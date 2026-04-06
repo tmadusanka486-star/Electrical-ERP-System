@@ -1,0 +1,20 @@
+# Python temporary files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+
+# Database (ඇත්තම ඩේටා තියෙන නිසා මේක යවන්න එපා)
+*.db
+
+# Uploads (පින්තූර සහ PDF)
+static/uploads/employees/*
+static/uploads/logo/*
+
+# Installer related
+dist/
+build/
+*.spec

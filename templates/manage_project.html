@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Project - {{ sys_settings[1] if sys_settings else 'ERP System' }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           🎨 THEME VARIABLES (Solid Dark)
+           ========================================= */
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --sidebar-bg: #121212;
+            --text-main: #ffffff;
+            --text-muted: #7dcff5;
+            --accent-blue: #3b82f6;
+            --border-color: #333333;
+            --hover-bg: #2a2a2a;
+            --input-bg: #2b2b2b;
+        }
+
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: 'Poppins', sans-serif; font-size: 13px; overflow-x: hidden; }
+
+        /* --- Sidebar Styles (New Dark Blue Theme) --- */
+        .sidebar { 
+            height: 100vh; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); 
+            position: fixed; width: 220px; padding-top: 25px; z-index: 1000; overflow-y: auto; 
+            display: flex; flex-direction: column;
+        }
+        .sidebar a.nav-link { padding: 12px 20px; text-decoration: none; font-size: 13px; color: var(--text-muted); display: block; transition: 0.3s; font-weight: 500; }
+        .sidebar a.nav-link:hover { background-color: var(--card-bg); color: #ffffff; padding-left: 25px; }
+        
+        .sidebar a.nav-link.active { 
+            background-color: #162232; 
+            color: var(--accent-blue); 
+            border-left: 3px solid var(--accent-blue); 
+            font-weight: 600; 
+        }
+        
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #444; border-radius: 5px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+
+        /* --- Content Area --- */
+        .content { margin-left: 220px; padding: 30px; position: relative;}
+
+        /* Card Styles */
+        .custom-card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 25px; margin-bottom: 25px;}
+        .card-title { font-size: 14px; font-weight: 600; margin-bottom: 15px; color: var(--text-main); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; display: flex; align-items: center; gap: 8px;}
+        
+        .form-label { color: var(--text-muted); font-size: 11px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .form-control, .form-select { background-color: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; font-size: 12px; padding: 8px 12px; height: 38px;}
+        .form-control:focus, .form-select:focus { background-color: var(--input-bg); color: var(--text-main); border-color: var(--accent-blue); box-shadow: none; }
+        
+        .btn-primary-solid { background-color: var(--accent-blue); color: white; border: none; font-weight: 600; border-radius: 6px; padding: 8px 20px; height: 38px; display: inline-flex; align-items: center; justify-content: center; transition: 0.3s;}
+        .btn-primary-solid:hover { background-color: #2563eb; color: white;}
+
+        .btn-success-solid { background-color: #2ecc71; color: black; border: none; font-weight: 600; border-radius: 6px; padding: 8px 20px; transition: 0.3s; height: 38px;}
+        .btn-success-solid:hover { background-color: #27ae60; color: black;}
+
+        .btn-outline-custom { height: 38px; border: 1px solid var(--border-color); color: var(--text-main); background: var(--input-bg); display: inline-flex; align-items: center; padding: 0 15px; border-radius: 6px; text-decoration: none; font-weight: 500; transition: 0.3s;}
+        .btn-outline-custom:hover { background: var(--hover-bg); color: white; border-color: #555;}
+
+        .status-badge { padding: 5px 12px; border-radius: 4px; font-weight: 700; font-size: 11px; margin-left: 10px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .bg-pending { background-color: rgba(241, 196, 15, 0.15); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.3); }
+        .bg-ongoing { background-color: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .bg-completed { background-color: rgba(46, 204, 113, 0.15); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); }
+
+        .table-custom { width: 100%; border-collapse: collapse; }
+        .table-custom th { background: #252525; color: var(--text-muted); padding: 12px 15px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; border-bottom: 1px solid var(--border-color); }
+        .table-custom td { padding: 12px 15px; border-bottom: 1px solid var(--border-color); color: #ddd; }
+        
+        .fin-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 13px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px;}
+        .fin-val { font-weight: 700; font-size: 15px; color: var(--text-main); }
+
+        /* =========================================================
+           🖨️ PRINT STYLES (A4, Header, Formatting) 
+           ========================================================= */
+        @media print {
+            @page { size: A4 portrait; margin: 15mm; } 
+            body { background-color: white !important; color: black !important; font-size: 12px; }
+            
+            /* Hide UI elements */
+            .sidebar, .btn, form, .no-print { display: none !important; }
+            
+            .content { margin-left: 0 !important; padding: 0 !important; }
+            
+            /* Fix Card styles for printing */
+            .custom-card { border: 1px solid #ccc !important; box-shadow: none !important; background: white !important; color: black !important; page-break-inside: avoid; padding: 15px !important;}
+            .card-title { color: black !important; border-bottom: 1px solid #000 !important; font-size: 16px !important;}
+            .text-muted { color: #555 !important; }
+            .text-white, .fin-val { color: black !important; }
+            .fin-row { background: transparent !important; padding: 5px 0 !important; border-bottom: 1px dashed #eee;}
+            
+            /* Print Header Visibility */
+            .print-header { display: block !important; text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 15px; }
+            
+            /* Table Print Styling */
+            .table-custom th { background-color: #eee !important; color: black !important; border-bottom: 2px solid #000 !important; }
+            .table-custom td { border-bottom: 1px solid #ccc !important; color: black !important; }
+        }
+        
+        .print-header { display: none; } /* Hidden on normal screen */
+
+        /* --- Fix Label Text Color --- */
+label, .form-label {
+    color: #ffffff !important; /* අකුරු සුදු පාට කරයි */
+    font-weight: 500; /* අකුරු ටිකක් පැහැදිලිව මහතට පෙන්නයි */
+    font-size: 12px;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 20px; padding: 0 15px; text-align: center;">
+        {% if sys_settings and sys_settings|length > 6 and sys_settings[6] %}
+            <img src="{{ url_for('static', filename='uploads/logo/' + sys_settings[6]) }}" alt="Logo" style="max-width: 140px; max-height: 70px; margin-bottom: 12px; border-radius: 8px; object-fit: contain;">
+        {% else %}
+            <div style="width: 45px; height: 45px; background: var(--accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: white; font-weight: bold; margin-bottom: 12px;">
+                {{ (sys_settings[1][0]|upper) if sys_settings else 'E' }}
+            </div>
+        {% endif %}
+        <div style="font-size: 15px; font-weight: 700; color: white; letter-spacing: 0.5px; line-height: 1.3; width: 100%; word-wrap: break-word;">
+            {{ sys_settings[1] if sys_settings else 'ERP System' }}
+        </div>
+    </div>
+
+    <div style="padding: 0 15px 15px 15px; margin-bottom: 10px; border-bottom: 1px solid #1e1e1e;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px; padding-left: 5px;">
+            <div style="width: 38px; height: 38px; border-radius: 50%; background-color: #34495e; display: flex; align-items: center; justify-content: center; font-size: 15px; color: white; font-weight: 700; flex-shrink: 0;">
+                {{ session['user_name'][0]|upper if session['user_name'] else '👤' }}
+            </div>
+            <div style="text-align: left; overflow: hidden; width: 100%;">
+                <div style="color: #ffffff; font-weight: 600; font-size: 12px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
+                    {{ session['user_name'] }}
+                </div>
+                <div style="color: #888888; font-size: 10px; text-transform: uppercase; font-weight: 700; margin-top: 2px;">
+                    {{ session['user_role'] }}
+                </div>
+            </div>
+        </div>
+        <a href="/logout" style="display: block; background: #2c1618; color: #ff4d4d; border: 1px solid #4a2124; border-radius: 6px; padding: 8px; text-align: center; font-weight: 600; font-size: 12px; text-decoration: none; transition: 0.3s; margin: 0 5px;">
+            🚪 Logout
+        </a>
+    </div>
+
+    <div style="overflow-y: auto; flex-grow: 1; padding-bottom: 20px;">
+        {% set perms = session.get('user_permissions', '') %}
+        {% if 'dashboard' in perms %}<a href="/" class="nav-link {{ 'active' if request.path == '/' else '' }}">📊 Dashboard</a>{% endif %}
+        {% if 'billing' in perms %}<a href="/billing" class="nav-link {{ 'active' if request.path == '/billing' else '' }}">🧾 Billing</a>{% endif %}
+        {% if 'expenses' in perms %}<a href="/expenses" class="nav-link {{ 'active' if request.path == '/expenses' else '' }}">💸 Shop Expenses</a>{% endif %}
+        {% if 'customers' in perms %}<a href="/customers" class="nav-link {{ 'active' if request.path == '/customers' else '' }}">👥 Customers</a>{% endif %}
+        {% if 'returns' in perms %}<a href="/returns" class="nav-link {{ 'active' if request.path == '/returns' else '' }}">↩️ Returns</a>{% endif %}
+        {% if 'inventory' in perms %}<a href="/inventory" class="nav-link {{ 'active' if request.path == '/inventory' else '' }}">📦 Inventory</a>{% endif %}
+        {% if 'purchasing' in perms %}<a href="/purchasing" class="nav-link {{ 'active' if request.path == '/purchasing' else '' }}">🛒 Purchasing</a>{% endif %}
+        {% if 'suppliers' in perms %}<a href="/suppliers" class="nav-link {{ 'active' if request.path == '/suppliers' else '' }}">🚚 Suppliers</a>{% endif %}
+        {% if 'barcodes' in perms %}<a href="/barcodes" class="nav-link {{ 'active' if request.path == '/barcodes' else '' }}">🏷️ Barcodes</a>{% endif %}
+        {% if 'employees' in perms %}<a href="/employees" class="nav-link {{ 'active' if request.path == '/employees' else '' }}">👨‍🔧 Employees</a>{% endif %}
+        {% if 'payroll' in perms %}<a href="/payroll" class="nav-link {{ 'active' if request.path == '/payroll' else '' }}">💰 Payroll</a>{% endif %}
+        {% if 'projects' in perms %}<a href="/projects" class="nav-link {{ 'active' if request.path.startswith('/project') or request.path.startswith('/manage_project') else '' }}">📋 Projects</a>{% endif %}
+        {% if 'reports' in perms %}<a href="/reports" class="nav-link {{ 'active' if request.path == '/reports' else '' }}">📈 Reports</a>{% endif %}
+        {% if 'settings' in perms %}<a href="/settings" class="nav-link {{ 'active' if request.path == '/settings' else '' }}">⚙️ Settings</a>{% endif %}
+    </div>
+</div>
+
+<div class="content">
+
+    <div class="print-header">
+        <h2 style="margin: 0; font-weight: 700; text-transform: uppercase;">{{ sys_settings[1] if sys_settings else 'ERP System' }}</h2>
+        <p style="margin: 0; font-size: 13px;">Project Invoice / Summary Document</p>
+        
+        <h4 style="margin-top: 15px; font-weight: 600; text-transform: uppercase; border: 1px solid #000; display: inline-block; padding: 5px 15px;">
+            PROJECT DETAILS
+        </h4>
+        <div style="text-align: right; font-size: 11px; margin-top: 10px;">
+            Project ID: <strong>PRO-{{ "%03d" % project[0] }}</strong><br>
+            Printed On: <script>document.write(new Date().toLocaleDateString());</script>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center">
+            <a href="/projects" class="btn-outline-custom me-3 no-print">← Back</a>
+            <h3 class="m-0" style="font-weight: 700; color: var(--text-main);">
+                {{ project[1] }} 
+                <span class="status-badge 
+                    {% if project[5] == 'Pending' %}bg-pending
+                    {% elif project[5] == 'Ongoing' %}bg-ongoing
+                    {% else %}bg-completed{% endif %}">
+                    {{ project[5] }}
+                </span>
+            </h3>
+        </div>
+        <button onclick="window.print()" class="btn-primary-solid no-print">🖨️ Print Invoice</button>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4">
+            
+            <div class="custom-card">
+                <div class="card-title" style="color: var(--accent-blue);"><span>ℹ️</span> Project Info</div>
+                <p class="mb-2"><strong class="text-muted">Customer:</strong> <span class="ms-2" style="color: var(--text-main); font-weight: 600;">{{ project[2] }}</span></p>
+                <p class="mb-2"><strong class="text-muted">Location:</strong> <span class="ms-2" style="color: var(--text-main);">{{ project[3] }}</span></p>
+                <p class="mb-2"><strong class="text-muted">Start Date:</strong> <span class="ms-2" style="color: var(--text-main);">{{ project[4] }}</span></p>
+            </div>
+
+            <div class="custom-card">
+                <div class="card-title text-warning"><span>💰</span> Financial Summary</div>
+                
+                {% set budget = project[6] or 0 %}
+                {% set received = project[7] or 0 %}
+                {% set balance = budget - received %}
+                
+                <div class="fin-row">
+                    <span class="text-muted">Estimated Budget</span>
+                    <span class="fin-val">LKR {{ "{:,.2f}".format(budget) }}</span>
+                </div>
+                <div class="fin-row">
+                    <span class="text-muted">Total Material Cost</span>
+                    <span class="fin-val" style="color: var(--accent-blue);">LKR {{ "{:,.2f}".format(total_cost) }}</span>
+                </div>
+                <div class="fin-row mt-3" style="border-top: 1px solid var(--border-color); padding-top: 15px;">
+                    <span class="text-muted">Amount Received</span>
+                    <span class="fin-val" style="color: #2ecc71;">LKR {{ "{:,.2f}".format(received) }}</span>
+                </div>
+                <div class="fin-row" style="background: rgba(255, 71, 87, 0.1); border: 1px solid rgba(255, 71, 87, 0.2);">
+                    <span class="text-muted" style="color: #ff4757 !important;">Pending Balance</span>
+                    <span class="fin-val" style="color: #ff4757; font-size: 18px;">LKR {{ "{:,.2f}".format(balance) }}</span>
+                </div>
+            </div>
+
+            <div class="custom-card no-print">
+                <div class="card-title"><span>🔄</span> Change Status</div>
+                <form action="/update_project_status/{{ project[0] }}" method="POST" class="d-flex gap-2">
+                    <select name="status" class="form-select">
+                        <option value="Pending" {% if project[5] == 'Pending' %}selected{% endif %}>Pending</option>
+                        <option value="Ongoing" {% if project[5] == 'Ongoing' %}selected{% endif %}>Ongoing</option>
+                        <option value="Completed" {% if project[5] == 'Completed' %}selected{% endif %}>Completed</option>
+                    </select>
+                    <button type="submit" class="btn-outline-custom">Update</button>
+                </form>
+            </div>
+
+            <div class="custom-card no-print">
+                <div class="card-title text-success"><span>💵</span> Customer Payment</div>
+                <form action="/add_project_payment/{{ project[0] }}" method="POST">
+                    <label class="form-label">Payment Amount (LKR)</label>
+                    <div class="d-flex gap-2">
+                        <input type="number" name="amount" class="form-control" placeholder="0.00" required>
+                        <button type="submit" class="btn-success-solid">Add</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+        <div class="col-lg-8">
+            
+            <div class="custom-card no-print" style="border-top: 3px solid var(--accent-blue);">
+                <div class="card-title"><span>📦</span> Issue Material from Stock</div>
+                <form action="/add_project_material" method="POST" class="row g-2 align-items-end">
+                    <input type="hidden" name="project_id" value="{{ project[0] }}">
+                    <div class="col-md-6">
+                        <label class="form-label">Select Item</label>
+                        <select name="inventory_id" class="form-select" required>
+                            <option value="">-- Choose Item --</option>
+                            {% for item in products %}
+                                <option value="{{ item[0] }}">{{ item[1] }} (Stock: {{ item[11] }}) - LKR {{ item[7] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" step="0.01" name="qty" class="form-control" required>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn-primary-solid w-100">+ Add to Project</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="custom-card p-0">
+                <div class="p-3 d-flex justify-content-between align-items-center" style="border-bottom: 1px solid var(--border-color); background-color: var(--bg-color); border-radius: 8px 8px 0 0;">
+                    <h6 class="m-0" style="font-weight: 600; color: var(--text-main);">🛠️ Used Materials List</h6>
+                    <span class="badge no-print" style="background-color: #f1c40f; color: #000; padding: 8px 12px; font-size: 12px; border-radius: 4px;">Total Cost: LKR {{ "{:,.2f}".format(total_cost) }}</span>
+                </div>
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Category</th>
+                            <th class="text-center">Qty Issued</th>
+                            <th class="text-end">Cost Value</th>
+                            <th class="text-end no-print">Issued Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mat in materials %}
+                        <tr>
+                            <td style="font-weight: 600; color: white;">{{ mat[1] }}</td>
+                            <td style="color: var(--text-muted);">{{ mat[2] }}</td>
+                            <td class="text-center" style="font-weight: 600;">{{ mat[3] }}</td>
+                            <td class="text-end" style="font-weight: 600; color: var(--accent-blue);">LKR {{ "{:,.2f}".format(mat[4]) }}</td>
+                            <td class="text-end no-print" style="color: var(--text-muted); font-size: 11px;">{{ mat[5][:16] }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5" style="color: var(--text-muted);">No materials issued for this project yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

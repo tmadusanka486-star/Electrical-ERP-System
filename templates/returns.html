@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Returns - {{ sys_settings[1] if sys_settings else 'ERP System' }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           🎨 THEME VARIABLES (Solid Dark)
+           ========================================= */
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --sidebar-bg: #121212;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --accent-blue: #3b82f6;
+            --border-color: #333333;
+            --hover-bg: #2a2a2a;
+            --input-bg: #2b2b2b;
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            font-family: 'Poppins', sans-serif; 
+            font-size: 13px;
+            overflow-x: hidden; 
+        }
+
+        /* --- Sidebar Styles (New Dark Blue Theme) --- */
+        .sidebar { 
+            height: 100vh; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); 
+            position: fixed; width: 220px; padding-top: 25px; z-index: 1000; overflow-y: auto; 
+            display: flex; flex-direction: column;
+        }
+        .sidebar a.nav-link { padding: 12px 20px; text-decoration: none; font-size: 13px; color: var(--text-muted); display: block; transition: 0.3s; font-weight: 500; }
+        .sidebar a.nav-link:hover { background-color: var(--card-bg); color: #ffffff; padding-left: 25px; }
+        
+        .sidebar a.nav-link.active { 
+            background-color: #162232; 
+            color: var(--accent-blue); 
+            border-left: 3px solid var(--accent-blue); 
+            font-weight: 600; 
+        }
+        
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #444; border-radius: 5px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+
+        /* --- Content Area --- */
+        .content { margin-left: 220px; padding: 40px; position: relative; }
+
+        /* --- Custom Cards & Inputs --- */
+        .custom-card { 
+            background-color: var(--card-bg); border: 1px solid var(--border-color); 
+            border-radius: 8px; padding: 25px; margin-bottom: 25px; 
+        }
+        
+        .form-label { font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;}
+        
+        .form-control, .form-select { 
+            background-color: var(--input-bg); border: 1px solid var(--border-color); 
+            color: var(--text-main); border-radius: 6px; font-size: 12px; 
+            padding: 8px 12px; height: 38px;
+        }
+        .form-control:focus, .form-select:focus { background-color: var(--input-bg); color: var(--text-main); border-color: var(--accent-blue); box-shadow: none; }
+        .form-control::placeholder { color: #8b92a5 !important; opacity: 1; }
+
+        .btn-primary-solid { background-color: var(--accent-blue); color: white; border: none; font-weight: 600; border-radius: 6px; padding: 8px 20px; transition: 0.3s;}
+        .btn-primary-solid:hover { background-color: #2563eb; color: white;}
+        
+        .btn-warning-solid { background-color: #f1c40f; color: black; border: none; font-weight: 600; border-radius: 6px; padding: 8px 20px; transition: 0.3s;}
+        .btn-warning-solid:hover { background-color: #f39c12; color: black;}
+
+        .btn-danger-solid { background-color: #ff4757; color: white; border: none; font-weight: 600; border-radius: 6px; padding: 8px 20px; transition: 0.3s;}
+        .btn-danger-solid:hover { background-color: #ff6b81; color: white;}
+
+        /* --- Table Styling --- */
+        .table-custom { width: 100%; border-collapse: collapse; }
+        .table-custom th { 
+            background-color: #252525; color: var(--text-muted); padding: 12px 15px; 
+            text-align: left; border-bottom: 1px solid var(--border-color); font-size: 11px; text-transform: uppercase; font-weight: 600;
+        }
+        .table-custom td { padding: 12px 15px; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: #ddd;}
+        .table-custom tr:hover td { background-color: var(--hover-bg); }
+        
+        /* Modal Styles */
+        .modal-content { background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 8px;}
+        .modal-header { border-bottom: 1px solid var(--border-color); }
+        .modal-footer { border-top: 1px solid var(--border-color); }
+        .btn-close { filter: invert(1); }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 25px; padding: 0 15px; text-align: center;">
+        {% if sys_settings and sys_settings|length > 6 and sys_settings[6] %}
+            <img src="{{ url_for('static', filename='uploads/logo/' + sys_settings[6]) }}" alt="Logo" style="max-height: 60px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+        {% else %}
+            <div style="width: 50px; height: 50px; background: var(--accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; font-weight: bold; margin-bottom: 15px;">
+                {{ (sys_settings[1][0]|upper) if sys_settings else 'E' }}
+            </div>
+        {% endif %}
+        <div style="font-size: 15px; font-weight: 700; color: white; text-align: center; letter-spacing: 0.5px; line-height: 1.3; width: 100%; word-wrap: break-word;">
+            {{ sys_settings[1] if sys_settings else 'ERP System' }}
+        </div>
+    </div>
+
+    <div style="padding: 0 20px 20px 20px; margin-bottom: 10px; border-bottom: 1px solid var(--border-color);">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+            <div style="width: 35px; height: 35px; border-radius: 50%; background-color: #34495e; display: flex; align-items: center; justify-content: center; font-size: 14px; color: white; font-weight: 700; flex-shrink: 0;">
+                {{ session['user_name'][0]|upper if session['user_name'] else '👤' }}
+            </div>
+            <div style="text-align: left; overflow: hidden;">
+                <div style="color: var(--text-main); font-weight: 600; font-size: 12px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
+                    {{ session['user_name'] }}
+                </div>
+                <div style="color: var(--text-muted); font-size: 10px; text-transform: uppercase; font-weight: 600;">
+                    {{ session['user_role'] }}
+                </div>
+            </div>
+        </div>
+        <a href="/logout" style="display: block; background: #2c1618; color: #ff4d4d; border: 1px solid #4a2124; border-radius: 6px; padding: 7px; text-align: center; font-weight: 600; font-size: 11px; text-decoration: none; transition: 0.3s; margin: 0 5px;">
+            🚪 Logout
+        </a>
+    </div>
+
+    <div style="overflow-y: auto; flex-grow: 1; padding-bottom: 20px;">
+        {% set perms = session.get('user_permissions', '') %}
+        
+        {% if 'dashboard' in perms %}<a href="/" class="nav-link {{ 'active' if request.path == '/' else '' }}">📊 Dashboard</a>{% endif %}
+        {% if 'billing' in perms %}<a href="/billing" class="nav-link {{ 'active' if request.path == '/billing' else '' }}">🧾 Billing</a>{% endif %}
+        
+        {% if 'quotations' in perms %}<a href="/quotations" class="nav-link {{ 'active' if request.path == '/quotations' else '' }}">📄 Quotations</a>{% endif %}
+        
+        {% if 'expenses' in perms %}<a href="/expenses" class="nav-link {{ 'active' if request.path == '/expenses' else '' }}">💸 Shop Expenses</a>{% endif %}
+        {% if 'customers' in perms %}<a href="/customers" class="nav-link {{ 'active' if request.path == '/customers' else '' }}">👥 Customers</a>{% endif %}
+        {% if 'returns' in perms %}<a href="/returns" class="nav-link {{ 'active' if request.path == '/returns' else '' }}">↩️ Returns</a>{% endif %}
+        {% if 'inventory' in perms %}<a href="/inventory" class="nav-link {{ 'active' if request.path == '/inventory' else '' }}">📦 Inventory</a>{% endif %}
+        {% if 'purchasing' in perms %}<a href="/purchasing" class="nav-link {{ 'active' if request.path == '/purchasing' else '' }}">🛒 Purchasing</a>{% endif %}
+        {% if 'suppliers' in perms %}<a href="/suppliers" class="nav-link {{ 'active' if request.path == '/suppliers' else '' }}">🚚 Suppliers</a>{% endif %}
+        {% if 'barcodes' in perms %}<a href="/barcodes" class="nav-link {{ 'active' if request.path == '/barcodes' else '' }}">🏷️ Barcodes</a>{% endif %}
+        {% if 'employees' in perms %}<a href="/employees" class="nav-link {{ 'active' if request.path == '/employees' else '' }}">👨‍🔧 Employees</a>{% endif %}
+        {% if 'payroll' in perms %}<a href="/payroll" class="nav-link {{ 'active' if request.path == '/payroll' else '' }}">💰 Payroll</a>{% endif %}
+        
+        {% if 'projects' in perms %}
+            <a href="/projects" class="nav-link {{ 'active' if request.path.startswith('/project') or request.path.startswith('/manage_project') else '' }}">📋 Projects</a>
+            <a href="/project_quotations" class="nav-link {{ 'active' if request.path == '/project_quotations' else '' }}">🏗️ Project Quotes</a>
+        {% endif %}
+        
+        {% if 'reports' in perms %}<a href="/reports" class="nav-link {{ 'active' if request.path == '/reports' else '' }}">📈 Reports</a>{% endif %}
+        {% if 'settings' in perms %}<a href="/settings" class="nav-link {{ 'active' if request.path == '/settings' else '' }}">⚙️ Settings</a>{% endif %}
+    </div>
+</div>
+<div class="content">
+    <h4 class="mb-4" style="font-weight: 600;">↩️ Returns Management</h4>
+
+    <div class="custom-card">
+        <label class="form-label" style="color: var(--accent-blue);">Find Invoice to Return</label>
+        <form action="/search_invoice_for_return" method="POST" class="d-flex gap-2 align-items-center" style="max-width: 500px;">
+            <input type="number" name="invoice_id" class="form-control" placeholder="Enter Invoice ID (e.g. 1)" value="{{ searched_invoice_id }}" required>
+            <button type="submit" class="btn-primary-solid" style="width: 120px;">🔍 Search</button>
+        </form>
+    </div>
+
+    {% if invoice_items %}
+    <div class="custom-card p-0" style="overflow: hidden;">
+        <div style="padding: 20px; border-bottom: 1px solid var(--border-color);">
+            <h6 class="m-0" style="color: #2ecc71; font-weight: 600;">Select Item to Return (Invoice #{{ searched_invoice_id }})</h6>
+        </div>
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Item Name</th>
+                    <th>Sold Price</th>
+                    <th class="text-center">Sold Qty</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in invoice_items %}
+                <tr>
+                    <td style="font-weight: 600; color: white;">{{ item[3] }}</td>
+                    <td style="color: var(--text-muted);">LKR {{ "{:,.2f}".format(item[5]) }}</td>
+                    <td class="text-center" style="font-weight: 600;">{{ item[4] }}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm" style="background: rgba(241, 196, 15, 0.1); color: #f1c40f; border: 1px solid #f1c40f; font-weight: 600;"
+                            onclick="openReturnModal('{{ searched_invoice_id }}', '{{ item[2] }}', '{{ item[3] }}', '{{ item[5] }}')">
+                            ↩️ Return Item
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <div class="custom-card p-0" style="overflow: hidden;">
+        <div style="padding: 20px; border-bottom: 1px solid var(--border-color);">
+            <h6 class="m-0" style="font-weight: 600;">Recent Returns History</h6>
+        </div>
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Inv ID</th>
+                    <th>Item Name</th>
+                    <th class="text-center">Return Qty</th>
+                    <th class="text-end">Refunded Amount</th>
+                    <th>Reason</th>
+                    <th>Date & Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in returns %}
+                <tr>
+                    <td style="color: var(--text-muted);">#{{ r[1] }}</td>
+                    <td style="font-weight: 500; color: white;">{{ r[3] }}</td>
+                    <td class="text-center" style="font-weight: 600;">{{ r[4] }}</td>
+                    <td class="text-end" style="color: #ff4757; font-weight: 600;">-LKR {{ "{:,.2f}".format(r[5]) }}</td>
+                    <td style="color: var(--text-muted);">{{ r[7] }}</td>
+                    <td style="font-size: 11px; color: #888;">{{ r[6] }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">No returns recorded yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="returnModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form action="/process_return" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-weight: 600;">Process Item Return</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body row g-3">
+                    <input type="hidden" name="invoice_id" id="modInvId">
+                    <input type="hidden" name="product_id" id="modProdId">
+                    
+                    <div class="col-12">
+                        <label class="form-label">Item Name</label>
+                        <input type="text" name="item_name" id="modItemName" class="form-control" readonly style="background-color: rgba(0,0,0,0.3); color: white;">
+                    </div>
+                    
+                    <div class="col-6">
+                        <label class="form-label text-warning">Return Quantity</label>
+                        <input type="number" name="qty" class="form-control" value="1" min="1" required style="font-size: 16px;">
+                    </div>
+                    
+                    <div class="col-6">
+                        <label class="form-label text-danger">Refund Amount (LKR)</label>
+                        <input type="number" name="refund" id="modRefund" class="form-control" required style="font-size: 16px;">
+                    </div>
+                    
+                    <div class="col-12 mt-3">
+                        <label class="form-label">Reason for Return</label>
+                        <select name="reason" class="form-select">
+                            <option>Defective / Damaged</option>
+                            <option>Wrong Item Supplied</option>
+                            <option>Customer Changed Mind</option>
+                            <option>Warranty Claim</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn-danger-solid">Confirm Return</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function openReturnModal(invId, prodId, name, price) {
+        document.getElementById('modInvId').value = invId;
+        document.getElementById('modProdId').value = prodId;
+        document.getElementById('modItemName').value = name;
+        document.getElementById('modRefund').value = price; 
+        var myModal = new bootstrap.Modal(document.getElementById('returnModal'));
+        myModal.show();
+    }
+</script>
+</body>
+</html>

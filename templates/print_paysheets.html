@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paysheets - {{ month }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #eee; margin: 0; padding: 20px; }
+        
+        /* Payslip Design */
+        .payslip { 
+            background: white; width: 148mm; /* A5 Size Width */
+            margin: 0 auto 30px auto; padding: 15px; 
+            border: 1px solid #ccc; box-shadow: 0 0 5px rgba(0,0,0,0.1); 
+            /* 🔴 මේ පේළියෙන් තමයි ප්‍රින්ට් කරද්දී එක කොළේකට එක පඩිපතක් එන්න කඩන්නේ 🔴 */
+            page-break-after: always; 
+        }
+        
+        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 15px; }
+        .header h2 { margin: 0; font-size: 20px; text-transform: uppercase; }
+        .header p { margin: 2px 0; font-size: 11px; color: #555; }
+        
+        .emp-details { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 12px; }
+        .emp-details strong { color: #333; }
+        
+        .salary-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .salary-table th { background: #f5f5f5; border-bottom: 2px solid #333; padding: 8px; text-align: left; }
+        .salary-table td { padding: 8px; border-bottom: 1px solid #ddd; }
+        .text-right { text-align: right; }
+        
+        .net-pay { font-size: 16px; font-weight: bold; border-top: 2px solid #333; padding-top: 10px; margin-top: 10px; }
+        
+        .signatures { display: flex; justify-content: space-between; margin-top: 40px; font-size: 11px; color: #555; text-align: center;}
+        .sign-line { border-top: 1px dashed #333; width: 120px; padding-top: 5px; }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .payslip { box-shadow: none; border: none; margin: 0; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body onload="window.print()">
+
+    <div class="no-print" style="text-align: center; margin-bottom: 20px;">
+        <button onclick="window.print()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">🖨️ Print Paysheets</button>
+    </div>
+
+    {% if employees|length == 0 %}
+        <h3 style="text-align: center;">No salaries calculated for {{ month }} yet!</h3>
+    {% endif %}
+
+    {% for emp in employees %}
+    <div class="payslip">
+        <div class="header">
+            <h2>{{ settings[1] }}</h2>
+            <p>Tel: {{ settings[3] }} | {{ settings[2] }}</p>
+            <h4 style="margin: 5px 0 0 0; border: 1px solid #333; display: inline-block; padding: 3px 15px;">SALARY SLIP - {{ month }}</h4>
+        </div>
+
+        <div class="emp-details">
+            <div>
+                <p><strong>Employee ID:</strong> EMP-{{ "%03d" % emp[0] }}</p>
+                <p><strong>Name:</strong> {{ emp[1] }}</p>
+            </div>
+            <div class="text-right">
+                <p><strong>Designation:</strong> {{ emp[2] }}</p>
+            </div>
+        </div>
+
+        <table class="salary-table">
+            <thead>
+                <tr>
+                    <th>Earnings & Deductions</th>
+                    <th class="text-right">Amount (LKR)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Basic Salary</td>
+                    <td class="text-right">{{ "{:,.2f}".format(emp[3]) }}</td>
+                </tr>
+                <tr>
+                    <td>Allowances / OT / Bonus (+)</td>
+                    <td class="text-right">{{ "{:,.2f}".format(emp[4]) }}</td>
+                </tr>
+                <tr>
+                    <td>Deductions / Advances (-)</td>
+                    <td class="text-right">{{ "{:,.2f}".format(emp[5]) }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="net-pay text-right">
+            NET SALARY: LKR {{ "{:,.2f}".format(emp[6]) }}
+        </div>
+
+        <div class="signatures">
+            <div>
+                <div class="sign-line">Employer Signature</div>
+            </div>
+            <div>
+                <div class="sign-line">Employee Signature</div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+</body>
+</html>

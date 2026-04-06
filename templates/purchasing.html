@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Purchasing (GRN) - {{ sys_settings[1] if sys_settings else 'ERP System' }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* =========================================
+           🎨 THEME VARIABLES (Solid Dark)
+           ========================================= */
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --sidebar-bg: #121212;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --accent-blue: #3b82f6;
+            --border-color: #333333;
+            --hover-bg: #2a2a2a;
+            --input-bg: #2b2b2b;
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            font-family: 'Poppins', sans-serif; 
+            font-size: 13px;
+            overflow-x: hidden; 
+        }
+
+        /* --- Sidebar Styles (New Dark Blue Theme) --- */
+        .sidebar { 
+            height: 100vh; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); 
+            position: fixed; width: 220px; padding-top: 25px; z-index: 1000; overflow-y: auto; 
+            display: flex; flex-direction: column;
+        }
+        .sidebar a.nav-link { padding: 12px 20px; text-decoration: none; font-size: 13px; color: var(--text-muted); display: block; transition: 0.3s; font-weight: 500; }
+        .sidebar a.nav-link:hover { background-color: var(--card-bg); color: #ffffff; padding-left: 25px; }
+        
+        .sidebar a.nav-link.active { 
+            background-color: #162232; 
+            color: var(--accent-blue); 
+            border-left: 3px solid var(--accent-blue); 
+            font-weight: 600; 
+        }
+        
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #444; border-radius: 5px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+
+        /* --- Content Area --- */
+        .content { margin-left: 220px; padding: 40px; position: relative; }
+
+        /* --- Custom Cards & Inputs --- */
+        .custom-card { 
+            background-color: var(--card-bg); border: 1px solid var(--border-color); 
+            border-radius: 8px; padding: 25px; margin-bottom: 25px; 
+        }
+        
+        .form-label { font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;}
+        
+        .form-control, .form-select { 
+            background-color: var(--input-bg); border: 1px solid var(--border-color); 
+            color: var(--text-main); border-radius: 6px; font-size: 12px; 
+            padding: 8px 12px; height: 38px;
+        }
+        .form-control:focus, .form-select:focus { background-color: var(--input-bg); color: var(--text-main); border-color: var(--accent-blue); box-shadow: none; }
+        .form-control::placeholder { color: #8b92a5 !important; opacity: 1; }
+
+        .btn-success-solid { background-color: #2ecc71; color: black; border: none; font-weight: 600; border-radius: 6px; padding: 10px 20px; transition: 0.3s;}
+        .btn-success-solid:hover { background-color: #27ae60; color: black;}
+
+        .form-check-label { color: var(--text-main); font-weight: 500; cursor: pointer; }
+        .form-check-input { cursor: pointer; }
+        .form-check-input:checked { background-color: var(--accent-blue); border-color: var(--accent-blue); }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 25px; padding: 0 15px; text-align: center;">
+        {% if sys_settings and sys_settings|length > 6 and sys_settings[6] %}
+            <img src="{{ url_for('static', filename='uploads/logo/' + sys_settings[6]) }}" alt="Logo" style="max-height: 60px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+        {% else %}
+            <div style="width: 50px; height: 50px; background: var(--accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; font-weight: bold; margin-bottom: 15px;">
+                {{ (sys_settings[1][0]|upper) if sys_settings else 'E' }}
+            </div>
+        {% endif %}
+        <div style="font-size: 15px; font-weight: 700; color: white; text-align: center; letter-spacing: 0.5px; line-height: 1.3; width: 100%; word-wrap: break-word;">
+            {{ sys_settings[1] if sys_settings else 'ERP System' }}
+        </div>
+    </div>
+
+    <div style="padding: 0 20px 20px 20px; margin-bottom: 10px; border-bottom: 1px solid var(--border-color);">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+            <div style="width: 35px; height: 35px; border-radius: 50%; background-color: #34495e; display: flex; align-items: center; justify-content: center; font-size: 14px; color: white; font-weight: 700; flex-shrink: 0;">
+                {{ session['user_name'][0]|upper if session['user_name'] else '👤' }}
+            </div>
+            <div style="text-align: left; overflow: hidden;">
+                <div style="color: var(--text-main); font-weight: 600; font-size: 12px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
+                    {{ session['user_name'] }}
+                </div>
+                <div style="color: var(--text-muted); font-size: 10px; text-transform: uppercase; font-weight: 600;">
+                    {{ session['user_role'] }}
+                </div>
+            </div>
+        </div>
+        <a href="/logout" style="display: block; background: #2c1618; color: #ff4d4d; border: 1px solid #4a2124; border-radius: 6px; padding: 7px; text-align: center; font-weight: 600; font-size: 11px; text-decoration: none; transition: 0.3s; margin: 0 5px;">
+            🚪 Logout
+        </a>
+    </div>
+
+    <div style="overflow-y: auto; flex-grow: 1; padding-bottom: 20px;">
+        {% set perms = session.get('user_permissions', '') %}
+        
+        {% if 'dashboard' in perms %}<a href="/" class="nav-link {{ 'active' if request.path == '/' else '' }}">📊 Dashboard</a>{% endif %}
+        {% if 'billing' in perms %}<a href="/billing" class="nav-link {{ 'active' if request.path == '/billing' else '' }}">🧾 Billing</a>{% endif %}
+        
+        {% if 'quotations' in perms %}<a href="/quotations" class="nav-link {{ 'active' if request.path == '/quotations' else '' }}">📄 Quotations</a>{% endif %}
+        
+        {% if 'expenses' in perms %}<a href="/expenses" class="nav-link {{ 'active' if request.path == '/expenses' else '' }}">💸 Shop Expenses</a>{% endif %}
+        {% if 'customers' in perms %}<a href="/customers" class="nav-link {{ 'active' if request.path == '/customers' else '' }}">👥 Customers</a>{% endif %}
+        {% if 'returns' in perms %}<a href="/returns" class="nav-link {{ 'active' if request.path == '/returns' else '' }}">↩️ Returns</a>{% endif %}
+        {% if 'inventory' in perms %}<a href="/inventory" class="nav-link {{ 'active' if request.path == '/inventory' else '' }}">📦 Inventory</a>{% endif %}
+        {% if 'purchasing' in perms %}<a href="/purchasing" class="nav-link {{ 'active' if request.path == '/purchasing' else '' }}">🛒 Purchasing</a>{% endif %}
+        {% if 'suppliers' in perms %}<a href="/suppliers" class="nav-link {{ 'active' if request.path == '/suppliers' else '' }}">🚚 Suppliers</a>{% endif %}
+        {% if 'barcodes' in perms %}<a href="/barcodes" class="nav-link {{ 'active' if request.path == '/barcodes' else '' }}">🏷️ Barcodes</a>{% endif %}
+        {% if 'employees' in perms %}<a href="/employees" class="nav-link {{ 'active' if request.path == '/employees' else '' }}">👨‍🔧 Employees</a>{% endif %}
+        {% if 'payroll' in perms %}<a href="/payroll" class="nav-link {{ 'active' if request.path == '/payroll' else '' }}">💰 Payroll</a>{% endif %}
+        
+        {% if 'projects' in perms %}
+            <a href="/projects" class="nav-link {{ 'active' if request.path.startswith('/project') or request.path.startswith('/manage_project') else '' }}">📋 Projects</a>
+            <a href="/project_quotations" class="nav-link {{ 'active' if request.path == '/project_quotations' else '' }}">🏗️ Project Quotes</a>
+        {% endif %}
+        
+        {% if 'reports' in perms %}<a href="/reports" class="nav-link {{ 'active' if request.path == '/reports' else '' }}">📈 Reports</a>{% endif %}
+        {% if 'settings' in perms %}<a href="/settings" class="nav-link {{ 'active' if request.path == '/settings' else '' }}">⚙️ Settings</a>{% endif %}
+    </div>
+</div>
+
+<div class="content">
+    <h4 class="mb-4" style="font-weight: 600;">🛒 Add New Stock (GRN)</h4>
+
+    <div class="custom-card">
+        <form action="/add_purchase" method="POST" class="row g-3">
+            
+            <div class="col-md-12 mb-3">
+                <label class="form-label">Select Supplier</label>
+                <div class="d-flex gap-2">
+                    <select name="supplier_id" class="form-select" required>
+                        {% for s in suppliers %}
+                        <option value="{{ s[0] }}">{{ s[3] }} - {{ s[1] }}</option>
+                        {% endfor %}
+                    </select>
+                    <a href="/suppliers" class="btn btn-outline-secondary" style="height: 38px; border-color: var(--border-color); color: white;">+</a>
+                </div>
+            </div>
+
+            <div class="col-md-12 mb-2">
+                <div class="d-flex gap-4 p-3" style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px;">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="purchase_type" id="typeExisting" value="existing" checked onclick="toggleMode()">
+                        <label class="form-check-label" for="typeExisting">Select Existing Item</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="purchase_type" id="typeNew" value="new" onclick="toggleMode()">
+                        <label class="form-check-label" style="color: var(--accent-blue);" for="typeNew">➕ Create New Item</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="existingSection" class="col-md-12">
+                <label class="form-label">Select Product</label>
+                <select name="product_id" class="form-select">
+                    {% for p in products %}
+                    <option value="{{ p[0] }}">{{ p[1] }} (Current Stock: {{ p[11] }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div id="newSection" class="row g-3 d-none">
+                <div class="col-12 mt-3 mb-1"><hr style="border-color: var(--border-color); margin: 0;"></div>
+                
+                <div class="col-md-4">
+                    <label class="form-label">Item Name</label>
+                    <input type="text" name="new_name" class="form-control" placeholder="e.g. 2.5mm Wire">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Category</label>
+                    <select name="new_category" class="form-select">
+                        <option>CCTV</option><option>Wiring</option><option>Network</option><option>Electrical</option><option>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Brand</label>
+                    <select name="new_brand" class="form-select">
+                        <option>Dahua</option><option>Hikvision</option><option>Orange</option><option>Kelani</option><option>ACL</option><option>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Model</label>
+                    <input type="text" name="new_model" class="form-control" placeholder="Model No">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Barcode</label>
+                    <input type="text" name="new_barcode" class="form-control" placeholder="Scan or Type">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Selling Price</label>
+                    <input type="number" name="new_price" class="form-control" placeholder="0.00" step="0.01">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Reorder Lvl</label>
+                    <input type="number" name="new_reorder" class="form-control" value="5">
+                </div>
+            </div>
+
+            <div class="col-12 mt-4 mb-2"><hr style="border-color: var(--border-color); margin: 0;"></div>
+
+            <div class="col-md-6">
+                <label class="form-label text-warning">Buying Quantity</label>
+                <input type="number" name="qty" class="form-control" placeholder="Qty Received" required style="font-size: 16px;">
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label text-danger">Buying Cost (Per Unit LKR)</label>
+                <input type="number" step="0.01" name="cost" class="form-control" placeholder="0.00" required style="font-size: 16px;">
+            </div>
+
+            <div class="col-md-12 pt-3">
+                <button type="submit" class="btn-success-solid w-100">🛒 Add to Stock & Update Ledger</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="alert mt-3" style="background-color: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--accent-blue); border-radius: 8px;">
+        ℹ️ <strong>Note:</strong> Adding stock here will automatically increase the inventory count and update the cost price of the item for future profit calculations.
+    </div>
+
+</div>
+
+<script>
+    function toggleMode() {
+        let isNew = document.getElementById('typeNew').checked;
+        let existingSec = document.getElementById('existingSection');
+        let newSec = document.getElementById('newSection');
+
+        if (isNew) {
+            existingSec.classList.add('d-none');
+            newSec.classList.remove('d-none');
+            newSec.classList.add('d-flex');
+            
+            // Set fields as required if new item
+            document.querySelector('input[name="new_name"]').required = true;
+            document.querySelector('input[name="new_price"]').required = true;
+        } else {
+            existingSec.classList.remove('d-none');
+            newSec.classList.add('d-none');
+            newSec.classList.remove('d-flex');
+            
+            // Remove required if existing item
+            document.querySelector('input[name="new_name"]').required = false;
+            document.querySelector('input[name="new_price"]').required = false;
+        }
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
