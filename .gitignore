@@ -1,0 +1,6 @@
+.env
+__pycache__/
+*.pyc
+electrical_erp.db
+backups/
+static/uploads/
