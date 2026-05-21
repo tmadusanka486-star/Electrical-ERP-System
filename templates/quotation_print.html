@@ -44,7 +44,7 @@
         <div class="header">
             <div class="company-info">
                 {% if sys_settings and sys_settings[6] %}
-                    <img src="{{ url_for('static', filename='uploads/logo/' + sys_settings[6]) }}" alt="Logo" style="max-height: 70px; margin-bottom: 10px;">
+                    <img src="{{ (sys_settings[6] if sys_settings[6] and (sys_settings[6]|string).startswith('http') else url_for('static', filename='uploads/logo/' + sys_settings[6])) }}" alt="Logo" style="max-height: 70px; margin-bottom: 10px;">
                 {% endif %}
                 <h2>{{ sys_settings[1] if sys_settings else 'T&S PowerTech' }}</h2>
                 <p>{{ sys_settings[2] }}</p>

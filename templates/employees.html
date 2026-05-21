@@ -106,7 +106,7 @@
 <div class="sidebar">
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 25px; padding: 0 15px; text-align: center;">
         {% if sys_settings and sys_settings|length > 6 and sys_settings[6] %}
-            <img src="{{ url_for('static', filename='uploads/logo/' + sys_settings[6]) }}" alt="Logo" style="max-height: 60px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+            <img src="{{ (sys_settings[6] if sys_settings[6] and (sys_settings[6]|string).startswith('http') else url_for('static', filename='uploads/logo/' + sys_settings[6])) }}" alt="Logo" style="max-height: 60px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
         {% else %}
             <div style="width: 50px; height: 50px; background: var(--accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; font-weight: bold; margin-bottom: 15px;">
                 {{ (sys_settings[1][0]|upper) if sys_settings else 'E' }}
@@ -272,7 +272,7 @@
                 <tr>
                     <td>
                         {% if emp|length > 5 and emp[5] %}
-                            <img src="{{ url_for('static', filename='uploads/employees/' + emp[5]) }}" class="emp-photo" alt="Profile">
+                            <img src="{{ (emp[5] if emp[5] and (emp[5]|string).startswith('http') else url_for('static', filename='uploads/employees/' + emp[5])) }}" class="emp-photo" alt="Profile">
                         {% else %}
                             <div class="emp-photo d-flex justify-content-center align-items-center" style="background: #444; color: #888; font-size: 20px;">👤</div>
                         {% endif %}
@@ -307,7 +307,7 @@
                             </div>
                             <div class="modal-body text-center">
                                 {% if emp|length > 5 and emp[5] %}
-                                    <img src="{{ url_for('static', filename='uploads/employees/' + emp[5]) }}" class="profile-img-large" alt="Profile">
+                                    <img src="{{ (emp[5] if emp[5] and (emp[5]|string).startswith('http') else url_for('static', filename='uploads/employees/' + emp[5])) }}" class="profile-img-large" alt="Profile">
                                 {% else %}
                                     <div class="profile-img-large d-inline-flex justify-content-center align-items-center mx-auto" style="background: #444; color: #888; font-size: 50px;">👤</div>
                                 {% endif %}
@@ -322,7 +322,7 @@
                                     <div class="mt-3 pt-3" style="border-top: 1px dashed var(--border-color);">
                                         <strong style="color: var(--text-muted);">Documents:</strong><br>
                                         {% if emp|length > 6 and emp[6] %}
-                                            <a href="{{ url_for('static', filename='uploads/employees/' + emp[6]) }}" target="_blank" class="btn btn-sm btn-outline-info mt-2">📄 View PDF Certificate/CV</a>
+                                            <a href="{{ (emp[6] if emp[6] and (emp[6]|string).startswith('http') else url_for('static', filename='uploads/employees/' + emp[6])) }}" target="_blank" class="btn btn-sm btn-outline-info mt-2">📄 View PDF Certificate/CV</a>
                                         {% else %}
                                             <span class="text-muted small">No documents uploaded.</span>
                                         {% endif %}
