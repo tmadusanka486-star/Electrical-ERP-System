@@ -73,7 +73,20 @@ def auto_backup_database():
 # ==========================================
 app = Flask(__name__)
 app.secret_key = 'ts_powertech_super_secret_key_2026'
-db = Database()
+
+db_error = None
+try:
+    db = Database()
+except Exception as e:
+    import traceback
+    db_error = traceback.format_exc()
+    db = None
+
+@app.route('/debug_error')
+def debug_error():
+    if db_error:
+        return f"<pre>Database Initialization Error:\n{db_error}</pre>"
+    return "No initialization errors."
 
 @app.context_processor
 def inject_global_settings():
@@ -120,9 +133,13 @@ def requires_permission(permission):
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'static']
+    if db_error:
+        return f"<h1>App Initialization Failed</h1><pre>{db_error}</pre>"
+        
+    allowed_routes = ['login', 'static', 'debug_error']
     if request.endpoint not in allowed_routes and 'user_id' not in session:
         return redirect(url_for('login'))
+
 
 # ==========================================
 # --- 3. Authentication & Login Routes ---
@@ -178,14 +195,20 @@ def logout():
 # --- 4. Dashboard Route ---
 # ==========================================
 @app.route('/')
-@requires_permission('dashboard')
 def index():
+    if db_error:
+        return f"<h1>App Initialization Failed</h1><pre>{db_error}</pre>"
+        
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+        
     stats = db.get_dashboard_stats()
     low_stock_items = db.get_low_stock_items()
     current_month = datetime.datetime.now().strftime('%Y-%m')
     all_expenses = db.get_all_expenses()
     month_expenses = sum(exp[4] for exp in all_expenses if exp[1].startswith(current_month))
     return render_template('dashboard.html', stats=stats, low_stock_items=low_stock_items, month_expenses=month_expenses)
+
 
 # ==========================================
 # --- 5. Main Modules Routes ---
