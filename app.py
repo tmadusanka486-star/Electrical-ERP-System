@@ -84,9 +84,12 @@ def inject_global_settings():
         return dict(sys_settings=None)
 
 UPLOAD_FOLDER = 'static/uploads/employees'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 LOGO_FOLDER = 'static/uploads/logo'
-os.makedirs(LOGO_FOLDER, exist_ok=True)
+try:
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    os.makedirs(LOGO_FOLDER, exist_ok=True)
+except OSError:
+    pass
 
 # --- 🔐 Security Gate (Permission Checker) ---
 def requires_permission(permission):
