@@ -553,7 +553,7 @@ def update_settings():
     printer_type = request.form['printer_type'] 
     logo_file = request.files.get('logo')
     logo_name = None
-    if logo_file:
+    if logo_file and logo_file.filename != '':
         logo_name = upload_file_to_storage(logo_file, LOGO_FOLDER)
     db.update_settings(name, address, phone, email, printer_type, logo_name)
     return redirect(url_for('settings'))

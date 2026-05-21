@@ -547,7 +547,7 @@ class Database:
 
     # --- Settings Functions ---
     def get_settings(self):
-        self.cursor.execute("SELECT * FROM settings WHERE id = 1")
+        self.cursor.execute("SELECT id, company_name, address, phone, email, printer_type, logo FROM settings WHERE id = 1")
         return self.cursor.fetchone()
 
     def update_settings(self, name, address, phone, email, printer_type, logo=None):
