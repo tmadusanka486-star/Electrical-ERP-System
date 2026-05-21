@@ -133,6 +133,9 @@ def requires_permission(permission):
 
 @app.before_request
 def require_login():
+    if db:
+        db.ensure_connection()
+
     if db_error:
         return f"<h1>App Initialization Failed</h1><pre>{db_error}</pre>"
         
@@ -140,11 +143,11 @@ def require_login():
     if request.endpoint not in allowed_routes and 'user_id' not in session:
         return redirect(url_for('login'))
 
-@app.errorhandler(500)
-def internal_error(exception):
+@app.errorhandler(Exception)
+def handle_exception(e):
     import traceback
     error_trace = traceback.format_exc()
-    return f"<h1>500 Internal Server Error</h1><pre>{error_trace}</pre>", 500
+    return f"<h1>App Crashed (500)</h1><pre>{error_trace}</pre>", 500
 
 
 # ==========================================

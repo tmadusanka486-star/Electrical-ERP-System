@@ -7,12 +7,26 @@ load_dotenv()
 
 class Database:
     def __init__(self, db_name="electrical_erp.db"):
-        db_url = os.environ.get("SUPABASE_DB_URL")
-        if not db_url:
+        self.db_url = os.environ.get("SUPABASE_DB_URL")
+        if not self.db_url:
             raise ValueError("SUPABASE_DB_URL is not set")
-        self.conn = psycopg2.connect(db_url)
+        self.connect()
+        try:
+            self.create_tables()
+        except Exception as e:
+            print("Table creation skipped or failed:", e)
+
+    def connect(self):
+        self.conn = psycopg2.connect(self.db_url)
+        self.conn.autocommit = True
         self.cursor = self.conn.cursor()
-        self.create_tables()
+
+    def ensure_connection(self):
+        try:
+            self.cursor.execute("SELECT 1")
+        except Exception:
+            self.connect()
+
 
     def create_tables(self):
         # 1. Products Table
