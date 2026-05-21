@@ -212,7 +212,7 @@
                         <tr>
                             <td style="color: var(--text-muted);">#Q-{{ "%03d" % q[0] }}</td>
                             <td style="font-weight: 500; color: white;">{{ q[1] }}</td>
-                            <td style="font-size: 11px; color: var(--text-muted);">{{ q[3][:10] }}</td>
+                            <td style="font-size: 11px; color: var(--text-muted);">{{ (q[3]|string)[:10] }}</td>
                             <td class="text-end" style="color: var(--accent-blue); font-weight: 600;">LKR {{ "{:,.2f}".format(q[4]) }}</td>
                             <td class="text-center">
                                 <a href="/print_quotation/{{ q[0] }}" target="_blank" class="btn btn-sm" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid #444; font-size: 11px;">🖨️ Print</a>

@@ -45,7 +45,7 @@
                 <div class="doc-title">Project Quotation</div>
                 <div style="text-align: right; margin-top: 10px; font-size: 13px;">
                     <strong>Quote No:</strong> #PRJ-Q-{{ "%04d" % pq[0] }}<br>
-                    <strong>Date:</strong> {{ pq[9][:10] }}
+                    <strong>Date:</strong> {{ (pq[9]|string)[:10] }}
                 </div>
             </div>
         </div>

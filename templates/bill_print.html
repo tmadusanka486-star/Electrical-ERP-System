@@ -102,7 +102,7 @@
                 <div class="invoice-title">RECEIPT</div>
                 <div class="invoice-meta">
                     #INV-{{ "%04d" % invoice[0] }}<br>
-                    Date: {{ invoice[3][:10] }}<br> 
+                    Date: {{ (invoice[3]|string)[:10] }}<br> 
                     Type: <strong>{{ invoice[7] }}</strong> 
                 </div>
             </div>

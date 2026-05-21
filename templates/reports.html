@@ -257,7 +257,7 @@
                     {% for inv in invoices %}
                     <tr>
                         <td style="color: var(--text-muted);">INV-{{ "%04d" % inv[0] }}</td>
-                        <td>{{ inv[1][:10] }}</td>
+                        <td>{{ (inv[1]|string)[:10] }}</td>
                         <td>{{ inv[2] }}</td>
                         <td>{{ inv[3] }}</td>
                         <td class="text-end" style="color: #2ecc71; font-weight: 600;">{{ "{:,.2f}".format(inv[4]) }}</td>
@@ -314,7 +314,7 @@
                     {% for pur in purchases %}
                     <tr>
                         <td style="color: var(--text-muted);">GRN-{{ "%03d" % pur[0] }}</td>
-                        <td>{{ pur[1][:10] }}</td>
+                        <td>{{ (pur[1]|string)[:10] }}</td>
                         <td>{{ pur[2] }}</td>
                         <td style="font-weight: 500; color: white;">{{ pur[3] }}</td>
                         <td class="text-center">{{ pur[4] }}</td>

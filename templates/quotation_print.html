@@ -57,7 +57,7 @@
                     <strong>#Q-{{ "%04d" % quotation[0] }}</strong>
                     <br><br>
                     <span class="info-label">Date:</span>
-                    <strong>{{ quotation[3][:10] }}</strong>
+                    <strong>{{ (quotation[3]|string)[:10] }}</strong>
                 </div>
             </div>
         </div>
