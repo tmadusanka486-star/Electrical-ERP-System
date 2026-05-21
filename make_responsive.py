@@ -1,21 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="UTF-8">
-    <title>Coming Soon - T&S PowerTech</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <style>
-        :root { --bg-dark: #121212; --text-main: #ffffff; }
-        body { background-color: var(--bg-dark); color: var(--text-main); font-family: 'Poppins', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .container { text-align: center; }
-        h1 { font-size: 4rem; margin-bottom: 10px; }
-        p { color: #888; font-size: 1.2rem; }
-        .btn-back { background-color: #333; color: white; border: 1px solid #555; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 20px; display: inline-block; }
-        .btn-back:hover { background-color: #444; color: white; }
-    
+import os
+import re
+
+template_dir = r"c:\Users\Thilina Madusanka\Desktop\MY SHOP ERP\templates"
+
+css_to_inject = """
         /* --- Mobile Responsiveness --- */
         .mobile-header {
             display: none; background-color: var(--card-bg); padding: 15px 20px;
@@ -37,10 +25,9 @@
             .row { margin-left: 0; margin-right: 0; }
             .col-md-5, .col-md-3, .col-md-4, .col-md-6, .col-md-7, .col-md-8, .col-md-12 { padding-left: 5px; padding-right: 5px; }
         }
-</style>
-</head>
-<body>
+"""
 
+html_to_inject = """
 <div class="mobile-header no-print">
     <div style="font-size: 16px; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px;">
         {% if sys_settings and sys_settings|length > 6 and sys_settings[6] %}
@@ -51,12 +38,52 @@
     <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
 </div>
 <div class="sidebar-overlay no-print" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+"""
 
-    <div class="container">
-        <h1>🚧</h1>
-        <h2>Under Construction</h2>
-        <p>This module is currently being developed.</p>
-        <a href="/" class="btn-back">← Go to Dashboard</a>
-    </div>
-</body>
-</html>
+js_to_inject = """
+<script>
+    function toggleSidebar() {
+        var sidebar = document.querySelector('.sidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+        if(sidebar && overlay) {
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        }
+    }
+</script>
+"""
+
+# Files to skip (like print templates)
+skip_files = ['quotation_print.html', 'project_quotation_print.html', 'login.html']
+
+for filename in os.listdir(template_dir):
+    if filename.endswith('.html') and filename not in skip_files:
+        filepath = os.path.join(template_dir, filename)
+        with open(filepath, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        original_content = content
+
+        # Inject viewport meta tag if missing
+        if '<meta name="viewport"' not in content:
+            content = content.replace('<head>', '<head>\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">')
+
+        # Inject CSS
+        if '/* --- Mobile Responsiveness --- */' not in content:
+            content = content.replace('</style>', css_to_inject + '</style>')
+
+        # Inject HTML
+        if 'class="mobile-header"' not in content:
+            # Find <body> tag, it might have attributes but usually it's just <body>
+            content = re.sub(r'(<body[^>]*>)', r'\1' + '\n' + html_to_inject, content)
+
+        # Inject JS
+        if 'toggleSidebar()' not in content and 'function toggleSidebar' not in content:
+            content = content.replace('</body>', js_to_inject + '\n</body>')
+
+        if content != original_content:
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write(content)
+            print(f"Updated {filename}")
+
+print("Done")

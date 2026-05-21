@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>Bill - {{ invoice[0] }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -12,7 +13,29 @@
         :root { --dark-blue: #1c2336; }
         .text-end { text-align: right !important; }
         .text-center { text-align: center !important; }
-    </style>
+    
+        /* --- Mobile Responsiveness --- */
+        .mobile-header {
+            display: none; background-color: var(--card-bg); padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color); align-items: center; justify-content: space-between;
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 998;
+        }
+        .mobile-header .toggle-btn { background: none; border: none; color: var(--text-main); font-size: 24px; cursor: pointer; }
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 999;
+        }
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+            .sidebar.show { transform: translateX(0); }
+            .content { margin-left: 0 !important; padding: 80px 15px 20px 15px !important; }
+            .mobile-header { display: flex; }
+            .sidebar-overlay.show { display: block; }
+            .table-container, .custom-card { overflow-x: auto; padding: 15px; }
+            .row { margin-left: 0; margin-right: 0; }
+            .col-md-5, .col-md-3, .col-md-4, .col-md-6, .col-md-7, .col-md-8, .col-md-12 { padding-left: 5px; padding-right: 5px; }
+        }
+</style>
 
     {% if settings and settings|length > 5 and settings[5] == 'Thermal' %}
     <style>
@@ -48,7 +71,29 @@
         
         .footer-area { position: static; width: 100%; padding: 10px 0 0 0; text-align: center; border-top: 1px dashed #333; margin-top: 10px; }
         .bottom-bar { background-color: transparent; color: #000; font-size: 10px; font-weight: bold; padding: 2px; }
-    </style>
+    
+        /* --- Mobile Responsiveness --- */
+        .mobile-header {
+            display: none; background-color: var(--card-bg); padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color); align-items: center; justify-content: space-between;
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 998;
+        }
+        .mobile-header .toggle-btn { background: none; border: none; color: var(--text-main); font-size: 24px; cursor: pointer; }
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 999;
+        }
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+            .sidebar.show { transform: translateX(0); }
+            .content { margin-left: 0 !important; padding: 80px 15px 20px 15px !important; }
+            .mobile-header { display: flex; }
+            .sidebar-overlay.show { display: block; }
+            .table-container, .custom-card { overflow-x: auto; padding: 15px; }
+            .row { margin-left: 0; margin-right: 0; }
+            .col-md-5, .col-md-3, .col-md-4, .col-md-6, .col-md-7, .col-md-8, .col-md-12 { padding-left: 5px; padding-right: 5px; }
+        }
+</style>
     {% else %}
     <style>
         @media print {
@@ -80,10 +125,44 @@
         
         .footer-area { position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px 10mm; }
         .bottom-bar { background-color: var(--dark-blue); color: white; padding: 5px 10px; font-size: 8px; text-align: center; border-radius: 3px; }
-    </style>
+    
+        /* --- Mobile Responsiveness --- */
+        .mobile-header {
+            display: none; background-color: var(--card-bg); padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color); align-items: center; justify-content: space-between;
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 998;
+        }
+        .mobile-header .toggle-btn { background: none; border: none; color: var(--text-main); font-size: 24px; cursor: pointer; }
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 999;
+        }
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+            .sidebar.show { transform: translateX(0); }
+            .content { margin-left: 0 !important; padding: 80px 15px 20px 15px !important; }
+            .mobile-header { display: flex; }
+            .sidebar-overlay.show { display: block; }
+            .table-container, .custom-card { overflow-x: auto; padding: 15px; }
+            .row { margin-left: 0; margin-right: 0; }
+            .col-md-5, .col-md-3, .col-md-4, .col-md-6, .col-md-7, .col-md-8, .col-md-12 { padding-left: 5px; padding-right: 5px; }
+        }
+</style>
     {% endif %}
 </head>
 <body onload="window.print()">
+
+<div class="mobile-header no-print">
+    <div style="font-size: 16px; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px;">
+        {% if sys_settings and sys_settings|length > 6 and sys_settings[6] %}
+            <img src="{{ (sys_settings[6] if sys_settings[6] and (sys_settings[6]|string).startswith('http') else url_for('static', filename='uploads/logo/' + sys_settings[6])) }}" alt="Logo" style="height: 30px; border-radius: 4px;">
+        {% endif %}
+        {{ sys_settings[1] if sys_settings else 'ERP System' }}
+    </div>
+    <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+</div>
+<div class="sidebar-overlay no-print" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
 
 <div class="text-center mt-3 no-print">
     <button onclick="window.print()" class="btn btn-primary btn-sm">🖨️ Print Bill</button>
