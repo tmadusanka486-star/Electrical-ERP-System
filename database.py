@@ -172,8 +172,7 @@ class Database:
         """)
         self.conn.commit()
 
-        self.cursor.execute("ALTER TABLE settings ADD COLUMN IF NOT EXISTS logo TEXT")
-        self.conn.commit() 
+
 
         # Employees Table 
         self.cursor.execute("""
@@ -185,6 +184,9 @@ class Database:
             basic_salary REAL
         )
         """)
+        self.conn.commit()
+
+
         self.conn.commit()
 
         # Payroll Table 
@@ -271,6 +273,17 @@ class Database:
             FOREIGN KEY(pq_id) REFERENCES project_quotations(id)
         )
         """)
+        self.conn.commit()
+
+        # Execute all ALTER TABLE statements to ensure schema is fully updated
+        self.cursor.execute("ALTER TABLE settings ADD COLUMN IF NOT EXISTS logo TEXT")
+        self.cursor.execute("ALTER TABLE settings ADD COLUMN IF NOT EXISTS printer_type TEXT DEFAULT 'A4'")
+        self.cursor.execute("ALTER TABLE projects ADD COLUMN IF NOT EXISTS received_amount REAL DEFAULT 0")
+        self.cursor.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS username TEXT")
+        self.cursor.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS password TEXT")
+        self.cursor.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS permissions TEXT")
+        self.cursor.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS photo TEXT")
+        self.cursor.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS certificate TEXT")
         self.conn.commit()
 
 
@@ -400,9 +413,6 @@ class Database:
             self.conn.commit()
 
     def get_project_by_id(self, project_id):
-        self.cursor.execute("ALTER TABLE projects ADD COLUMN IF NOT EXISTS received_amount REAL DEFAULT 0")
-        self.conn.commit()
-            
         self.cursor.execute("SELECT * FROM projects WHERE id = %s", (project_id,))
         return self.cursor.fetchone()
 
@@ -411,9 +421,6 @@ class Database:
         self.conn.commit()
 
     def add_project_payment(self, project_id, amount):
-        self.cursor.execute("ALTER TABLE projects ADD COLUMN IF NOT EXISTS received_amount REAL DEFAULT 0")
-        self.conn.commit()
-            
         self.cursor.execute("UPDATE projects SET received_amount = COALESCE(received_amount, 0) + %s WHERE id = %s", (amount, project_id))
         self.conn.commit()
         return True, "Added"
@@ -540,9 +547,6 @@ class Database:
 
     # --- Settings Functions ---
     def get_settings(self):
-        self.cursor.execute("ALTER TABLE settings ADD COLUMN IF NOT EXISTS printer_type TEXT DEFAULT 'A4'")
-        self.conn.commit()
-
         self.cursor.execute("SELECT * FROM settings WHERE id = 1")
         return self.cursor.fetchone()
 
@@ -564,12 +568,6 @@ class Database:
 
     # --- Employee Functions ---
     def get_all_employees(self):
-        self.cursor.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS username TEXT")
-        self.cursor.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS password TEXT")
-        self.cursor.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS permissions TEXT")
-        self.cursor.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS photo TEXT")
-        self.conn.commit()
-
         self.cursor.execute("SELECT * FROM employees ORDER BY id DESC")
         return self.cursor.fetchall()
 
