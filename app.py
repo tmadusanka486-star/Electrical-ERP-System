@@ -140,6 +140,12 @@ def require_login():
     if request.endpoint not in allowed_routes and 'user_id' not in session:
         return redirect(url_for('login'))
 
+@app.errorhandler(500)
+def internal_error(exception):
+    import traceback
+    error_trace = traceback.format_exc()
+    return f"<h1>500 Internal Server Error</h1><pre>{error_trace}</pre>", 500
+
 
 # ==========================================
 # --- 3. Authentication & Login Routes ---
