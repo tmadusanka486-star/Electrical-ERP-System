@@ -568,7 +568,7 @@ class Database:
 
     # --- Employee Functions ---
     def get_all_employees(self):
-        self.cursor.execute("SELECT * FROM employees ORDER BY id DESC")
+        self.cursor.execute("SELECT id, name, phone, role, basic_salary, photo, certificate, username, password, permissions FROM employees ORDER BY id DESC")
         return self.cursor.fetchall()
 
     def add_employee(self, name, phone, role, salary, photo_name, cert_name, username, password, permissions):
@@ -579,17 +579,18 @@ class Database:
         self.conn.commit()
 
     def update_employee(self, emp_id, name, phone, role, salary, photo_name, cert_name, username, password, permissions):
-        self.cursor.execute("SELECT photo, certificate FROM employees WHERE id = %s", (emp_id,))
+        self.cursor.execute("SELECT photo, certificate, password FROM employees WHERE id = %s", (emp_id,))
         current = self.cursor.fetchone()
         
         final_photo = photo_name if photo_name else (current[0] if current else "")
         final_cert = cert_name if cert_name else (current[1] if current else "")
+        final_pass = password if password and password != "None" else (current[2] if current else "")
         
         self.cursor.execute("""
             UPDATE employees 
             SET name=%s, phone=%s, role=%s, basic_salary=%s, photo=%s, certificate=%s, username=%s, password=%s, permissions=%s 
             WHERE id=%s
-        """, (name, phone, role, salary, final_photo, final_cert, username, password, permissions, emp_id))
+        """, (name, phone, role, salary, final_photo, final_cert, username, final_pass, permissions, emp_id))
         self.conn.commit()
 
 
