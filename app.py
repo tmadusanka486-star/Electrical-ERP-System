@@ -1,13 +1,44 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file, session, abort
 from werkzeug.utils import secure_filename
-from apscheduler.schedulers.background import BackgroundScheduler
-from functools import wraps
-from database import Database
-import datetime
 import os
 import shutil
 import json
-import atexit
+import uuid
+from functools import wraps
+from database import Database
+import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Supabase Storage Initialization
+from supabase import create_client, Client
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY) if SUPABASE_URL and SUPABASE_KEY else None
+
+def upload_file_to_storage(file, folder):
+    if not supabase:
+        # Fallback to local
+        os.makedirs(folder, exist_ok=True)
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(folder, filename))
+        return filename
+
+    ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else 'bin'
+    filename = f"{folder}/{uuid.uuid4().hex}.{ext}"
+    
+    file_bytes = file.read()
+    content_type = file.content_type
+    
+    try:
+        supabase.storage.from_("erp_storage").upload(filename, file_bytes, {"content-type": content_type})
+        public_url = supabase.storage.from_("erp_storage").get_public_url(filename)
+        return public_url
+    except Exception as e:
+        print("Upload failed:", e)
+        return ""
+
 
 # ==========================================
 # --- 1. Auto Backup Function ---
@@ -35,11 +66,7 @@ def auto_backup_database():
     except Exception as e:
         print(f"❌ Auto Backup Failed: {e}")
 
-# Scheduler Start
-scheduler = BackgroundScheduler()
-scheduler.add_job(func=auto_backup_database, trigger="interval", hours=12)
-scheduler.start()
-atexit.register(lambda: scheduler.shutdown())
+# Auto Backup disabled for PostgreSQL/Vercel
 
 # ==========================================
 # --- 2. App Setup & Security ---
