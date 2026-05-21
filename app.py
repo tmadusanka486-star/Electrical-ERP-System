@@ -464,11 +464,9 @@ def add_employee():
     photo_name = ""
     cert_name = ""
     if photo_file and photo_file.filename != '':
-        photo_name = secure_filename(photo_file.filename)
-        photo_file.save(os.path.join(UPLOAD_FOLDER, photo_name))
+        photo_name = upload_file_to_storage(photo_file, UPLOAD_FOLDER)
     if cert_file and cert_file.filename != '':
-        cert_name = secure_filename(cert_file.filename)
-        cert_file.save(os.path.join(UPLOAD_FOLDER, cert_name))
+        cert_name = upload_file_to_storage(cert_file, UPLOAD_FOLDER)
     db.add_employee(name, phone, role, salary, photo_name, cert_name, username, password, permissions_str)
     return redirect(url_for('employees'))
 
@@ -488,11 +486,9 @@ def edit_employee(emp_id):
     photo_name = None
     cert_name = None
     if photo_file and photo_file.filename != '':
-        photo_name = secure_filename(photo_file.filename)
-        photo_file.save(os.path.join(UPLOAD_FOLDER, photo_name))
+        photo_name = upload_file_to_storage(photo_file, UPLOAD_FOLDER)
     if cert_file and cert_file.filename != '':
-        cert_name = secure_filename(cert_file.filename)
-        cert_file.save(os.path.join(UPLOAD_FOLDER, cert_name))
+        cert_name = upload_file_to_storage(cert_file, UPLOAD_FOLDER)
     db.update_employee(emp_id, name, phone, role, salary, photo_name, cert_name, username, password, permissions_str)
     return redirect(url_for('employees'))
 
@@ -557,9 +553,8 @@ def update_settings():
     printer_type = request.form['printer_type'] 
     logo_file = request.files.get('logo')
     logo_name = None
-    if logo_file and logo_file.filename != '':
-        logo_name = secure_filename(logo_file.filename)
-        logo_file.save(os.path.join(LOGO_FOLDER, logo_name))
+    if logo_file:
+        logo_name = upload_file_to_storage(logo_file, LOGO_FOLDER)
     db.update_settings(name, address, phone, email, printer_type, logo_name)
     return redirect(url_for('settings'))
 
