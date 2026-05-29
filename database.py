@@ -743,7 +743,7 @@ class Database:
     def backup_database(self):
         import json
         tables = ['settings', 'customers', 'products', 'suppliers', 'employees', 
-                  'inventory_returns', 'purchases', 'payroll', 'expenses', 'projects', 
+                  'returns', 'purchases', 'payroll', 'expenses', 'projects', 
                   'quotations', 'quotation_items', 'project_quotations', 'pq_items', 
                   'invoices', 'invoice_items']
         
@@ -776,7 +776,7 @@ class Database:
             # Wiping tables in reverse dependency order
             tables = ['invoice_items', 'invoices', 'pq_items', 'project_quotations', 
                       'quotation_items', 'quotations', 'projects', 'expenses', 
-                      'payroll', 'purchases', 'inventory_returns', 'products', 
+                      'payroll', 'purchases', 'returns', 'products', 
                       'suppliers', 'employees', 'customers', 'settings']
             
             for table in tables:
@@ -784,7 +784,7 @@ class Database:
                 
             # Restoring tables in correct dependency order
             restore_order = ['settings', 'customers', 'products', 'suppliers', 'employees', 
-                             'inventory_returns', 'purchases', 'payroll', 'expenses', 'projects', 
+                             'returns', 'purchases', 'payroll', 'expenses', 'projects', 
                              'quotations', 'project_quotations', 'quotation_items', 'pq_items', 
                              'invoices', 'invoice_items']
                              
@@ -807,7 +807,7 @@ class Database:
         try:
             tables_to_wipe = ['invoice_items', 'invoices', 'pq_items', 'project_quotations', 
                               'quotation_items', 'quotations', 'projects', 'expenses', 
-                              'payroll', 'purchases', 'inventory_returns', 'products', 
+                              'payroll', 'purchases', 'returns', 'products', 
                               'suppliers', 'customers']
             for table in tables_to_wipe:
                 self.cursor.execute(f"TRUNCATE TABLE {table} RESTART IDENTITY CASCADE")
