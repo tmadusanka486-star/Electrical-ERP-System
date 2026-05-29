@@ -269,7 +269,6 @@ def super_admin_dashboard():
 def manage_shop(shop_id):
     session['managing_shop_id'] = shop_id
     session['shop_id'] = shop_id
-    db.shop_id = shop_id
     branches = db.get_shop_branches()
     if branches:
         session['branch_id'] = branches[0][0]
