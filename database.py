@@ -358,6 +358,25 @@ class Database:
         self.cursor.execute("SELECT * FROM products WHERE item_name LIKE %s OR brand LIKE %s OR barcode LIKE %s", ('%'+keyword+'%', '%'+keyword+'%', '%'+keyword+'%'))
         return self.cursor.fetchall()
 
+    def update_product(self, product_id, name, barcode, category, brand, model, cost, price, stock, reorder, warranty):
+        self.cursor.execute("""
+            UPDATE products 
+            SET item_name=%s, barcode=%s, category=%s, brand=%s, model=%s, 
+                cost_price=%s, selling_price=%s, current_stock=%s, reorder_level=%s, warranty_months=%s 
+            WHERE id=%s
+        """, (name, barcode, category, brand, model, cost, price, stock, reorder, warranty, product_id))
+        self.conn.commit()
+
+    def delete_product(self, product_id):
+        try:
+            self.cursor.execute("DELETE FROM products WHERE id=%s", (product_id,))
+            self.conn.commit()
+            return True, "Deleted successfully"
+        except Exception as e:
+            self.conn.rollback()
+            return False, "Cannot delete item. It is already used in transactions."
+
+
 
     # --- Dashboard Stats ---
     def get_dashboard_stats(self):

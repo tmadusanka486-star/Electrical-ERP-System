@@ -280,6 +280,7 @@
                     <th class="text-end">Price</th>
                     <th class="text-center">Stock</th>
                     <th class="text-center">Status</th>
+                    <th class="text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -309,6 +310,22 @@
                             <span class="badge-custom bg-ok">Good</span>
                         {% endif %}
                     </td>
+                    <td class="text-center" style="white-space: nowrap;">
+                        <button class="btn btn-sm btn-primary" style="background-color: var(--accent-blue); border: none;"
+                            data-id="{{ item[0] }}" 
+                            data-name="{{ item[1] }}" 
+                            data-barcode="{{ item[2] if item[2] else '' }}" 
+                            data-category="{{ item[3] }}" 
+                            data-brand="{{ item[4] }}" 
+                            data-model="{{ item[5] if item[5] else '' }}" 
+                            data-cost="{{ item[6] }}" 
+                            data-price="{{ item[7] }}" 
+                            data-stock="{{ item[11] }}" 
+                            data-reorder="{{ item[9] }}" 
+                            data-warranty="{{ item[10] }}" 
+                            onclick="openEditModal(this)">✏️</button>
+                        <a href="/delete_item/{{ item[0] }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this item?');" style="background-color: #e74c3c; border: none;">🗑️</a>
+                    </td>
                 </tr>
                 {% else %}
                 <tr>
@@ -320,6 +337,91 @@
     </div>
 </div>
 
+<!-- Edit Item Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" style="background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color);">
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+        <h5 class="modal-title" id="editModalLabel" style="color: var(--accent-blue); font-weight: 600;">✏️ Edit Item</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/edit_item" method="POST" id="editForm">
+            <input type="hidden" name="item_id" id="edit_item_id">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Item Name</label>
+                    <input type="text" name="name" id="edit_name" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Barcode</label>
+                    <input type="text" name="barcode" id="edit_barcode" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Category</label>
+                    <select name="category" id="edit_category" class="form-select">
+                        <option>CCTV</option><option>Wiring</option><option>Network</option><option>Electrical</option><option>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Brand</label>
+                    <select name="brand" id="edit_brand" class="form-select">
+                        <option>Dahua</option><option>Hikvision</option><option>Orange</option><option>Kelani</option><option>ACL</option><option>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Model</label>
+                    <input type="text" name="model" id="edit_model" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Cost Price</label>
+                    <input type="number" step="0.01" name="cost" id="edit_cost" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Selling Price</label>
+                    <input type="number" step="0.01" name="price" id="edit_price" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Current Stock</label>
+                    <input type="number" name="qty" id="edit_qty" class="form-control">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Reorder Lvl</label>
+                    <input type="number" name="reorder" id="edit_reorder" class="form-control">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Warranty(M)</label>
+                    <input type="number" name="warranty" id="edit_warranty" class="form-control">
+                </div>
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer" style="border-top: 1px solid var(--border-color);">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary-solid" onclick="document.getElementById('editForm').submit();">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openEditModal(btn) {
+    document.getElementById('edit_item_id').value = btn.getAttribute('data-id');
+    document.getElementById('edit_name').value = btn.getAttribute('data-name');
+    document.getElementById('edit_barcode').value = btn.getAttribute('data-barcode');
+    document.getElementById('edit_category').value = btn.getAttribute('data-category');
+    document.getElementById('edit_brand').value = btn.getAttribute('data-brand');
+    document.getElementById('edit_model').value = btn.getAttribute('data-model');
+    document.getElementById('edit_cost').value = btn.getAttribute('data-cost');
+    document.getElementById('edit_price').value = btn.getAttribute('data-price');
+    document.getElementById('edit_qty').value = btn.getAttribute('data-stock');
+    document.getElementById('edit_reorder').value = btn.getAttribute('data-reorder');
+    document.getElementById('edit_warranty').value = btn.getAttribute('data-warranty');
+    
+    var myModal = new bootstrap.Modal(document.getElementById('editModal'));
+    myModal.show();
+}
+</script>
 </body>
 </html>

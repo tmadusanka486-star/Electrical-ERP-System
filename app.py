@@ -256,6 +256,34 @@ def add_item():
         print(f"Error: {e}")
     return redirect(url_for('inventory'))
 
+@app.route('/edit_item', methods=['POST'])
+@requires_permission('inventory')
+def edit_item():
+    try:
+        item_id = int(request.form['item_id'])
+        name = request.form['name']
+        barcode = request.form['barcode']
+        category = request.form['category']
+        brand = request.form['brand']
+        model = request.form['model']
+        cost = float(request.form['cost']) if request.form['cost'] else 0
+        price = float(request.form['price']) if request.form['price'] else 0
+        qty = float(request.form['qty']) if request.form['qty'] else 0
+        reorder = int(request.form['reorder']) if request.form['reorder'] else 0
+        warranty = int(request.form['warranty']) if request.form['warranty'] else 0
+        db.update_product(item_id, name, barcode, category, brand, model, cost, price, qty, reorder, warranty)
+    except Exception as e:
+        print(f"Error: {e}")
+    return redirect(url_for('inventory'))
+
+@app.route('/delete_item/<int:item_id>')
+@requires_permission('inventory')
+def delete_item(item_id):
+    success, msg = db.delete_product(item_id)
+    if not success:
+        return f"<script>alert('{msg}'); window.location.href='/inventory';</script>"
+    return redirect(url_for('inventory'))
+
 # --- Projects ---
 @app.route('/projects')
 @requires_permission('projects')
