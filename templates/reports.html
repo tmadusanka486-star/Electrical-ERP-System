@@ -6,6 +6,8 @@
     <title>Reports Manager - {{ sys_settings[1] if sys_settings else 'ERP System' }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         /* =========================================
@@ -222,7 +224,27 @@
         </div>
     </div>
     
+    <div class="filter-section no-print" style="background: var(--card-bg); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border-color); display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+        <div>
+            <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 5px;">Search (Customer, Invoice, Project, Employee)</label>
+            <input type="text" id="globalSearch" onkeyup="applyFilters()" placeholder="Type to filter..." style="background: var(--input-bg); border: 1px solid var(--border-color); color: white; padding: 8px 12px; border-radius: 6px; width: 280px; font-size: 12px;">
+        </div>
+        <div>
+            <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 5px;">Start Date</label>
+            <input type="date" id="startDate" onchange="applyFilters()" style="background: var(--input-bg); border: 1px solid var(--border-color); color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px;">
+        </div>
+        <div>
+            <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 5px;">End Date</label>
+            <input type="date" id="endDate" onchange="applyFilters()" style="background: var(--input-bg); border: 1px solid var(--border-color); color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px;">
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="clearFilters()" style="background: #e74c3c; border: none; padding: 8px 15px; border-radius: 6px; color: white; font-weight: 600; font-size: 12px;"><i class="fas fa-times"></i> Clear</button>
+            <button onclick="downloadPDF()" class="btn-print" style="background-color: #8e44ad; border: none; padding: 8px 15px; border-radius: 6px; color: white; font-weight: 600; font-size: 12px;"><i class="fas fa-file-pdf"></i> Download PDF</button>
+        </div>
+    </div>
+
     <div class="nav-btn-group no-print">
+        <button class="nav-btn btn-employees" onclick="showTab('employees')" style="background-color: #e84393;">👥 Employees</button>
         <button class="nav-btn btn-exp" onclick="showTab('exp')">📛 Shop Exp</button>
         <button class="nav-btn btn-daily" onclick="showTab('daily')">📅 Daily P&L</button>
         <button class="nav-btn btn-monthly" onclick="showTab('monthly')">📆 Monthly P&L</button>
@@ -234,6 +256,25 @@
 
     <div class="report-container">
         
+        <div id="tab-employees" class="tab-section">
+            <table class="table-custom">
+                <thead>
+                    <tr><th>Emp ID</th><th>Name</th><th>Role</th><th>Phone</th><th class="text-end">Basic Salary</th></tr>
+                </thead>
+                <tbody>
+                    {% for emp in employees %}
+                    <tr>
+                        <td style="color: var(--text-muted);">EMP-{{ "%03d" % emp[0] }}</td>
+                        <td style="font-weight: 500; color: white;">{{ emp[1] }}</td>
+                        <td>{{ emp[3] }}</td>
+                        <td>{{ emp[2] }}</td>
+                        <td class="text-end">{{ "{:,.2f}".format(emp[4]) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
         <div id="tab-exp" class="tab-section">
             <table class="table-custom">
                 <thead>
@@ -414,16 +455,96 @@
             footerText.innerText = "Active Projects View";
             printTitle.innerText = "PROJECTS REPORT";
         }
+        else if (tabName === 'employees') {
+            footerText.innerText = "Employees Report";
+            printTitle.innerText = "EMPLOYEES REPORT";
+        }
         else {
             footerText.innerText = "Report View: " + tabName.toUpperCase();
             printTitle.innerText = tabName.toUpperCase() + " REPORT";
         }
+        
+        applyFilters();
     }
 
     function preparePrint() {
         let now = new Date();
         document.getElementById('printDate').innerText = now.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
         window.print();
+    }
+
+    function downloadPDF() {
+        let now = new Date();
+        document.getElementById('printDate').innerText = now.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+        
+        const element = document.querySelector('.content').cloneNode(true);
+        element.querySelectorAll('.no-print').forEach(el => el.remove());
+        
+        const header = element.querySelector('.print-header');
+        if (header) header.style.display = 'block';
+
+        const opt = {
+          margin:       10,
+          filename:     document.getElementById('printReportTitle').innerText + '.pdf',
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2 },
+          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save();
+    }
+
+    function applyFilters() {
+        const searchTerm = document.getElementById('globalSearch').value.toLowerCase();
+        const startDateStr = document.getElementById('startDate').value;
+        const endDateStr = document.getElementById('endDate').value;
+        
+        const startObj = startDateStr ? new Date(startDateStr) : null;
+        const endObj = endDateStr ? new Date(endDateStr) : null;
+
+        const activeTab = document.querySelector('.tab-section.active');
+        if (!activeTab) return;
+
+        const rows = activeTab.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+            if (row.cells.length === 1 && row.cells[0].colSpan > 1) return;
+
+            let rowText = row.innerText.toLowerCase();
+            let matchSearch = searchTerm === "" || rowText.includes(searchTerm);
+            
+            let matchDate = true;
+            let rowDateStr = "";
+            for (let cell of row.cells) {
+                let txt = cell.innerText.trim();
+                if (/^\d{4}-\d{2}-\d{2}/.test(txt)) {
+                    rowDateStr = txt.substring(0, 10);
+                    break;
+                }
+            }
+
+            if (rowDateStr && (startObj || endObj)) {
+                let rowDate = new Date(rowDateStr);
+                if (startObj && rowDate < startObj) matchDate = false;
+                if (endObj) {
+                    let nextDay = new Date(endObj);
+                    nextDay.setDate(nextDay.getDate() + 1);
+                    if (rowDate >= nextDay) matchDate = false;
+                }
+            }
+
+            if (matchSearch && matchDate) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
+    function clearFilters() {
+        document.getElementById('globalSearch').value = "";
+        document.getElementById('startDate').value = "";
+        document.getElementById('endDate').value = "";
+        applyFilters();
     }
 
     // Load Purchases tab by default

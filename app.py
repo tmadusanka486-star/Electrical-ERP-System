@@ -531,10 +531,11 @@ def reports():
     invoices = db.get_report_invoices()
     purchases = db.get_report_purchases()
     expenses = db.get_all_expenses()
+    employees = db.get_all_employees()
     total_expenses_val = sum(exp[4] for exp in expenses) if expenses else 0
     total_stock_val = sum((p[6] * p[11]) for p in stock)
     total_purchase_val = sum(pur[6] for pur in purchases)
-    return render_template('reports.html', stats=stats, stock=stock, projects=projects, invoices=invoices, purchases=purchases, expenses=expenses, total_stock_val=total_stock_val, total_purchase_val=total_purchase_val, total_expenses_val=total_expenses_val)
+    return render_template('reports.html', stats=stats, stock=stock, projects=projects, invoices=invoices, purchases=purchases, expenses=expenses, employees=employees, total_stock_val=total_stock_val, total_purchase_val=total_purchase_val, total_expenses_val=total_expenses_val)
 
 # --- Settings & Backup ---
 @app.route('/settings')
