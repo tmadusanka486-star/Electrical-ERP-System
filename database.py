@@ -13,6 +13,7 @@ class Database:
         self.connect()
         try:
             self.create_tables()
+            self.fix_sequences()
         except Exception as e:
             print("Table creation skipped or failed:", e)
 
@@ -26,6 +27,17 @@ class Database:
             self.cursor.execute("SELECT 1")
         except Exception:
             self.connect()
+
+    def fix_sequences(self):
+        tables = ['customers', 'products', 'suppliers', 'employees', 
+                  'returns', 'purchases', 'payroll', 'expenses', 'projects', 
+                  'quotations', 'project_quotations', 'quotation_items', 'pq_items', 
+                  'invoices', 'invoice_items']
+        for table in tables:
+            try:
+                self.cursor.execute(f"SELECT setval(pg_get_serial_sequence('{table}', 'id'), COALESCE(MAX(id), 1)) FROM {table}")
+            except Exception as e:
+                pass
 
 
     def create_tables(self):
@@ -797,6 +809,10 @@ class Database:
                     query = f"INSERT INTO {table} ({col_names}) VALUES ({placeholders})"
                     for row in rows:
                         self.cursor.execute(query, [row[c] for c in cols])
+            
+            # Fix sequences after restoring
+            self.fix_sequences()
+            
             self.conn.commit()
             return True, "Database restored successfully!"
         except Exception as e:
