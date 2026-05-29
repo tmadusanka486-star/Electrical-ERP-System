@@ -252,7 +252,7 @@ class Database:
         self.cursor.execute("SELECT id, customer_name, final_amount, payment_method, date_created FROM invoices WHERE shop_id=%s ORDER BY id DESC", (self.shop_id,))
         return self.cursor.fetchall()
     def get_report_purchases(self):
-        self.cursor.execute("SELECT p.id, s.name, pr.item_name, p.qty, p.buying_cost, p.date_added FROM purchases p JOIN suppliers s ON p.supplier_id = s.id JOIN products pr ON p.product_id = pr.id WHERE p.shop_id=%s ORDER BY p.id DESC", (self.shop_id,))
+        self.cursor.execute("SELECT p.id, p.date_added, s.name, pr.item_name, p.qty, p.buying_cost, (p.qty * p.buying_cost) as total_cost, p.warranty_months, p.warranty_expire_date FROM purchases p JOIN suppliers s ON p.supplier_id = s.id JOIN products pr ON p.product_id = pr.id WHERE p.shop_id=%s ORDER BY p.id DESC", (self.shop_id,))
         return self.cursor.fetchall()
     def get_settings(self):
         self.cursor.execute("SELECT * FROM shop_settings WHERE shop_id=%s", (self.shop_id,))
