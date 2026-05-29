@@ -22,6 +22,35 @@
             --border-color: #333333;
             --hover-bg: #2a2a2a;
             --input-bg: #2b2b2b;
+            --sidebar-active-bg: #162232;
+        }
+
+        /* Light Theme Colors */
+        :root.light-theme {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --sidebar-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-muted: #7f8c8d;
+            --accent-blue: #0984e3;
+            --border-color: #dfe6e9;
+            --hover-bg: #f1f2f6;
+            --input-bg: #fcfcfc;
+            --sidebar-active-bg: #e3f2fd;
+        }
+
+        /* Smooth UI Animations */
+        * {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease;
+        }
+        
+        .fade-in {
+            animation: fadeInUp 0.4s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         body { 
@@ -42,7 +71,7 @@
         .sidebar a.nav-link:hover { background-color: var(--card-bg); color: #ffffff; padding-left: 25px; }
         
         .sidebar a.nav-link.active { 
-            background-color: #162232; 
+            background-color: var(--sidebar-active-bg); 
             color: var(--accent-blue); 
             border-left: 3px solid var(--accent-blue); 
             font-weight: 600; 
@@ -177,9 +206,14 @@
                 </div>
             </div>
         </div>
-        <a href="/logout" style="display: block; background: #2c1618; color: #ff4d4d; border: 1px solid #4a2124; border-radius: 6px; padding: 7px; text-align: center; font-weight: 600; font-size: 11px; text-decoration: none; transition: 0.3s; margin: 0 5px;">
-            🚪 Logout
-        </a>
+        <div style="display: flex; justify-content: space-between; gap: 5px;">
+            <button onclick="toggleTheme()" id="themeBtn" style="flex: 1; background: var(--hover-bg); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; padding: 7px; text-align: center; font-weight: 600; font-size: 11px; cursor: pointer; transition: 0.3s;">
+                ☀️ Light
+            </button>
+            <a href="/logout" style="flex: 1; display: block; background: #2c1618; color: #ff4d4d; border: 1px solid #4a2124; border-radius: 6px; padding: 7px; text-align: center; font-weight: 600; font-size: 11px; text-decoration: none; transition: 0.3s;">
+                🚪 Logout
+            </a>
+        </div>
         {% if session.get('managing_shop_id') %}
         <a href="/super_admin/exit_shop" style="display: block; background: #162232; color: #3b82f6; border: 1px solid #2563eb; border-radius: 6px; padding: 7px; text-align: center; font-weight: 600; font-size: 11px; text-decoration: none; transition: 0.3s; margin: 10px 5px 0 5px;">
             🔙 Exit Shop
@@ -215,7 +249,7 @@
     </div>
 </div>
 
-<div class="content">
+<div class="content fade-in">
     {% block content %}
     {% endblock %}
 </div>
@@ -226,6 +260,28 @@
         document.querySelector('.sidebar').classList.toggle('show');
         document.getElementById('sidebarOverlay').classList.toggle('show');
     }
+
+    function toggleTheme() {
+        const root = document.documentElement;
+        root.classList.toggle('light-theme');
+        const isLight = root.classList.contains('light-theme');
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        
+        const themeBtn = document.getElementById('themeBtn');
+        if (themeBtn) {
+            themeBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+        }
+    }
+
+    // Load theme on startup
+    document.addEventListener("DOMContentLoaded", function() {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.documentElement.classList.add('light-theme');
+            const themeBtn = document.getElementById('themeBtn');
+            if (themeBtn) themeBtn.innerHTML = '🌙 Dark';
+        }
+    });
 </script>
 {% block extra_js %}{% endblock %}
 </body>

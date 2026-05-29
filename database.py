@@ -1,6 +1,7 @@
 import psycopg2
 import os
 from dotenv import load_dotenv
+from werkzeug.security import generate_password_hash, check_password_hash
 load_dotenv()
 
 class Database:
@@ -86,6 +87,17 @@ class Database:
         self.cursor.execute("CREATE TABLE IF NOT EXISTS project_quotations (id SERIAL PRIMARY KEY, project_name TEXT NOT NULL, customer_name TEXT, location TEXT, date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, estimated_cost REAL, subtotal REAL, discount REAL DEFAULT 0, final_total REAL)")
         self.cursor.execute("CREATE TABLE IF NOT EXISTS pq_items (id SERIAL PRIMARY KEY, pq_id INTEGER, description TEXT NOT NULL, qty REAL, unit_price REAL, total_price REAL, FOREIGN KEY(pq_id) REFERENCES project_quotations(id) ON DELETE CASCADE)")
         self.cursor.execute("CREATE TABLE IF NOT EXISTS project_payments (id SERIAL PRIMARY KEY, project_id INTEGER, amount REAL, date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(project_id) REFERENCES projects(id))")
+        
+        # Add Indexes for performance
+        try:
+            self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_products_shop_branch ON products(shop_id, branch_id)")
+            self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_customers_shop_branch ON customers(shop_id, branch_id)")
+            self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_invoices_shop_branch ON invoices(shop_id, branch_id)")
+            self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_users_username ON users(username)")
+            self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_employees_username ON employees(username)")
+        except:
+            pass
+
         self.conn.commit()
 
     def add_customer(self, name, phone, address):
@@ -290,9 +302,14 @@ class Database:
         self.cursor.execute("SELECT * FROM employees WHERE shop_id=%s ORDER BY id DESC", (self.shop_id,))
         return self.cursor.fetchall()
     def add_employee(self, name, phone, role, salary, photo_name, cert_name, username, password, permissions, nic_name="", passport_name="", other_name=""):
-        self.cursor.execute("INSERT INTO employees (shop_id, branch_id, name, phone, role, basic_salary, username, password, permissions, photo, certificate, nic_doc, passport_doc, other_docs) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, name, phone, role, salary, username, password, permissions, photo_name, cert_name, nic_name, passport_name, other_name))
+        hashed_pw = generate_password_hash(password) if password else ""
+        self.cursor.execute("INSERT INTO employees (shop_id, branch_id, name, phone, role, basic_salary, username, password, permissions, photo, certificate, nic_doc, passport_doc, other_docs) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, name, phone, role, salary, username, hashed_pw, permissions, photo_name, cert_name, nic_name, passport_name, other_name))
     def update_employee(self, emp_id, name, phone, role, salary, photo_name, cert_name, username, password, permissions, nic_name="", passport_name="", other_name=""):
-        self.cursor.execute("UPDATE employees SET name=%s, phone=%s, role=%s, basic_salary=%s, username=%s, password=%s, permissions=%s, photo=COALESCE(%s, photo), certificate=COALESCE(%s, certificate), nic_doc=COALESCE(%s, nic_doc), passport_doc=COALESCE(%s, passport_doc), other_docs=COALESCE(%s, other_docs) WHERE id=%s AND shop_id=%s", (name, phone, role, salary, username, password, permissions, photo_name, cert_name, nic_name, passport_name, other_name, emp_id, self.shop_id))
+        if password:
+            hashed_pw = generate_password_hash(password)
+            self.cursor.execute("UPDATE employees SET name=%s, phone=%s, role=%s, basic_salary=%s, username=%s, password=%s, permissions=%s, photo=COALESCE(%s, photo), certificate=COALESCE(%s, certificate), nic_doc=COALESCE(%s, nic_doc), passport_doc=COALESCE(%s, passport_doc), other_docs=COALESCE(%s, other_docs) WHERE id=%s AND shop_id=%s", (name, phone, role, salary, username, hashed_pw, permissions, photo_name, cert_name, nic_name, passport_name, other_name, emp_id, self.shop_id))
+        else:
+            self.cursor.execute("UPDATE employees SET name=%s, phone=%s, role=%s, basic_salary=%s, username=%s, permissions=%s, photo=COALESCE(%s, photo), certificate=COALESCE(%s, certificate), nic_doc=COALESCE(%s, nic_doc), passport_doc=COALESCE(%s, passport_doc), other_docs=COALESCE(%s, other_docs) WHERE id=%s AND shop_id=%s", (name, phone, role, salary, username, permissions, photo_name, cert_name, nic_name, passport_name, other_name, emp_id, self.shop_id))
     def delete_employee(self, emp_id):
         self.cursor.execute("DELETE FROM employees WHERE id=%s AND shop_id=%s", (emp_id, self.shop_id))
     def get_payroll_by_month(self, month):
@@ -340,12 +357,31 @@ class Database:
         self.cursor.execute("SELECT * FROM pq_items WHERE pq_id=%s AND shop_id=%s", (pq_id, self.shop_id))
         return self.cursor.fetchall()
     def verify_login(self, username, password):
-        self.cursor.execute("SELECT id, name, role, permissions, shop_id, branch_id FROM employees WHERE username=%s AND password=%s", (username, password))
+        self.cursor.execute("SELECT id, name, role, permissions, shop_id, branch_id, password FROM employees WHERE username=%s", (username,))
         emp = self.cursor.fetchone()
-        if emp: return emp
-        self.cursor.execute("SELECT id, username, role, shop_id, branch_id FROM users WHERE username=%s AND password=%s", (username, password))
+        if emp:
+            stored_pw = emp[6]
+            if stored_pw and stored_pw.startswith('scrypt:'):
+                if check_password_hash(stored_pw, password):
+                    return emp[:6]
+            else:
+                if stored_pw == password:
+                    hashed_pw = generate_password_hash(password)
+                    self.cursor.execute("UPDATE employees SET password=%s WHERE id=%s", (hashed_pw, emp[0]))
+                    return emp[:6]
+                    
+        self.cursor.execute("SELECT id, username, role, shop_id, branch_id, password FROM users WHERE username=%s", (username,))
         user = self.cursor.fetchone()
-        if user: return (user[0], user[1], user[2], "ALL", user[3], user[4])
+        if user:
+            stored_pw = user[5]
+            if stored_pw and stored_pw.startswith('scrypt:'):
+                if check_password_hash(stored_pw, password):
+                    return (user[0], user[1], user[2], "ALL", user[3], user[4])
+            else:
+                if stored_pw == password:
+                    hashed_pw = generate_password_hash(password)
+                    self.cursor.execute("UPDATE users SET password=%s WHERE id=%s", (hashed_pw, user[0]))
+                    return (user[0], user[1], user[2], "ALL", user[3], user[4])
         return None
     def backup_database(self): pass
     def restore_database(self, file_path): pass
@@ -373,7 +409,8 @@ class Database:
         self.cursor.execute("INSERT INTO shop_settings (shop_id, company_name, phone, email) VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING", (shop_id, shop_name, contact, ''))
         
         # Create user account for owner
-        self.cursor.execute("INSERT INTO users (username, password, role, shop_id, branch_id) VALUES (%s, %s, %s, %s, %s)", (username, password, 'ShopOwner', shop_id, branch_id))
+        hashed_pw = generate_password_hash(password)
+        self.cursor.execute("INSERT INTO users (username, password, role, shop_id, branch_id) VALUES (%s, %s, %s, %s, %s)", (username, hashed_pw, 'ShopOwner', shop_id, branch_id))
         
         return shop_id
     def get_all_branches(self):

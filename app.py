@@ -349,7 +349,9 @@ def add_item():
         reorder = int(request.form['reorder']) if request.form['reorder'] else 0
         warranty = int(request.form['warranty']) if request.form['warranty'] else 0
         db.add_product(name, barcode, category, brand, model, cost, price, qty, reorder, warranty)
+        flash('Item added successfully!', 'success')
     except Exception as e:
+        flash(f"Error adding item: {str(e)}", 'danger')
         print(f"Error: {e}")
     return redirect(url_for('inventory'))
 
@@ -369,7 +371,9 @@ def edit_item():
         reorder = int(request.form['reorder']) if request.form['reorder'] else 0
         warranty = int(request.form['warranty']) if request.form['warranty'] else 0
         db.update_product(item_id, name, barcode, category, brand, model, cost, price, qty, reorder, warranty)
+        flash('Item updated successfully!', 'success')
     except Exception as e:
+        flash(f"Error updating item: {str(e)}", 'danger')
         print(f"Error: {e}")
     return redirect(url_for('inventory'))
 
@@ -398,7 +402,9 @@ def add_project():
         start_date = request.form['start_date']
         cost = float(request.form['estimated_cost']) if request.form['estimated_cost'] else 0
         db.create_project(name, customer, location, start_date, cost)
+        flash('Project created successfully!', 'success')
     except Exception as e:
+        flash(f"Error creating project: {str(e)}", 'danger')
         print(f"Error: {e}")
     return redirect(url_for('projects'))
 
