@@ -352,9 +352,9 @@ class Database:
         
         date_col = "expense_date"
         if "date_added" in cols:
-            date_col = "COALESCE(expense_date, TO_CHAR(date_added, 'YYYY-MM-DD'))"
+            date_col = "COALESCE(expense_date, SUBSTRING(CAST(date_added AS TEXT), 1, 10))"
         elif "date" in cols:
-            date_col = "COALESCE(expense_date, TO_CHAR(date, 'YYYY-MM-DD'))"
+            date_col = "COALESCE(expense_date, SUBSTRING(CAST(date AS TEXT), 1, 10))"
             
         cat_col = "category" if "category" in cols else "'Other'"
         added_by_col = "added_by" if "added_by" in cols else "''"
