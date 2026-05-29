@@ -390,6 +390,10 @@ class Database:
     def get_all_products(self):
         self.cursor.execute("SELECT * FROM products ORDER BY id DESC")
         return self.cursor.fetchall()
+        
+    def get_product_by_id(self, product_id):
+        self.cursor.execute("SELECT * FROM products WHERE id=%s", (product_id,))
+        return self.cursor.fetchone()
     
     def search_products(self, keyword):
         self.cursor.execute("SELECT * FROM products WHERE item_name LIKE %s OR brand LIKE %s OR barcode LIKE %s", ('%'+keyword+'%', '%'+keyword+'%', '%'+keyword+'%'))
