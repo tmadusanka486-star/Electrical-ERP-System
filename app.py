@@ -131,6 +131,24 @@ def requires_permission(permission):
         return decorated_function
     return decorator
 
+def requires_super_admin(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return redirect(url_for('login'))
+        if session.get('user_role') != 'SuperAdmin':
+            return """
+            <div style="text-align:center; margin-top:50px; font-family:sans-serif; color:white; background:#121212; height:100vh; padding-top:100px;">
+                <h1 style="color:#ff4757; font-size:50px;">🛑 Access Denied!</h1>
+                <h3>Only Super Admin can access this page.</h3>
+                <div style="margin-top: 30px;">
+                    <a href="/" style="display:inline-block; margin:10px; padding:10px 20px; background:#00d2ff; color:black; text-decoration:none; border-radius:5px; font-weight:bold;">Go Back to Dashboard</a>
+                </div>
+            </div>
+            """, 403
+        return f(*args, **kwargs)
+    return decorated_function
+
 @app.before_request
 def require_login():
     if db:
@@ -160,19 +178,14 @@ def login():
         username = request.form['username']
         password = request.form['password']
         
-        if username == 'admin' and password == 'admin123':
-            session['user_id'] = 0
-            session['user_name'] = 'Master Admin'
-            session['user_role'] = 'Admin'
-            session['user_permissions'] = 'dashboard,billing,customers,returns,inventory,purchasing,suppliers,barcodes,employees,payroll,projects,reports,settings,expenses'
-            return redirect(url_for('index'))
-
         user = db.verify_login(username, password)
         if user:
             session['user_id'] = user[0]
             session['user_name'] = user[1]
             session['user_role'] = user[2] 
             session['user_permissions'] = user[3] if len(user) > 3 and user[3] else ""
+            session['shop_id'] = user[4] if len(user) > 4 else 1
+            session['branch_id'] = user[5] if len(user) > 5 else 1
 
             perms = session.get('user_permissions', '')
             if 'dashboard' in perms:
@@ -211,12 +224,45 @@ def index():
     if 'user_id' not in session:
         return redirect(url_for('login'))
         
+    if session.get('user_role') == 'SuperAdmin':
+        return redirect(url_for('super_admin_dashboard'))
+        
     stats = db.get_dashboard_stats()
     low_stock_items = db.get_low_stock_items()
     current_month = datetime.datetime.now().strftime('%Y-%m')
     all_expenses = db.get_all_expenses()
     month_expenses = sum(exp[4] for exp in all_expenses if exp[1].startswith(current_month))
     return render_template('dashboard.html', stats=stats, low_stock_items=low_stock_items, month_expenses=month_expenses)
+
+@app.route('/super_admin_dashboard')
+@requires_super_admin
+def super_admin_dashboard():
+    shops = db.get_all_shops()
+    branches = db.get_all_branches()
+    total_revenue = db.get_aggregated_revenue()
+    return render_template('super_admin_dashboard.html', shops=shops, branches=branches, total_revenue=total_revenue)
+
+@app.route('/super_admin/add_shop', methods=['POST'])
+@requires_super_admin
+def add_shop():
+    shop_name = request.form['shop_name']
+    owner_name = request.form['owner_name']
+    contact = request.form['contact']
+    shop_id = db.add_shop(shop_name, owner_name, contact)
+    # create default branch
+    db.add_branch(shop_id, 'Main Branch', '')
+    flash('Shop created successfully!', 'success')
+    return redirect(url_for('super_admin_dashboard'))
+
+@app.route('/super_admin/add_branch', methods=['POST'])
+@requires_super_admin
+def add_branch():
+    shop_id = request.form['shop_id']
+    branch_name = request.form['branch_name']
+    location = request.form['location']
+    db.add_branch(shop_id, branch_name, location)
+    flash('Branch created successfully!', 'success')
+    return redirect(url_for('super_admin_dashboard'))
 
 
 # ==========================================
@@ -236,6 +282,13 @@ def search():
     keyword = request.form.get('keyword')
     items = db.search_products(keyword)
     return render_template('inventory.html', items=items)
+
+@app.route('/other_branches_stock/<barcode>', methods=['GET'])
+@requires_permission('inventory')
+def other_branches_stock(barcode):
+    stock_info = db.get_stock_in_other_branches(barcode)
+    result = [{'branch_name': row[0], 'current_stock': row[1]} for row in stock_info]
+    return jsonify(result)
 
 @app.route('/add_item', methods=['POST'])
 @requires_permission('inventory')

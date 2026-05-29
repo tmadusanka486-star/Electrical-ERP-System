@@ -1,15 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - T&S PowerTech</title>
+    <title>Login - ERP System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --bg-color: #0f111a;
+            --card-bg: rgba(30, 33, 48, 0.7);
+            --text-main: #ffffff;
+            --text-muted: #8b92a5;
+            --input-bg: rgba(21, 24, 36, 0.8);
+            --border-color: rgba(255,255,255,0.08);
+            --accent-primary: #3b82f6;
+            --accent-secondary: #00d2ff;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f0f4f8;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-main: #1e2130;
+            --text-muted: #64748b;
+            --input-bg: #ffffff;
+            --border-color: rgba(0,0,0,0.1);
+            --accent-primary: #2563eb;
+            --accent-secondary: #0ea5e9;
+        }
+
         body { 
-            background: #0f111a; 
-            font-family: 'Poppins', sans-serif; 
+            background: var(--bg-color); 
+            font-family: 'Inter', sans-serif; 
             height: 100vh;
             display: flex;
             align-items: center;
@@ -17,95 +40,186 @@
             margin: 0;
             overflow: hidden;
             position: relative;
+            transition: background 0.4s ease;
         }
 
-        /* Background Effects */
-        .bg-circle-1 { position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(0, 210, 255, 0.15) 0%, transparent 70%); top: -100px; left: -100px; border-radius: 50%; }
-        .bg-circle-2 { position: absolute; width: 500px; height: 500px; background: radial-gradient(circle, rgba(58, 123, 213, 0.1) 0%, transparent 70%); bottom: -150px; right: -150px; border-radius: 50%; }
+        /* Glassmorphism Background Effects */
+        .bg-circle-1 { position: absolute; width: 500px; height: 500px; background: radial-gradient(circle, var(--accent-secondary) 0%, transparent 70%); top: -150px; left: -150px; border-radius: 50%; opacity: 0.15; filter: blur(40px); animation: float 10s infinite alternate ease-in-out; }
+        .bg-circle-2 { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, var(--accent-primary) 0%, transparent 70%); bottom: -200px; right: -200px; border-radius: 50%; opacity: 0.15; filter: blur(50px); animation: float 12s infinite alternate-reverse ease-in-out; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(30px, 30px); }
+        }
 
         .login-card {
-            background: #1e2130;
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 20px;
-            padding: 40px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 45px 40px;
             width: 100%;
-            max-width: 400px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            max-width: 420px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
             z-index: 10;
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(30px);
         }
 
-        .brand-logo { text-align: center; margin-bottom: 30px; }
-        .brand-logo h2 { color: #ffffff; font-weight: 700; font-size: 26px; letter-spacing: 1px; margin: 0; }
-        .brand-logo p { color: #8b92a5; font-size: 13px; margin-top: 5px; }
+        [data-theme="light"] .login-card {
+            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+        }
+
+        @keyframes slideUpFade {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 15px;
+            border-radius: 30px;
+            cursor: pointer;
+            z-index: 20;
+            transition: 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        .theme-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .brand-logo { text-align: center; margin-bottom: 35px; }
+        .brand-logo img { width: 80px; height: auto; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); }
+        .brand-logo h2 { color: var(--text-main); font-weight: 700; font-size: 26px; letter-spacing: -0.5px; margin: 0; }
+        .brand-logo p { color: var(--text-muted); font-size: 14px; margin-top: 5px; }
 
         .form-control {
-            background: #151824;
-            border: 1px solid rgba(255,255,255,0.05);
-            color: #fff;
-            padding: 12px 15px;
-            border-radius: 8px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 12px 16px;
+            border-radius: 12px;
             font-size: 14px;
+            transition: 0.3s;
         }
         .form-control:focus {
-            background: #151824;
-            border-color: #00d2ff;
-            color: #fff;
-            box-shadow: 0 0 10px rgba(0, 210, 255, 0.1);
+            background: var(--input-bg);
+            border-color: var(--accent-primary);
+            color: var(--text-main);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
         }
         
-        .form-label { color: #8b92a5; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+        .form-label { color: var(--text-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;}
 
         .btn-login {
-            background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
             border: none;
             color: white;
             font-weight: 600;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 14px;
+            border-radius: 12px;
             width: 100%;
             font-size: 15px;
-            transition: 0.3s;
-            margin-top: 15px;
+            transition: 0.3s ease;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
         }
-        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 210, 255, 0.3); color: white;}
+        .btn-login::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        .btn-login:hover::after { left: 100%; }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); color: white;}
 
-        .alert-error { background: rgba(255, 71, 87, 0.1); border: 1px solid rgba(255, 71, 87, 0.3); color: #ff4757; padding: 10px; border-radius: 8px; font-size: 13px; text-align: center; margin-bottom: 20px; font-weight: 500; }
+        .alert-error { background: rgba(255, 71, 87, 0.1); border: 1px solid rgba(255, 71, 87, 0.3); color: #ff4757; padding: 12px; border-radius: 12px; font-size: 13px; text-align: center; margin-bottom: 25px; font-weight: 500; animation: shake 0.5s; }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+
     </style>
 </head>
 <body>
+
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <i class="fas fa-moon" id="themeIcon"></i>
+    </button>
 
     <div class="bg-circle-1"></div>
     <div class="bg-circle-2"></div>
 
     <div class="login-card">
         <div class="brand-logo">
-            <div style="font-size: 40px; margin-bottom: 10px; text-shadow: 0 0 15px rgba(0,210,255,0.5);">⚡</div>
-            <h2>T&S PowerTech</h2>
-            <p>ERP System Login</p>
+            <!-- Using a fallback icon if logo is not available -->
+            <div style="width: 80px; height: 80px; border-radius: 20px; background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; box-shadow: 0 10px 20px rgba(59,130,246,0.3);">
+                <i class="fas fa-bolt" style="font-size: 40px; color: white;"></i>
+            </div>
+            <h2>Enterprise ERP</h2>
+            <p>Sign in to continue</p>
         </div>
 
         {% if error %}
         <div class="alert-error">
-            ⚠️ {{ error }}
+            <i class="fas fa-exclamation-circle me-1"></i> {{ error }}
         </div>
         {% endif %}
 
         <form method="POST" action="/login">
             <div class="mb-3">
                 <label class="form-label">Username</label>
-                <input type="text" name="username" class="form-control" placeholder="Enter your username" required autofocus>
+                <div class="position-relative">
+                    <i class="fas fa-user position-absolute" style="top: 15px; left: 15px; color: var(--text-muted);"></i>
+                    <input type="text" name="username" class="form-control" style="padding-left: 45px;" placeholder="Enter your username" required autofocus>
+                </div>
             </div>
             <div class="mb-4">
                 <label class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
+                <div class="position-relative">
+                    <i class="fas fa-lock position-absolute" style="top: 15px; left: 15px; color: var(--text-muted);"></i>
+                    <input type="password" name="password" class="form-control" style="padding-left: 45px;" placeholder="Enter your password" required>
+                </div>
             </div>
-            <button type="submit" class="btn btn-login">Login to System</button>
+            <button type="submit" class="btn btn-login">Login to Dashboard <i class="fas fa-arrow-right ms-2"></i></button>
         </form>
 
         <div class="text-center mt-4">
-            <p style="font-size: 11px; color: #555;">&copy; 2026 Logic Circuit SL. All rights reserved.</p>
+            <p style="font-size: 12px; color: var(--text-muted);">&copy; 2026 ERP Solutions. All rights reserved.</p>
         </div>
     </div>
 
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            if(html.getAttribute('data-theme') === 'dark') {
+                html.setAttribute('data-theme', 'light');
+                icon.className = 'fas fa-sun';
+                localStorage.setItem('erp_theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                icon.className = 'fas fa-moon';
+                localStorage.setItem('erp_theme', 'dark');
+            }
+        }
+
+        // Check saved theme
+        if(localStorage.getItem('erp_theme') === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+            document.getElementById('themeIcon').className = 'fas fa-sun';
+        }
+    </script>
 </body>
 </html>

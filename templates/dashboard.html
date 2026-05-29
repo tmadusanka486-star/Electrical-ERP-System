@@ -1,344 +1,301 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - T&S PowerTech</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* =========================================
-           🎨 THEME VARIABLES (Solid Dark)
-           ========================================= */
-        :root {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --sidebar-bg: #121212;
-            --text-main: #ffffff;
-            --text-muted: #a0a0a0;
-            --accent-blue: #0d6efd;
-            --border-color: #333333;
-            --hover-bg: #2a2a2a;
-            --input-bg: #2b2b2b;
-        }
+{% extends "base.html" %}
+{% block title %}Dashboard - ERP System{% endblock %}
 
-        /* =========================================
-           GLOBAL STYLES
-           ========================================= */
-        body { 
-            background-color: var(--bg-color); 
-            color: var(--text-main); 
-            font-family: 'Poppins', sans-serif; 
-            overflow-x: hidden; 
-        }
+{% block content %}
+<style>
+    .stat-card {
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        padding: 24px;
+        border: 1px solid var(--border-color);
+        display: flex; align-items: center; justify-content: space-between;
+        transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        position: relative; overflow: hidden;
+        height: 100%;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .stat-card:hover { transform: translateY(-5px); border-color: var(--accent-blue); box-shadow: 0 10px 20px rgba(0,0,0,0.1);}
+    .stat-details { z-index: 2; position: relative; }
+    .stat-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 8px;}
+    .stat-value { font-size: 28px; font-weight: 700; color: var(--text-main); }
+    .stat-icon { font-size: 40px; opacity: 0.15; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); z-index: 1; transition: 0.3s; }
+    .stat-card:hover .stat-icon { transform: translateY(-50%) scale(1.1); opacity: 0.3; }
 
-        /* --- Sidebar --- */
-        .sidebar { 
-            height: 100vh; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); 
-            position: fixed; width: 220px; padding-top: 25px; z-index: 1000; overflow-y: auto; 
-            display: flex; flex-direction: column;
-        }
-        .sidebar .brand { font-size: 20px; font-weight: 700; color: var(--text-main); text-align: center; margin-bottom: 25px; letter-spacing: 1px; }
-        .sidebar a.nav-link { padding: 12px 25px; text-decoration: none; font-size: 13px; color: var(--text-muted); display: block; transition: 0.3s; font-weight: 500; }
-        .sidebar a.nav-link:hover { background-color: var(--hover-bg); color: var(--text-main); padding-left: 30px; }
-        .sidebar a.nav-link.active { background-color: rgba(13, 110, 253, 0.1); color: var(--accent-blue); border-left: 4px solid var(--accent-blue); }
-        
-        .sidebar::-webkit-scrollbar { width: 4px; }
-        .sidebar::-webkit-scrollbar-thumb { background: #555; border-radius: 5px; }
-        .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .section-title { font-weight: 600; color: var(--text-main); margin-bottom: 20px; font-size: 16px; letter-spacing: 0.5px; border-left: 4px solid var(--accent-blue); padding-left: 10px;}
 
-        /* --- Content Area --- */
-        .content { margin-left: 220px; padding: 40px; position: relative;}
-        .section-title { font-weight: 600; color: var(--text-main); margin-bottom: 20px; font-size: 16px; letter-spacing: 0.5px;}
+    /* Lists and Tables */
+    .dashboard-table { width: 100%; color: var(--text-main); }
+    .dashboard-table th { padding: 12px 15px; color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-weight: 600; border-bottom: 1px solid var(--border-color); }
+    .dashboard-table td { padding: 15px; border-bottom: 1px solid var(--border-color); font-size: 13px; vertical-align: middle; }
+    .dashboard-table tr:hover td { background-color: var(--hover-bg); }
+    .dashboard-table tr:last-child td { border-bottom: none; }
 
-        /* --- Stat Cards --- */
-        .stat-card {
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            padding: 20px;
-            border: 1px solid var(--border-color);
-            display: flex; align-items: center; justify-content: space-between;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-            position: relative; overflow: hidden;
-            height: 100%;
-        }
-        .stat-card:hover { transform: translateY(-3px); border-color: var(--accent-blue);}
-        .stat-details { z-index: 2; position: relative; }
-        .stat-title { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 5px;}
-        .stat-value { font-size: 24px; font-weight: 700; color: var(--text-main); }
-        .stat-icon { font-size: 35px; opacity: 0.2; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); z-index: 1; }
+    .badge-status { padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase;}
+    .badge-completed { background-color: rgba(46, 204, 113, 0.15); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); }
+    .badge-pending { background-color: rgba(241, 196, 15, 0.15); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.3); }
+    .badge-danger { background-color: rgba(255, 71, 87, 0.15); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.3); }
 
-        .stat-card.alert-card { border-bottom: 3px solid #ff4757; }
-        .stat-card.alert-card .stat-title, .stat-card.alert-card .stat-value { color: #ff4757; }
-        .stat-card.alert-card .stat-icon { color: #ff4757; opacity: 0.15; }
+    /* --- System Modules Grid --- */
+    .module-card {
+        background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px 15px;
+        text-align: center; text-decoration: none; color: var(--text-muted); display: block;
+        transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .module-card:hover {
+        border-color: var(--accent-blue); transform: translateY(-5px); color: var(--text-main);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .module-icon { font-size: 35px; margin-bottom: 15px; display: inline-block; transition: transform 0.3s ease; opacity: 0.8;}
+    .module-card:hover .module-icon { transform: scale(1.1); opacity: 1; color: var(--accent-blue); }
+    .module-title { font-size: 13px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;}
 
-        /* --- Custom Table --- */
-        .table-container {
-            background-color: var(--card-bg); border-radius: 8px; padding: 20px;
-            border: 1px solid var(--border-color); margin-bottom: 35px;
-        }
-        .table-custom { width: 100%; border-collapse: collapse; }
-        .table-custom th { 
-            text-align: left; color: var(--text-muted); padding: 12px 15px; 
-            border-bottom: 1px solid var(--border-color); font-size: 11px; 
-            text-transform: uppercase; font-weight: 600; background-color: #252525;
-        }
-        .table-custom td { padding: 12px 15px; border-bottom: 1px solid var(--border-color); color: var(--text-main); font-size: 12px; }
-        .table-custom tr:hover td { background-color: var(--hover-bg); }
-        .badge-low { background-color: rgba(255, 71, 87, 0.15); color: #ff4757; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid rgba(255, 71, 87, 0.3); }
-        .empty-text { color: var(--text-muted); font-size: 13px; margin-top: 30px; text-align: center; font-style: italic; }
-
-        /* --- System Modules Grid --- */
-        .module-card {
-            background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 25px 15px;
-            text-align: center; text-decoration: none; color: var(--text-muted); display: block;
-            transition: all 0.3s ease;
-        }
-        .module-card:hover {
-            border-color: var(--accent-blue); background-color: var(--hover-bg); transform: translateY(-5px); color: var(--text-main);
-        }
-        .module-icon { font-size: 35px; margin-bottom: 10px; display: inline-block; transition: transform 0.3s ease; opacity: 0.7;}
-        .module-card:hover .module-icon { transform: scale(1.1); opacity: 1; }
-        .module-title { font-size: 12px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;}
-    
-        /* --- Mobile Responsiveness --- */
-        .mobile-header {
-            display: none; background-color: var(--card-bg); padding: 15px 20px;
-            border-bottom: 1px solid var(--border-color); align-items: center; justify-content: space-between;
-            position: fixed; top: 0; left: 0; width: 100%; z-index: 998;
-        }
-        .mobile-header .toggle-btn { background: none; border: none; color: var(--text-main); font-size: 24px; cursor: pointer; }
-        .sidebar-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); z-index: 999;
-        }
-        @media (max-width: 992px) {
-            .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
-            .sidebar.show { transform: translateX(0); }
-            .content { margin-left: 0 !important; padding: 80px 15px 20px 15px !important; }
-            .mobile-header { display: flex; }
-            .sidebar-overlay.show { display: block; }
-            .table-container, .custom-card { overflow-x: auto; padding: 15px; }
-            .row { margin-left: 0; margin-right: 0; }
-            .col-md-5, .col-md-3, .col-md-4, .col-md-6, .col-md-7, .col-md-8, .col-md-12 { padding-left: 5px; padding-right: 5px; }
-        }
 </style>
-</head>
-<body>
 
-<div class="mobile-header no-print">
-    <div style="font-size: 16px; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px;">
-        {% if sys_settings and sys_settings|length > 6 and sys_settings[6] %}
-            <img src="{{ (sys_settings[6] if sys_settings[6] and (sys_settings[6]|string).startswith('http') else url_for('static', filename='uploads/logo/' + sys_settings[6])) }}" alt="Logo" style="height: 30px; border-radius: 4px;">
-        {% endif %}
-        {{ sys_settings[1] if sys_settings else 'ERP System' }}
-    </div>
-    <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-</div>
-<div class="sidebar-overlay no-print" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
-
-<div class="sidebar">
-    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 25px; padding: 0 15px; text-align: center;">
-        {% if sys_settings and sys_settings|length > 6 and sys_settings[6] %}
-            <img src="{{ (sys_settings[6] if sys_settings[6] and (sys_settings[6]|string).startswith('http') else url_for('static', filename='uploads/logo/' + sys_settings[6])) }}" alt="Logo" style="max-height: 60px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-        {% else %}
-            <div style="width: 50px; height: 50px; background: var(--accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; font-weight: bold; margin-bottom: 15px;">
-                {{ (sys_settings[1][0]|upper) if sys_settings else 'E' }}
-            </div>
-        {% endif %}
-        <div style="font-size: 15px; font-weight: 700; color: white; text-align: center; letter-spacing: 0.5px; line-height: 1.3; width: 100%; word-wrap: break-word;">
-            {{ sys_settings[1] if sys_settings else 'ERP System' }}
-        </div>
-    </div>
-
-    <div style="padding: 0 20px 20px 20px; margin-bottom: 10px; border-bottom: 1px solid var(--border-color);">
-        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-            <div style="width: 35px; height: 35px; border-radius: 50%; background-color: #34495e; display: flex; align-items: center; justify-content: center; font-size: 14px; color: white; font-weight: 700; flex-shrink: 0;">
-                {{ session['user_name'][0]|upper if session['user_name'] else '👤' }}
-            </div>
-            <div style="text-align: left; overflow: hidden;">
-                <div style="color: var(--text-main); font-weight: 600; font-size: 12px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
-                    {{ session['user_name'] }}
-                </div>
-                <div style="color: var(--text-muted); font-size: 10px; text-transform: uppercase; font-weight: 600;">
-                    {{ session['user_role'] }}
-                </div>
-            </div>
-        </div>
-        <a href="/logout" style="display: block; background: #2c1618; color: #ff4d4d; border: 1px solid #4a2124; border-radius: 6px; padding: 7px; text-align: center; font-weight: 600; font-size: 11px; text-decoration: none; transition: 0.3s; margin: 0 5px;">
-            🚪 Logout
-        </a>
-    </div>
-
-    <div style="overflow-y: auto; flex-grow: 1; padding-bottom: 20px;">
-        {% set perms = session.get('user_permissions', '') %}
-        
-        {% if 'dashboard' in perms %}<a href="/" class="nav-link {{ 'active' if request.path == '/' else '' }}">📊 Dashboard</a>{% endif %}
-        {% if 'billing' in perms %}<a href="/billing" class="nav-link {{ 'active' if request.path == '/billing' else '' }}">🧾 Billing</a>{% endif %}
-        
-        {% if 'quotations' in perms %}<a href="/quotations" class="nav-link {{ 'active' if request.path == '/quotations' else '' }}">📄 Quotations</a>{% endif %}
-        
-        {% if 'expenses' in perms %}<a href="/expenses" class="nav-link {{ 'active' if request.path == '/expenses' else '' }}">💸 Shop Expenses</a>{% endif %}
-        {% if 'customers' in perms %}<a href="/customers" class="nav-link {{ 'active' if request.path == '/customers' else '' }}">👥 Customers</a>{% endif %}
-        {% if 'returns' in perms %}<a href="/returns" class="nav-link {{ 'active' if request.path == '/returns' else '' }}">↩️ Returns</a>{% endif %}
-        {% if 'inventory' in perms %}<a href="/inventory" class="nav-link {{ 'active' if request.path == '/inventory' else '' }}">📦 Inventory</a>{% endif %}
-        {% if 'purchasing' in perms %}<a href="/purchasing" class="nav-link {{ 'active' if request.path == '/purchasing' else '' }}">🛒 Purchasing</a>{% endif %}
-        {% if 'suppliers' in perms %}<a href="/suppliers" class="nav-link {{ 'active' if request.path == '/suppliers' else '' }}">🚚 Suppliers</a>{% endif %}
-        {% if 'barcodes' in perms %}<a href="/barcodes" class="nav-link {{ 'active' if request.path == '/barcodes' else '' }}">🏷️ Barcodes</a>{% endif %}
-        {% if 'employees' in perms %}<a href="/employees" class="nav-link {{ 'active' if request.path == '/employees' else '' }}">👨‍🔧 Employees</a>{% endif %}
-        {% if 'payroll' in perms %}<a href="/payroll" class="nav-link {{ 'active' if request.path == '/payroll' else '' }}">💰 Payroll</a>{% endif %}
-        
-        {% if 'projects' in perms %}
-            <a href="/projects" class="nav-link {{ 'active' if request.path.startswith('/project') or request.path.startswith('/manage_project') else '' }}">📋 Projects</a>
-            <a href="/project_quotations" class="nav-link {{ 'active' if request.path == '/project_quotations' else '' }}">🏗️ Project Quotes</a>
-        {% endif %}
-        
-        {% if 'reports' in perms %}<a href="/reports" class="nav-link {{ 'active' if request.path == '/reports' else '' }}">📈 Reports</a>{% endif %}
-        {% if 'settings' in perms %}<a href="/settings" class="nav-link {{ 'active' if request.path == '/settings' else '' }}">⚙️ Settings</a>{% endif %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h4 style="font-weight: 700; color: var(--text-main);">Dashboard Overview</h4>
+        <p style="color: var(--text-muted); font-size: 14px;">Welcome back, {{ session['user_name'] }}. Here's what's happening today.</p>
     </div>
 </div>
-<div class="content">
 
-    <h4 class="mb-4" style="font-weight: 600; color: var(--text-main);">System Overview</h4>
-
-    <div class="row g-4 mb-5">
-        <div class="col-md-3">
-            <div class="stat-card">
-                <div class="stat-details">
-                    <div class="stat-title">Inventory Value</div>
-                    <div class="stat-value text-primary">Rs {{ "{:,.0f}".format(stats['stock_value']) }}</div>
-                </div>
-                <div class="stat-icon text-primary">💰</div>
+<div class="row g-4 mb-5">
+    <!-- Top Row Stats -->
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card" style="border-left: 4px solid #3b82f6;">
+            <div class="stat-details">
+                <div class="stat-title">Total Sales Income</div>
+                <div class="stat-value text-primary">Rs {{ "{:,.0f}".format(stats.get('total_sales', 0)) }}</div>
             </div>
-        </div>
-        
-        <div class="col-md-3">
-            <div class="stat-card">
-                <div class="stat-details">
-                    <div class="stat-title">Active Sites</div>
-                    <div class="stat-value text-info">{{ stats['active_projects'] }}</div>
-                </div>
-                <div class="stat-icon text-info">🏗️</div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="stat-card">
-                <div class="stat-details">
-                    <div class="stat-title">Completed Jobs</div>
-                    <div class="stat-value text-success">{{ stats['completed_projects'] }}</div>
-                </div>
-                <div class="stat-icon text-success">✅</div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="stat-card alert-card" style="border-bottom: none; border-left: 3px solid #ff4757;">
-                <div class="stat-details">
-                    <div class="stat-title">Monthly Expenses</div>
-                    <div class="stat-value" style="color: #ff4757;">Rs {{ "{:,.0f}".format(month_expenses) if month_expenses else 0 }}</div>
-                </div>
-                <div class="stat-icon" style="color: #ff4757; opacity: 0.15;">💸</div>
-            </div>
+            <div class="stat-icon text-primary"><i class="fas fa-chart-line"></i></div>
         </div>
     </div>
-
-    <div class="row mb-5">
-        <div class="col-12">
-            <h5 class="section-title text-danger" style="color: #ff4757 !important;">⚠️ Items Needing Reorder ({{ stats['low_stock'] }})</h5>
-            <div class="table-container p-0">
-                <table class="table-custom">
-                    <thead>
-                        <tr>
-                            <th>Item Name</th>
-                            <th>Category</th>
-                            <th>Current Stock</th>
-                            <th>Reorder Level</th>
-                            <th class="text-center">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in low_stock_items %}
-                        <tr>
-                            <td style="font-weight: 500;">{{ item[1] }}</td>
-                            <td style="color: var(--text-muted);">{{ item[3] }}</td>
-                            <td class="text-danger" style="font-weight: 600; font-size: 14px;">{{ item[11] }}</td>
-                            <td style="color: var(--text-muted);">{{ item[9] }}</td>
-                            <td class="text-center"><span class="badge-low">Restock Now</span></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                
-                {% if not low_stock_items %}
-                <div class="empty-text p-4">
-                    <span style="font-size: 30px; display: block; margin-bottom: 10px;">✅</span>
-                    All stock levels are good! <br>
-                    <span style="font-size: 11px; opacity: 0.7;">No items are below reorder level.</span>
-                </div>
-                {% endif %}
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card" style="border-left: 4px solid #10b981;">
+            <div class="stat-details">
+                <div class="stat-title">Project Income</div>
+                <div class="stat-value text-success">Rs {{ "{:,.0f}".format(stats.get('project_income', 0)) }}</div>
             </div>
+            <div class="stat-icon text-success"><i class="fas fa-hard-hat"></i></div>
         </div>
     </div>
-
-    <h5 class="section-title">🚀 Core Modules</h5>
-    <div class="row g-3 mb-4">
-        {% set perms = session.get('user_permissions', '') %}
-
-        {% if 'billing' in perms %}
-            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/billing" class="module-card"><div class="module-icon">🧾</div><div class="module-title">Billing</div></a></div>
-        {% endif %}
-        
-        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/expenses" class="module-card"><div class="module-icon">💸</div><div class="module-title">Expenses</div></a></div>
-
-        {% if 'customers' in perms %}
-            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/customers" class="module-card"><div class="module-icon">👥</div><div class="module-title">Customers</div></a></div>
-        {% endif %}
-        
-        {% if 'returns' in perms %}
-            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/returns" class="module-card"><div class="module-icon">↩️</div><div class="module-title">Returns</div></a></div>
-        {% endif %}
-        
-        {% if 'inventory' in perms %}
-            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/inventory" class="module-card"><div class="module-icon">📦</div><div class="module-title">Inventory</div></a></div>
-        {% endif %}
-        
-        {% if 'purchasing' in perms %}
-            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/purchasing" class="module-card"><div class="module-icon">🛒</div><div class="module-title">Purchasing</div></a></div>
-        {% endif %}
-        
-        {% if 'suppliers' in perms %}
-            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/suppliers" class="module-card"><div class="module-icon">🚚</div><div class="module-title">Suppliers</div></a></div>
-        {% endif %}
-        
-        {% if 'barcodes' in perms %}
-            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/barcodes" class="module-card"><div class="module-icon">🏷️</div><div class="module-title">Barcodes</div></a></div>
-        {% endif %}
-        
-        {% if 'employees' in perms %}
-            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/employees" class="module-card"><div class="module-icon">👨‍🔧</div><div class="module-title">Employees</div></a></div>
-        {% endif %}
-        
-        {% if 'payroll' in perms %}
-            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/payroll" class="module-card"><div class="module-icon">💰</div><div class="module-title">Payroll</div></a></div>
-        {% endif %}
-        
-        {% if 'projects' in perms %}
-            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/projects" class="module-card"><div class="module-icon">📋</div><div class="module-title">Projects</div></a></div>
-        {% endif %}
-        
-        {% if 'reports' in perms %}
-            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/reports" class="module-card"><div class="module-icon">📈</div><div class="module-title">Reports</div></a></div>
-        {% endif %}
-        
-        {% if 'settings' in perms %}
-            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/settings" class="module-card"><div class="module-icon">⚙️</div><div class="module-title">Settings</div></a></div>
-        {% endif %}
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card" style="border-left: 4px solid #ef4444;">
+            <div class="stat-details">
+                <div class="stat-title">Total Expenses</div>
+                <div class="stat-value text-danger">Rs {{ "{:,.0f}".format(stats.get('total_expenses', 0)) }}</div>
+            </div>
+            <div class="stat-icon text-danger"><i class="fas fa-money-bill-wave"></i></div>
+        </div>
     </div>
-
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card" style="border-left: 4px solid #f59e0b;">
+            <div class="stat-details">
+                <div class="stat-title">Pending Payments (Credit)</div>
+                <div class="stat-value text-warning">Rs {{ "{:,.0f}".format(stats.get('total_credit', 0)) }}</div>
+            </div>
+            <div class="stat-icon text-warning"><i class="fas fa-hand-holding-usd"></i></div>
+        </div>
+    </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<div class="row g-4 mb-5">
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card" style="background: linear-gradient(135deg, rgba(59,130,246,0.1), transparent);">
+            <div class="stat-details">
+                <div class="stat-title">Sales This Month</div>
+                <div class="stat-value text-primary">Rs {{ "{:,.0f}".format(stats.get('monthly_sales', 0)) }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card" style="background: linear-gradient(135deg, rgba(16,185,129,0.1), transparent);">
+            <div class="stat-details">
+                <div class="stat-title">Total Balance (Est)</div>
+                <div class="stat-value text-success">Rs {{ "{:,.0f}".format((stats.get('total_sales', 0) + stats.get('project_income', 0)) - stats.get('total_expenses', 0)) }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card" style="background: linear-gradient(135deg, rgba(139,92,246,0.1), transparent);">
+            <div class="stat-details">
+                <div class="stat-title">Total Products</div>
+                <div class="stat-value" style="color: #8b5cf6;">{{ stats.get('total_products', 0) }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card" style="background: linear-gradient(135deg, rgba(239,68,68,0.1), transparent);">
+            <div class="stat-details">
+                <div class="stat-title">Low Stock Items</div>
+                <div class="stat-value text-danger">{{ low_stock_items|length }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <!-- Recent Invoices -->
+    <div class="col-lg-6">
+        <div class="card" style="background-color: var(--card-bg); border-color: var(--border-color); height: 100%;">
+            <div class="card-header bg-transparent" style="border-bottom: 1px solid var(--border-color); padding: 20px;">
+                <h5 class="section-title mb-0" style="border: none; padding: 0;">🧾 Recent Invoices</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Inv #</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for inv in stats.get('recent_invoices', []) %}
+                            <tr>
+                                <td style="color: var(--text-muted);">#{{ inv[0] }}</td>
+                                <td style="font-weight: 500;">{{ inv[1] }}</td>
+                                <td style="color: var(--accent-blue); font-weight: 600;">Rs {{ "{:,.2f}".format(inv[2]) }}</td>
+                                <td style="color: var(--text-muted); font-size: 11px;">{{ inv[3].strftime('%Y-%m-%d') if inv[3].strftime else inv[3] }}</td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="4" class="text-center text-muted py-4">No recent invoices.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Projects -->
+    <div class="col-lg-6">
+        <div class="card" style="background-color: var(--card-bg); border-color: var(--border-color); height: 100%;">
+            <div class="card-header bg-transparent" style="border-bottom: 1px solid var(--border-color); padding: 20px;">
+                <h5 class="section-title mb-0" style="border: none; padding: 0;">🏗️ Recent Projects</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Proj #</th>
+                                <th>Name</th>
+                                <th>Cost Est.</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for proj in stats.get('recent_projects', []) %}
+                            <tr>
+                                <td style="color: var(--text-muted);">#{{ proj[0] }}</td>
+                                <td style="font-weight: 500;">{{ proj[1] }}</td>
+                                <td style="font-weight: 600;">Rs {{ "{:,.2f}".format(proj[3]) }}</td>
+                                <td>
+                                    <span class="badge-status {% if proj[2] == 'Completed' %}badge-completed{% else %}badge-pending{% endif %}">
+                                        {{ proj[2] }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="4" class="text-center text-muted py-4">No recent projects.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card" style="background-color: var(--card-bg); border-color: var(--border-color);">
+            <div class="card-header bg-transparent" style="border-bottom: 1px solid var(--border-color); padding: 20px;">
+                <h5 class="section-title mb-0" style="border: none; padding: 0; color: #ff4757;">⚠️ Low Stock Alerts ({{ low_stock_items|length }})</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Category</th>
+                                <th>Current Stock</th>
+                                <th>Reorder Level</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in low_stock_items %}
+                            <tr>
+                                <td style="font-weight: 500;">{{ item[1] }}</td>
+                                <td style="color: var(--text-muted);">{{ item[3] }}</td>
+                                <td class="text-danger" style="font-weight: 700; font-size: 14px;">{{ item[11] }}</td>
+                                <td style="color: var(--text-muted);">{{ item[9] }}</td>
+                                <td><span class="badge-status badge-danger">Restock Now</span></td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <div style="font-size: 40px; margin-bottom: 15px;">✅</div>
+                                    <h5 style="color: var(--text-main);">All stock levels are good!</h5>
+                                    <p style="color: var(--text-muted);">No items are below reorder level.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-12">
+        <h5 class="section-title mb-4">🚀 Core Modules</h5>
+        <div class="row g-3">
+            {% set perms = session.get('user_permissions', '') %}
+            {% if 'billing' in perms %}
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/billing" class="module-card"><div class="module-icon">🧾</div><div class="module-title">Billing</div></a></div>
+            {% endif %}
+            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/expenses" class="module-card"><div class="module-icon">💸</div><div class="module-title">Expenses</div></a></div>
+            {% if 'customers' in perms %}
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/customers" class="module-card"><div class="module-icon">👥</div><div class="module-title">Customers</div></a></div>
+            {% endif %}
+            {% if 'returns' in perms %}
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/returns" class="module-card"><div class="module-icon">↩️</div><div class="module-title">Returns</div></a></div>
+            {% endif %}
+            {% if 'inventory' in perms %}
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/inventory" class="module-card"><div class="module-icon">📦</div><div class="module-title">Inventory</div></a></div>
+            {% endif %}
+            {% if 'purchasing' in perms %}
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/purchasing" class="module-card"><div class="module-icon">🛒</div><div class="module-title">Purchasing</div></a></div>
+            {% endif %}
+            {% if 'suppliers' in perms %}
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/suppliers" class="module-card"><div class="module-icon">🚚</div><div class="module-title">Suppliers</div></a></div>
+            {% endif %}
+            {% if 'barcodes' in perms %}
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/barcodes" class="module-card"><div class="module-icon">🏷️</div><div class="module-title">Barcodes</div></a></div>
+            {% endif %}
+            {% if 'employees' in perms %}
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/employees" class="module-card"><div class="module-icon">👨‍🔧</div><div class="module-title">Employees</div></a></div>
+            {% endif %}
+            {% if 'payroll' in perms %}
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/payroll" class="module-card"><div class="module-icon">💰</div><div class="module-title">Payroll</div></a></div>
+            {% endif %}
+            {% if 'projects' in perms %}
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/projects" class="module-card"><div class="module-icon">📋</div><div class="module-title">Projects</div></a></div>
+            {% endif %}
+            {% if 'reports' in perms %}
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/reports" class="module-card"><div class="module-icon">📈</div><div class="module-title">Reports</div></a></div>
+            {% endif %}
+            {% if 'settings' in perms %}
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/settings" class="module-card"><div class="module-icon">⚙️</div><div class="module-title">Settings</div></a></div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

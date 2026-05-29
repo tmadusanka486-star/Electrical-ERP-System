@@ -41,7 +41,7 @@
         .custom-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .form-label { color: #d1d5db; font-weight: 500; font-size: 12px; margin-bottom: 5px; }
         .form-control, .form-select { background: var(--input-bg); border: 1px solid var(--border-color); color: white; font-size: 13px; padding: 8px 12px; height: 38px; border-radius: 6px; }
-        .form-control::placeholder { color: #888; }
+        .form-control::placeholder { color: #888; opacity: 1; }
         .form-control:focus, .form-select:focus { background-color: var(--input-bg); color: white; border-color: var(--accent-blue); box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25); }
         
         .btn-primary-solid { background: var(--accent-blue); color: #fff; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 600; transition: 0.3s;}
@@ -178,15 +178,23 @@
 
                 <hr style="border-color: var(--border-color); margin: 25px 0;">
                 <h6 class="mb-3 text-warning fw-bold" style="font-size: 14px;">2. Add Materials (Items)</h6>
-                <div class="d-flex gap-2 mb-3">
-                    <select id="matSelect" class="form-select">
-                        <option value="">-- Select Material --</option>
-                        {% for p in products %}
-                            <option value="{{ p[7] }}">{{ p[1] }}</option>
-                        {% endfor %}
-                    </select>
-                    <input type="number" id="matQty" class="form-control" placeholder="Qty" style="width: 100px;">
-                    <button class="btn btn-sm btn-secondary px-3 fw-bold" onclick="addMaterial()">Add</button>
+                <div class="row g-2 mb-3 align-items-end">
+                    <div class="col-md-7">
+                        <label class="form-label text-warning">Select Material</label>
+                        <select id="matSelect" class="form-select">
+                            <option value="">-- Select Material --</option>
+                            {% for p in products %}
+                                <option value="{{ p[7] }}">{{ p[1] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-warning">Quantity</label>
+                        <input type="number" id="matQty" class="form-control" placeholder="Qty">
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-secondary w-100 fw-bold" style="height: 38px;" onclick="addMaterial()">Add</button>
+                    </div>
                 </div>
                 <table class="table-custom mb-4">
                     <thead><tr><th>Material</th><th class="text-center">Qty</th><th class="text-end">Price</th><th class="text-end">Total</th><th></th></tr></thead>
@@ -195,11 +203,22 @@
 
                 <hr style="border-color: var(--border-color); margin: 25px 0;">
                 <h6 class="mb-3 text-success fw-bold" style="font-size: 14px;">3. Add Labor / Points Cost</h6>
-                <div class="d-flex gap-2 mb-3">
-                    <input type="text" id="labDesc" class="form-control" placeholder="e.g., CCTV Point, Light Point">
-                    <input type="number" id="labQty" class="form-control" placeholder="Qty" style="width: 100px;">
-                    <input type="number" id="labPrice" class="form-control" placeholder="Rate" style="width: 120px;">
-                    <button class="btn btn-sm btn-secondary px-3 fw-bold" onclick="addLabor()">Add</button>
+                <div class="row g-2 mb-3 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label text-success">Description</label>
+                        <input type="text" id="labDesc" class="form-control" placeholder="e.g. CCTV Point">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-success">Quantity</label>
+                        <input type="number" id="labQty" class="form-control" placeholder="Qty">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-success">Rate per Unit</label>
+                        <input type="number" id="labRate" class="form-control" placeholder="Rate">
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-success w-100 fw-bold" style="height: 38px; color: white;" onclick="addLabor()">Add</button>
+                    </div>
                 </div>
                 <table class="table-custom mb-4">
                     <thead><tr><th>Description</th><th class="text-center">Qty</th><th class="text-end">Rate</th><th class="text-end">Total</th><th></th></tr></thead>
@@ -270,7 +289,7 @@
     function addLabor() {
         let desc = document.getElementById('labDesc').value;
         let qty = parseFloat(document.getElementById('labQty').value) || 1;
-        let price = parseFloat(document.getElementById('labPrice').value) || 0;
+        let price = parseFloat(document.getElementById('labRate').value) || 0;
         if(!desc) return;
 
         labor.push({
@@ -282,7 +301,7 @@
         });
         document.getElementById('labDesc').value = '';
         document.getElementById('labQty').value = '';
-        document.getElementById('labPrice').value = '';
+        document.getElementById('labRate').value = '';
         renderTables();
     }
 

@@ -311,6 +311,11 @@
                         {% endif %}
                     </td>
                     <td class="text-center" style="white-space: nowrap;">
+                        {% if item[2] %}
+                        <button class="btn btn-sm btn-info" onclick="checkBranches('{{ item[2] }}', '{{ item[1] }}')" title="Check Stock in Other Branches">
+                            <i class="fas fa-search-location"></i>
+                        </button>
+                        {% endif %}
                         <button class="btn btn-sm btn-primary" style="background-color: var(--accent-blue); border: none;"
                             data-id="{{ item[0] }}" 
                             data-name="{{ item[1] }}" 
@@ -404,8 +409,57 @@
   </div>
 </div>
 
+<!-- Check Branches Modal -->
+<div class="modal fade" id="checkBranchesModal" tabindex="-1" aria-labelledby="checkBranchesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color);">
+            <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+                <h5 class="modal-title" id="checkBranchesModalLabel">Stock in Other Branches: <span id="cbItemName" class="text-info"></span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th>Branch Name</th>
+                            <th class="text-end">Current Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cbTableBody">
+                        <tr><td colspan="2" class="text-center">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+function checkBranches(barcode, itemName) {
+    document.getElementById('cbItemName').innerText = itemName;
+    document.getElementById('cbTableBody').innerHTML = '<tr><td colspan="2" class="text-center">Loading...</td></tr>';
+    var myModal = new bootstrap.Modal(document.getElementById('checkBranchesModal'));
+    myModal.show();
+    
+    fetch('/other_branches_stock/' + encodeURIComponent(barcode))
+        .then(response => response.json())
+        .then(data => {
+            let html = '';
+            if(data.length === 0) {
+                html = '<tr><td colspan="2" class="text-center text-muted">No stock found in other branches.</td></tr>';
+            } else {
+                data.forEach(branch => {
+                    html += `<tr><td>${branch.branch_name}</td><td class="text-end" style="font-weight:bold; color: ${branch.current_stock > 0 ? '#2ecc71' : '#ff4757'}">${branch.current_stock}</td></tr>`;
+                });
+            }
+            document.getElementById('cbTableBody').innerHTML = html;
+        })
+        .catch(err => {
+            document.getElementById('cbTableBody').innerHTML = '<tr><td colspan="2" class="text-center text-danger">Error loading data.</td></tr>';
+        });
+}
+
 function openEditModal(btn) {
     document.getElementById('edit_item_id').value = btn.getAttribute('data-id');
     document.getElementById('edit_name').value = btn.getAttribute('data-name');
