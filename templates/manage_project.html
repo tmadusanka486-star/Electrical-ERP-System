@@ -265,7 +265,7 @@
 
             <div class="custom-card no-print">
                 <div class="card-title"><span>🔄</span> Change Status</div>
-                <form action="/update_project_status/{{ project[0] }}" method="POST" class="d-flex gap-2">
+                <form action="/update_project_status/{{ project[0] }}" method="POST" class="d-flex gap-2 mb-3">
                     <select name="status" class="form-select">
                         <option value="Pending" {% if project[5] == 'Pending' %}selected{% endif %}>Pending</option>
                         <option value="Ongoing" {% if project[5] == 'Ongoing' %}selected{% endif %}>Ongoing</option>
@@ -273,6 +273,13 @@
                     </select>
                     <button type="submit" class="btn-outline-custom">Update</button>
                 </form>
+                
+                {% if project[5] != 'Completed' %}
+                <hr style="border-color: var(--border-color); margin: 15px 0;">
+                <form action="/project_complete_invoice/{{ project[0] }}" method="POST" onsubmit="return confirm('This will mark the project as Completed and generate a Final Invoice in the main Billing system. Are you sure?');">
+                    <button type="submit" class="btn-success-solid w-100" style="color: white !important;">✅ Complete & Generate Final Invoice</button>
+                </form>
+                {% endif %}
             </div>
 
             <div class="custom-card no-print">

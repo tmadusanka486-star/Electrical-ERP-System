@@ -454,6 +454,78 @@ class Database:
             self.cursor.execute("UPDATE products SET current_stock = current_stock - %s WHERE id=%s", (qty, prod_id))
             self.conn.commit()
 
+    def add_project_material(self, project_id, product_id, qty, total_cost):
+        self.cursor.execute("""
+            INSERT INTO project_materials (project_id, product_id, qty, total_cost) 
+            VALUES (%s, %s, %s, %s)
+        """, (project_id, product_id, qty, total_cost))
+        
+        self.cursor.execute("UPDATE products SET current_stock = current_stock - %s WHERE id = %s", (qty, product_id))
+        self.conn.commit()
+        
+    def generate_project_invoice(self, project_id):
+        # Fetch project details
+        self.cursor.execute("SELECT project_name, customer_name, estimated_cost FROM projects WHERE id=%s", (project_id,))
+        proj = self.cursor.fetchone()
+        if not proj: return None
+        
+        p_name, c_name, budget = proj
+        
+        # Fetch used materials
+        self.cursor.execute("""
+            SELECT p.id, p.item_name, pm.qty, p.selling_price
+            FROM project_materials pm
+            JOIN products p ON pm.product_id = p.id
+            WHERE pm.project_id = %s
+        """, (project_id,))
+        materials = self.cursor.fetchall()
+        
+        # Create invoice items list
+        cart_items = []
+        for m in materials:
+            cart_items.append({
+                'id': m[0],
+                'name': m[1],
+                'qty': m[2],
+                'price': m[3],
+                'total': float(m[2]) * float(m[3])
+            })
+            
+        # Add labor/service fee if budget > materials selling price total
+        materials_total = sum(item['total'] for item in cart_items)
+        if budget and budget > materials_total:
+            labor_fee = budget - materials_total
+            cart_items.append({
+                'id': 0,
+                'name': f'Service/Labor Charge ({p_name})',
+                'qty': 1,
+                'price': labor_fee,
+                'total': labor_fee
+            })
+            
+        # Create the invoice (discount 0, Cash payment)
+        # Note: stock was already deducted when material was added to project, so create_invoice shouldn't deduct again!
+        # Wait, create_invoice WILL deduct stock. So we can't use standard create_invoice directly, or we need a flag.
+        
+        total_amount = sum(item['total'] for item in cart_items)
+        
+        self.cursor.execute("""
+            INSERT INTO invoices (customer_name, total_amount, discount, final_amount, payment_method) 
+            VALUES (%s, %s, 0, %s, 'Cash') RETURNING id
+        """, (f"{c_name} (Project: {p_name})", total_amount, total_amount))
+        invoice_id = self.cursor.fetchone()[0]
+        
+        for item in cart_items:
+            self.cursor.execute("""
+                INSERT INTO invoice_items (invoice_id, product_id, item_name, qty, unit_price, total_price)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (invoice_id, item['id'], item['name'], item['qty'], item['price'], item['total']))
+            
+        # Mark project as completed
+        self.cursor.execute("UPDATE projects SET status='Completed' WHERE id=%s", (project_id,))
+        self.conn.commit()
+        return invoice_id
+
     def get_project_by_id(self, project_id):
         self.cursor.execute("SELECT * FROM projects WHERE id = %s", (project_id,))
         return self.cursor.fetchone()
@@ -499,6 +571,17 @@ class Database:
     
 
     # --- Returns Functions ---
+    def get_returnable_qty(self, invoice_id, product_id):
+        self.cursor.execute("SELECT SUM(qty) FROM invoice_items WHERE invoice_id=%s AND product_id=%s", (invoice_id, product_id))
+        sold_res = self.cursor.fetchone()
+        sold_qty = sold_res[0] if sold_res and sold_res[0] else 0
+        
+        self.cursor.execute("SELECT SUM(qty) FROM returns WHERE invoice_id=%s AND product_id=%s", (invoice_id, product_id))
+        ret_res = self.cursor.fetchone()
+        ret_qty = ret_res[0] if ret_res and ret_res[0] else 0
+        
+        return sold_qty - ret_qty
+
     def process_return(self, invoice_id, product_id, item_name, qty, refund_amount, reason):
         self.cursor.execute("""
             INSERT INTO returns (invoice_id, product_id, item_name, qty, refund_amount, reason)

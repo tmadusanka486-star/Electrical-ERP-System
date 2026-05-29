@@ -428,7 +428,14 @@ def process_return_item():
     qty = float(request.form['qty'])
     refund = float(request.form['refund'])
     reason = request.form['reason']
+    
+    returnable_qty = db.get_returnable_qty(invoice_id, product_id)
+    if qty > returnable_qty:
+        flash("Return quantity exceeds sold quantity.", "danger")
+        return redirect(url_for('returns'))
+        
     db.process_return(invoice_id, product_id, item_name, qty, refund, reason)
+    flash("Return processed successfully.", "success")
     return redirect(url_for('returns'))
 
 # --- Suppliers & Purchasing ---
@@ -616,6 +623,16 @@ def print_paysheets(month):
     return render_template('print_paysheets.html', employees=paid_employees, month=month, settings=settings_data)
 
 # --- Reports ---
+@app.route('/project_complete_invoice/<int:project_id>', methods=['POST'])
+@requires_permission('projects')
+def project_complete_invoice(project_id):
+    invoice_id = db.generate_project_invoice(project_id)
+    if invoice_id:
+        flash("Project completed and Final Invoice generated!", "success")
+        return redirect(url_for('print_bill', invoice_id=invoice_id))
+    flash("Error generating invoice.", "danger")
+    return redirect(url_for('manage_project', project_id=project_id))
+
 @app.route('/reports')
 @requires_permission('reports')
 def reports():

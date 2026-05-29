@@ -38,9 +38,11 @@
 
         /* --- Content Area --- */
         .content { margin-left: 220px; padding: 40px; position: relative; }
-        .custom-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 25px; margin-bottom: 25px; }
-        .form-control, .form-select { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); font-size: 12px; padding: 8px 12px; height: 38px;}
-        .form-control:focus, .form-select:focus { background-color: var(--input-bg); color: var(--text-main); border-color: var(--accent-blue); box-shadow: none; }
+        .custom-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .form-label { color: #d1d5db; font-weight: 500; font-size: 12px; margin-bottom: 5px; }
+        .form-control, .form-select { background: var(--input-bg); border: 1px solid var(--border-color); color: white; font-size: 13px; padding: 8px 12px; height: 38px; border-radius: 6px; }
+        .form-control::placeholder { color: #888; }
+        .form-control:focus, .form-select:focus { background-color: var(--input-bg); color: white; border-color: var(--accent-blue); box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25); }
         
         .btn-primary-solid { background: var(--accent-blue); color: #fff; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 600; transition: 0.3s;}
         .btn-primary-solid:hover { background-color: #2563eb; color: white;}
