@@ -149,6 +149,20 @@
         </div>
     </div>
 
+    <div style="padding: 0 20px; margin-bottom: 15px;">
+        {% if shop_branches and shop_branches|length > 1 %}
+        <select class="form-select form-select-sm" style="background-color: #1e293b; color: white; border-color: #334155; font-size: 11px;" onchange="window.location.href='/switch_branch/'+this.value">
+            {% for b in shop_branches %}
+                <option value="{{ b[0] }}" {% if current_branch_id == b[0] %}selected{% endif %}>📍 {{ b[1] }}</option>
+            {% endfor %}
+        </select>
+        {% elif shop_branches and shop_branches|length == 1 %}
+        <div style="font-size: 11px; color: var(--text-muted); text-align: center; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 4px;">
+            📍 {{ shop_branches[0][1] }}
+        </div>
+        {% endif %}
+    </div>
+
     <div style="padding: 0 20px 20px 20px; margin-bottom: 10px; border-bottom: 1px solid var(--border-color);">
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
             <div style="width: 35px; height: 35px; border-radius: 50%; background-color: #34495e; display: flex; align-items: center; justify-content: center; font-size: 14px; color: white; font-weight: 700; flex-shrink: 0;">

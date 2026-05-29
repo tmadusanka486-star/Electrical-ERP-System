@@ -92,9 +92,24 @@ def debug_error():
 def inject_global_settings():
     try:
         settings = db.get_settings()
-        return dict(sys_settings=settings)
+        shop_branches = []
+        if 'user_id' in session and session.get('user_role') in ['ShopOwner', 'Admin', 'SuperAdmin']:
+            shop_branches = db.get_shop_branches()
+        return dict(sys_settings=settings, shop_branches=shop_branches, current_branch_id=session.get('branch_id', 1))
     except:
-        return dict(sys_settings=None)
+        return dict(sys_settings=None, shop_branches=[], current_branch_id=1)
+
+@app.route('/switch_branch/<int:branch_id>')
+def switch_branch(branch_id):
+    if 'user_id' in session:
+        # Validate that branch belongs to this shop
+        branches = db.get_shop_branches()
+        if any(b[0] == branch_id for b in branches):
+            session['branch_id'] = branch_id
+            flash("Switched branch successfully.", "success")
+        else:
+            flash("Invalid branch selection.", "error")
+    return redirect(request.referrer or url_for('index'))
 
 UPLOAD_FOLDER = 'static/uploads/employees'
 LOGO_FOLDER = 'static/uploads/logo'
@@ -113,7 +128,8 @@ def requires_permission(permission):
                 return redirect(url_for('login'))
             
             user_perms = session.get('user_permissions', '')
-            if session.get('user_role') == 'Admin':
+            user_role = session.get('user_role', '')
+            if user_role in ['Admin', 'SuperAdmin', 'ShopOwner'] or user_perms == "ALL":
                 return f(*args, **kwargs)
                 
             if permission not in user_perms:
@@ -251,9 +267,9 @@ def add_shop():
     shop_name = request.form['shop_name']
     owner_name = request.form['owner_name']
     contact = request.form['contact']
-    shop_id = db.add_shop(shop_name, owner_name, contact)
-    # create default branch
-    db.add_branch(shop_id, 'Main Branch', '')
+    username = request.form['username']
+    password = request.form['password']
+    shop_id = db.add_shop(shop_name, owner_name, contact, username, password)
     flash('Shop created successfully!', 'success')
     return redirect(url_for('super_admin_dashboard'))
 

@@ -361,11 +361,26 @@ class Database:
         self.cursor.execute("SELECT SUM(received_amount) FROM projects")
         p = self.cursor.fetchone()[0] or 0
         return s + p
-    def add_shop(self, shop_name, owner_name, contact):
+    def add_shop(self, shop_name, owner_name, contact, username, password):
         self.cursor.execute("INSERT INTO shops (shop_name, owner_name, contact) VALUES (%s, %s, %s) RETURNING id", (shop_name, owner_name, contact))
-        return self.cursor.fetchone()[0]
+        shop_id = self.cursor.fetchone()[0]
+        
+        # Insert default branch
+        self.cursor.execute("INSERT INTO branches (shop_id, branch_name, location) VALUES (%s, %s, %s) RETURNING id", (shop_id, "Main Branch", ""))
+        branch_id = self.cursor.fetchone()[0]
+        
+        # Create default shop settings
+        self.cursor.execute("INSERT INTO shop_settings (shop_id, company_name, phone, email) VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING", (shop_id, shop_name, contact, ''))
+        
+        # Create user account for owner
+        self.cursor.execute("INSERT INTO users (username, password, role, shop_id, branch_id) VALUES (%s, %s, %s, %s, %s)", (username, password, 'ShopOwner', shop_id, branch_id))
+        
+        return shop_id
     def get_all_branches(self):
         self.cursor.execute("SELECT * FROM branches ORDER BY id DESC")
+        return self.cursor.fetchall()
+    def get_shop_branches(self):
+        self.cursor.execute("SELECT id, branch_name FROM branches WHERE shop_id=%s ORDER BY id", (self.shop_id,))
         return self.cursor.fetchall()
     def add_branch(self, shop_id, branch_name, location):
         self.cursor.execute("INSERT INTO branches (shop_id, branch_name, location) VALUES (%s, %s, %s)", (shop_id, branch_name, location))
