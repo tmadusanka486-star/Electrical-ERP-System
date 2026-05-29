@@ -53,7 +53,7 @@ class Database:
         self.cursor.execute("INSERT INTO branches (id, shop_id, branch_name) VALUES (1, 1, 'Main Branch') ON CONFLICT (id) DO NOTHING;")
         self.cursor.execute("CREATE TABLE IF NOT EXISTS shop_settings (shop_id INTEGER PRIMARY KEY REFERENCES shops(id), company_name TEXT, address TEXT, phone TEXT, email TEXT, print_type TEXT DEFAULT 'A4', logo TEXT, services_list TEXT, terms_conditions TEXT)")
         self.cursor.execute("INSERT INTO shop_settings (shop_id, company_name, address, phone, email) SELECT 1, company_name, address, phone, email FROM settings WHERE id = 1 ON CONFLICT (shop_id) DO NOTHING;")
-        tables_to_update = ['products', 'customers', 'invoices', 'invoice_items', 'projects', 'project_materials', 'returns', 'project_labor', 'suppliers', 'purchases', 'expenses', 'payroll', 'users', 'quotations', 'quotation_items', 'project_quotations', 'pq_items', 'project_payments']
+        tables_to_update = ['products', 'customers', 'invoices', 'invoice_items', 'projects', 'project_materials', 'returns', 'project_labor', 'suppliers', 'purchases', 'expenses', 'payroll', 'users', 'quotations', 'quotation_items', 'project_quotations', 'pq_items', 'project_payments', 'employees']
         for t in tables_to_update:
             try:
                 self.cursor.execute(f"ALTER TABLE {t} ADD COLUMN shop_id INTEGER DEFAULT 1;")
