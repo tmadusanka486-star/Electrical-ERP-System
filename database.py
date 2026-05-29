@@ -283,9 +283,9 @@ class Database:
         return self.cursor.fetchone()
     def update_settings(self, name, address, phone, email, printer_type, services_list="", terms_conditions="", logo=None):
         if logo:
-            self.cursor.execute("UPDATE shop_settings SET company_name=%s, address=%s, phone=%s, email=%s, printer_type=%s, services_list=%s, terms_conditions=%s, logo=%s WHERE shop_id=%s", (name, address, phone, email, printer_type, services_list, terms_conditions, logo, self.shop_id))
+            self.cursor.execute("UPDATE shop_settings SET company_name=%s, address=%s, phone=%s, email=%s, print_type=%s, services_list=%s, terms_conditions=%s, logo=%s WHERE shop_id=%s", (name, address, phone, email, printer_type, services_list, terms_conditions, logo, self.shop_id))
         else:
-            self.cursor.execute("UPDATE shop_settings SET company_name=%s, address=%s, phone=%s, email=%s, printer_type=%s, services_list=%s, terms_conditions=%s WHERE shop_id=%s", (name, address, phone, email, printer_type, services_list, terms_conditions, self.shop_id))
+            self.cursor.execute("UPDATE shop_settings SET company_name=%s, address=%s, phone=%s, email=%s, print_type=%s, services_list=%s, terms_conditions=%s WHERE shop_id=%s", (name, address, phone, email, printer_type, services_list, terms_conditions, self.shop_id))
     def get_all_employees(self):
         self.cursor.execute("SELECT * FROM employees WHERE shop_id=%s ORDER BY id DESC", (self.shop_id,))
         return self.cursor.fetchall()
