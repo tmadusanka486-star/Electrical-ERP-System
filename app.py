@@ -240,7 +240,7 @@ def index():
     if 'user_id' not in session:
         return redirect(url_for('login'))
         
-    if session.get('user_role') == 'SuperAdmin':
+    if session.get('user_role') == 'SuperAdmin' and not session.get('managing_shop_id'):
         return redirect(url_for('super_admin_dashboard'))
         
     stats = db.get_dashboard_stats()
@@ -258,8 +258,34 @@ def index():
 def super_admin_dashboard():
     shops = db.get_all_shops()
     branches = db.get_all_branches()
-    total_revenue = db.get_aggregated_revenue()
-    return render_template('super_admin_dashboard.html', shops=shops, branches=branches, total_revenue=total_revenue)
+    stats = {
+        'total_revenue': sum(s[4] for s in shops if s[4]),
+        'total_shops': len(shops)
+    }
+    return render_template('super_admin_dashboard.html', shops=shops, branches=branches, stats=stats)
+
+@app.route('/super_admin/manage_shop/<int:shop_id>')
+@requires_super_admin
+def manage_shop(shop_id):
+    session['managing_shop_id'] = shop_id
+    session['shop_id'] = shop_id
+    db.shop_id = shop_id
+    branches = db.get_shop_branches()
+    if branches:
+        session['branch_id'] = branches[0][0]
+    else:
+        session['branch_id'] = 1
+    flash(f"You are now managing Shop ID: {shop_id}", "success")
+    return redirect(url_for('index'))
+
+@app.route('/super_admin/exit_shop')
+@requires_super_admin
+def exit_shop():
+    session.pop('managing_shop_id', None)
+    session['shop_id'] = 1
+    session['branch_id'] = 1
+    flash("Returned to Super Admin Dashboard", "success")
+    return redirect(url_for('super_admin_dashboard'))
 
 @app.route('/super_admin/add_shop', methods=['POST'])
 @requires_super_admin

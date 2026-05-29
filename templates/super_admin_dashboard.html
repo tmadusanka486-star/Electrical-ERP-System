@@ -39,6 +39,7 @@
                             <th>Owner</th>
                             <th>Contact</th>
                             <th>Status</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,6 +50,9 @@
                             <td>{{ shop[2] }}</td>
                             <td>{{ shop[3] }}</td>
                             <td><span class="badge bg-success">{{ shop[4] }}</span></td>
+                            <td>
+                                <a href="{{ url_for('manage_shop', shop_id=shop[0]) }}" class="btn btn-sm btn-primary-solid">Manage</a>
+                            </td>
                         </tr>
                         {% else %}
                         <tr><td colspan="5" class="text-center text-muted">No shops found.</td></tr>
