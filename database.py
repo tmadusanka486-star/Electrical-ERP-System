@@ -628,12 +628,14 @@ class Database:
 
     def delete_employee(self, emp_id):
         try:
+            self.cursor.execute("DELETE FROM payroll WHERE emp_id=%s", (emp_id,))
             self.cursor.execute("DELETE FROM employees WHERE id=%s", (emp_id,))
             self.conn.commit()
             return True, "Employee deleted successfully"
         except Exception as e:
             self.conn.rollback()
-            return False, f"Cannot delete employee: {e}"
+            safe_msg = str(e).replace("'", "").replace('"', '').replace('\n', ' ')
+            return False, f"Cannot delete employee: {safe_msg}"
 
 
     # --- Payroll Functions ---
