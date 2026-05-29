@@ -372,7 +372,9 @@ def billing():
 @requires_permission('billing')
 def save_invoice():
     data = request.get_json()
-    customer_id = data.get('customer_id') 
+    customer_id = data.get('customer_id')
+    if not customer_id:
+        customer_id = None
     customer_name = data.get('customer_name')
     cart = data.get('cart', [])
     discount = float(data.get('discount', 0))

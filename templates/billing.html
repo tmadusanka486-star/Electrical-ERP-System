@@ -231,7 +231,7 @@
                     <option value="{{ c[0] }}" data-name="{{ c[1] }}">{{ c[1] }} (Credit: {{ c[4] }})</option>
                     {% endfor %}
                 </select>
-                <a href="/customers" class="btn btn-outline-secondary btn-sm" target="_blank" style="height: 35px; border-color: var(--border-color); color: white;">+</a>
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#addCustomerModal" style="height: 35px; border-color: var(--border-color); color: white;">+</button>
             </div>
         </div>
 
@@ -320,6 +320,35 @@
             <div class="modal-footer" style="background: #2b2b2b; border-top: none; padding: 15px 20px; display: flex; justify-content: space-between;">
                 <button type="button" class="btn btn-secondary" onclick="window.location.reload()" style="font-weight: 600;">➕ New Bill</button>
                 <button type="button" class="btn btn-primary-solid" style="width: auto; background: linear-gradient(135deg, #10b981, #34d399); border: none; font-size: 15px;" onclick="document.getElementById('printIframe').contentWindow.print()">🖨️ Print Invoice</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Customer Modal -->
+<div class="modal fade" id="addCustomerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="font-weight: 600;">➕ Add New Customer</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addCustomerForm">
+                    <div class="mb-3">
+                        <label>Customer Name</label>
+                        <input type="text" id="newCustomerName" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Phone</label>
+                        <input type="text" id="newCustomerPhone" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Address</label>
+                        <textarea id="newCustomerAddress" class="form-control" rows="2"></textarea>
+                    </div>
+                    <button type="button" onclick="saveNewCustomer()" class="btn-primary-solid w-100 mt-2">💾 Save Customer</button>
+                </form>
             </div>
         </div>
     </div>
@@ -562,6 +591,35 @@
             } else {
                 alert("Error: " + data.message);
             }
+        }).catch(err => {
+            console.error(err);
+            alert("System Error! Print Bill Failed: " + err);
+        });
+    }
+
+    // 8. Save New Customer
+    function saveNewCustomer() {
+        let name = document.getElementById("newCustomerName").value;
+        let phone = document.getElementById("newCustomerPhone").value;
+        let address = document.getElementById("newCustomerAddress").value;
+        
+        if (!name || !phone) {
+            alert("Name and Phone are required!");
+            return;
+        }
+
+        let formData = new FormData();
+        formData.append('name', name);
+        formData.append('phone', phone);
+        formData.append('address', address);
+
+        fetch('/add_customer', {
+            method: 'POST',
+            body: formData
+        }).then(() => {
+            window.location.reload();
+        }).catch(err => {
+            alert("Failed to add customer: " + err);
         });
     }
 </script>
