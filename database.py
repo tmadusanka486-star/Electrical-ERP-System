@@ -243,8 +243,22 @@ class Database:
         self.cursor.execute("INSERT INTO purchases (shop_id, branch_id, supplier_id, product_id, qty, buying_cost, warranty_months, warranty_expire_date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, supplier_id, product_id, qty, new_cost, warranty_months, exp_date))
         self.cursor.execute("UPDATE products SET current_stock = current_stock + %s, cost_price = %s WHERE id = %s AND shop_id=%s", (qty, new_cost, product_id, self.shop_id))
     def get_sales_report(self):
-        self.cursor.execute("SELECT DATE(date_created), SUM(final_amount) FROM invoices WHERE shop_id=%s GROUP BY DATE(date_created) ORDER BY DATE(date_created) DESC", (self.shop_id,))
-        return self.cursor.fetchall()
+        self.cursor.execute("SELECT SUM(final_amount) FROM invoices WHERE shop_id=%s AND DATE(date_created) = CURRENT_DATE", (self.shop_id,))
+        today_sales = self.cursor.fetchone()[0] or 0
+        
+        self.cursor.execute("SELECT SUM(final_amount) FROM invoices WHERE shop_id=%s AND to_char(date_created, 'YYYY-MM') = to_char(CURRENT_DATE, 'YYYY-MM')", (self.shop_id,))
+        month_sales = self.cursor.fetchone()[0] or 0
+        
+        self.cursor.execute("SELECT SUM(amount) FROM expenses WHERE shop_id=%s AND to_char(date, 'YYYY-MM') = to_char(CURRENT_DATE, 'YYYY-MM')", (self.shop_id,))
+        month_expenses = self.cursor.fetchone()[0] or 0
+        
+        month_profit = float(month_sales) - float(month_expenses)
+        
+        return {
+            'today_sales': float(today_sales),
+            'month_sales': float(month_sales),
+            'month_profit': float(month_profit)
+        }
     def get_top_selling_items(self):
         self.cursor.execute("SELECT item_name, SUM(qty) FROM invoice_items WHERE shop_id=%s GROUP BY item_name ORDER BY SUM(qty) DESC LIMIT 5", (self.shop_id,))
         return self.cursor.fetchall()
