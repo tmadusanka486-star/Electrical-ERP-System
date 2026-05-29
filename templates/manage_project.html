@@ -347,7 +347,7 @@
                             <td style="color: var(--text-muted);">{{ mat[2] }}</td>
                             <td class="text-center" style="font-weight: 600;">{{ mat[3] }}</td>
                             <td class="text-end" style="font-weight: 600; color: var(--accent-blue);">LKR {{ "{:,.2f}".format(mat[4]) }}</td>
-                            <td class="text-end no-print" style="color: var(--text-muted); font-size: 11px;">{{ mat[5][:16] }}</td>
+                            <td class="text-end no-print" style="color: var(--text-muted); font-size: 11px;">{{ (mat[5]|string)[:16] }}</td>
                         </tr>
                         {% else %}
                         <tr>
