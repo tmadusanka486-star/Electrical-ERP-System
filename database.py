@@ -284,6 +284,11 @@ class Database:
         self.cursor.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS permissions TEXT")
         self.cursor.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS photo TEXT")
         self.cursor.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS certificate TEXT")
+        self.cursor.execute("ALTER TABLE purchases ADD COLUMN IF NOT EXISTS warranty_months INTEGER DEFAULT 0")
+        self.cursor.execute("ALTER TABLE purchases ADD COLUMN IF NOT EXISTS warranty_expire_date TIMESTAMP")
+        self.cursor.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS nic_doc TEXT")
+        self.cursor.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS passport_doc TEXT")
+        self.cursor.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS other_docs TEXT")
         self.conn.commit()
 
 
@@ -501,11 +506,17 @@ class Database:
         self.cursor.execute("SELECT * FROM suppliers ORDER BY id DESC")
         return self.cursor.fetchall()
 
-    def add_purchase(self, supplier_id, product_id, qty, new_cost):
-        self.cursor.execute("""
-            INSERT INTO purchases (supplier_id, product_id, qty, buying_cost)
-            VALUES (%s, %s, %s, %s)
-        """, (supplier_id, product_id, qty, new_cost))
+    def add_purchase(self, supplier_id, product_id, qty, new_cost, warranty_months=0):
+        if warranty_months > 0:
+            self.cursor.execute("""
+                INSERT INTO purchases (supplier_id, product_id, qty, buying_cost, warranty_months, warranty_expire_date)
+                VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP + INTERVAL '%s months')
+            """, (supplier_id, product_id, qty, new_cost, warranty_months, warranty_months))
+        else:
+            self.cursor.execute("""
+                INSERT INTO purchases (supplier_id, product_id, qty, buying_cost, warranty_months)
+                VALUES (%s, %s, %s, %s, 0)
+            """, (supplier_id, product_id, qty, new_cost))
 
         self.cursor.execute("""
             UPDATE products 
@@ -555,7 +566,7 @@ class Database:
 
     def get_report_purchases(self):
         self.cursor.execute("""
-            SELECT p.id, p.date_added, s.name, pr.item_name, p.qty, p.buying_cost, (p.qty * p.buying_cost) as total
+            SELECT p.id, p.date_added, s.name, pr.item_name, p.qty, p.buying_cost, (p.qty * p.buying_cost) as total, p.warranty_months, p.warranty_expire_date
             FROM purchases p
             LEFT JOIN suppliers s ON p.supplier_id = s.id
             LEFT JOIN products pr ON p.product_id = pr.id
@@ -587,30 +598,42 @@ class Database:
 
     # --- Employee Functions ---
     def get_all_employees(self):
-        self.cursor.execute("SELECT id, name, phone, role, basic_salary, photo, certificate, username, password, permissions FROM employees ORDER BY id DESC")
+        self.cursor.execute("SELECT id, name, phone, role, basic_salary, photo, certificate, username, password, permissions, nic_doc, passport_doc, other_docs FROM employees ORDER BY id DESC")
         return self.cursor.fetchall()
 
-    def add_employee(self, name, phone, role, salary, photo_name, cert_name, username, password, permissions):
+    def add_employee(self, name, phone, role, salary, photo_name, cert_name, username, password, permissions, nic_name="", passport_name="", other_name=""):
         self.cursor.execute("""
-            INSERT INTO employees (name, phone, role, basic_salary, photo, certificate, username, password, permissions) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (name, phone, role, salary, photo_name, cert_name, username, password, permissions))
+            INSERT INTO employees (name, phone, role, basic_salary, photo, certificate, username, password, permissions, nic_doc, passport_doc, other_docs) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (name, phone, role, salary, photo_name, cert_name, username, password, permissions, nic_name, passport_name, other_name))
         self.conn.commit()
 
-    def update_employee(self, emp_id, name, phone, role, salary, photo_name, cert_name, username, password, permissions):
-        self.cursor.execute("SELECT photo, certificate, password FROM employees WHERE id = %s", (emp_id,))
+    def update_employee(self, emp_id, name, phone, role, salary, photo_name, cert_name, username, password, permissions, nic_name="", passport_name="", other_name=""):
+        self.cursor.execute("SELECT photo, certificate, password, nic_doc, passport_doc, other_docs FROM employees WHERE id = %s", (emp_id,))
         current = self.cursor.fetchone()
         
         final_photo = photo_name if photo_name else (current[0] if current else "")
         final_cert = cert_name if cert_name else (current[1] if current else "")
         final_pass = password if password and password != "None" else (current[2] if current else "")
+        final_nic = nic_name if nic_name else (current[3] if current and len(current) > 3 else "")
+        final_passport = passport_name if passport_name else (current[4] if current and len(current) > 4 else "")
+        final_other = other_name if other_name else (current[5] if current and len(current) > 5 else "")
         
         self.cursor.execute("""
             UPDATE employees 
-            SET name=%s, phone=%s, role=%s, basic_salary=%s, photo=%s, certificate=%s, username=%s, password=%s, permissions=%s 
+            SET name=%s, phone=%s, role=%s, basic_salary=%s, photo=%s, certificate=%s, username=%s, password=%s, permissions=%s, nic_doc=%s, passport_doc=%s, other_docs=%s 
             WHERE id=%s
-        """, (name, phone, role, salary, final_photo, final_cert, username, final_pass, permissions, emp_id))
+        """, (name, phone, role, salary, final_photo, final_cert, username, final_pass, permissions, final_nic, final_passport, final_other, emp_id))
         self.conn.commit()
+
+    def delete_employee(self, emp_id):
+        try:
+            self.cursor.execute("DELETE FROM employees WHERE id=%s", (emp_id,))
+            self.conn.commit()
+            return True, "Employee deleted successfully"
+        except Exception as e:
+            self.conn.rollback()
+            return False, f"Cannot delete employee: {e}"
 
 
     # --- Payroll Functions ---

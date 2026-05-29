@@ -241,6 +241,18 @@
                 <label class="form-label">Certificates/CV (PDF, Word, Images)</label>
                 <input type="file" name="certificate" class="form-control" accept=".pdf,.doc,.docx,image/*" style="padding-top: 6px;">
             </div>
+            <div class="col-md-4">
+                <label class="form-label">NIC Document</label>
+                <input type="file" name="nic_doc" class="form-control" accept=".pdf,image/*" style="padding-top: 6px;">
+            </div>
+            <div class="col-md-6 mt-3">
+                <label class="form-label">Passport Document</label>
+                <input type="file" name="passport_doc" class="form-control" accept=".pdf,image/*" style="padding-top: 6px;">
+            </div>
+            <div class="col-md-6 mt-3">
+                <label class="form-label">Other Documents</label>
+                <input type="file" name="other_docs" class="form-control" accept=".pdf,.zip,image/*" style="padding-top: 6px;">
+            </div>
 
             <div class="col-12 mt-4 mb-2"><hr style="border-color: var(--border-color); margin: 0;"></div>
             
@@ -330,6 +342,7 @@
                     <td class="text-center">
                         <button class="btn btn-sm btn-info text-white mb-1" data-bs-toggle="modal" data-bs-target="#viewModal{{ emp[0] }}">👁️ View</button>
                         <button class="btn btn-sm btn-warning mb-1" data-bs-toggle="modal" data-bs-target="#editModal{{ emp[0] }}">✏️ Edit</button>
+                        <a href="/delete_employee/{{ emp[0] }}" class="btn btn-sm btn-danger mb-1" onclick="return confirm('Are you sure you want to delete this employee?');">🗑️ Delete</a>
                     </td>
                 </tr>
 
@@ -357,8 +370,18 @@
                                     <div class="mt-3 pt-3" style="border-top: 1px dashed var(--border-color);">
                                         <strong style="color: var(--text-muted);">Documents:</strong><br>
                                         {% if emp|length > 6 and emp[6] %}
-                                            <a href="{{ (emp[6] if emp[6] and (emp[6]|string).startswith('http') else url_for('static', filename='uploads/employees/' + emp[6])) }}" target="_blank" class="btn btn-sm btn-outline-info mt-2">📄 View PDF Certificate/CV</a>
-                                        {% else %}
+                                            <a href="{{ (emp[6] if emp[6] and (emp[6]|string).startswith('http') else url_for('static', filename='uploads/employees/' + emp[6])) }}" target="_blank" class="btn btn-sm btn-outline-info mt-2">📄 Certificate/CV</a>
+                                        {% endif %}
+                                        {% if emp|length > 10 and emp[10] %}
+                                            <a href="{{ (emp[10] if emp[10] and (emp[10]|string).startswith('http') else url_for('static', filename='uploads/employees/' + emp[10])) }}" target="_blank" class="btn btn-sm btn-outline-info mt-2">🪪 NIC</a>
+                                        {% endif %}
+                                        {% if emp|length > 11 and emp[11] %}
+                                            <a href="{{ (emp[11] if emp[11] and (emp[11]|string).startswith('http') else url_for('static', filename='uploads/employees/' + emp[11])) }}" target="_blank" class="btn btn-sm btn-outline-info mt-2">🛂 Passport</a>
+                                        {% endif %}
+                                        {% if emp|length > 12 and emp[12] %}
+                                            <a href="{{ (emp[12] if emp[12] and (emp[12]|string).startswith('http') else url_for('static', filename='uploads/employees/' + emp[12])) }}" target="_blank" class="btn btn-sm btn-outline-info mt-2">📁 Other Docs</a>
+                                        {% endif %}
+                                        {% if not (emp|length > 6 and emp[6]) and not (emp|length > 10 and emp[10]) and not (emp|length > 11 and emp[11]) and not (emp|length > 12 and emp[12]) %}
                                             <span class="text-muted small">No documents uploaded.</span>
                                         {% endif %}
                                     </div>
@@ -408,6 +431,18 @@
                                     <div class="col-md-4">
                                         <label class="form-label">Update Certificate/CV <span class="text-muted" style="text-transform: none;">(Leave blank to keep)</span></label>
                                         <input type="file" name="certificate" class="form-control" accept=".pdf,.doc,.docx,image/*" style="padding-top: 6px;">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Update NIC Document <span class="text-muted" style="text-transform: none;">(Leave blank to keep)</span></label>
+                                        <input type="file" name="nic_doc" class="form-control" accept=".pdf,image/*" style="padding-top: 6px;">
+                                    </div>
+                                    <div class="col-md-6 mt-3">
+                                        <label class="form-label">Update Passport <span class="text-muted" style="text-transform: none;">(Leave blank to keep)</span></label>
+                                        <input type="file" name="passport_doc" class="form-control" accept=".pdf,image/*" style="padding-top: 6px;">
+                                    </div>
+                                    <div class="col-md-6 mt-3">
+                                        <label class="form-label">Update Other Documents <span class="text-muted" style="text-transform: none;">(Leave blank to keep)</span></label>
+                                        <input type="file" name="other_docs" class="form-control" accept=".pdf,.zip,image/*" style="padding-top: 6px;">
                                     </div>
 
                                     <div class="col-12 mt-4 mb-2"><hr style="border-color: var(--border-color); margin: 0;"></div>

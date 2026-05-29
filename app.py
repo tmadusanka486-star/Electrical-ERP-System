@@ -459,7 +459,9 @@ def add_purchase():
         product_id = db.add_product(name, barcode, category, brand, model, cost, price, 0, reorder, warranty)
     else:
         product_id = request.form['product_id']
-    db.add_purchase(supplier_id, product_id, qty, cost)
+    
+    warranty_months = int(request.form.get('warranty_months', 0))
+    db.add_purchase(supplier_id, product_id, qty, cost, warranty_months)
     return redirect(url_for('purchasing'))
 
 # --- Barcodes ---
@@ -489,13 +491,28 @@ def add_employee():
     permissions_str = ",".join(permissions_list)
     photo_file = request.files.get('photo')
     cert_file = request.files.get('certificate')
+    nic_file = request.files.get('nic_doc')
+    passport_file = request.files.get('passport_doc')
+    other_file = request.files.get('other_docs')
+    
     photo_name = ""
     cert_name = ""
+    nic_name = ""
+    passport_name = ""
+    other_name = ""
+    
     if photo_file and photo_file.filename != '':
         photo_name = upload_file_to_storage(photo_file, UPLOAD_FOLDER)
     if cert_file and cert_file.filename != '':
         cert_name = upload_file_to_storage(cert_file, UPLOAD_FOLDER)
-    db.add_employee(name, phone, role, salary, photo_name, cert_name, username, password, permissions_str)
+    if nic_file and nic_file.filename != '':
+        nic_name = upload_file_to_storage(nic_file, UPLOAD_FOLDER)
+    if passport_file and passport_file.filename != '':
+        passport_name = upload_file_to_storage(passport_file, UPLOAD_FOLDER)
+    if other_file and other_file.filename != '':
+        other_name = upload_file_to_storage(other_file, UPLOAD_FOLDER)
+        
+    db.add_employee(name, phone, role, salary, photo_name, cert_name, username, password, permissions_str, nic_name, passport_name, other_name)
     return redirect(url_for('employees'))
 
 @app.route('/edit_employee/<int:emp_id>', methods=['POST'])
@@ -509,15 +526,39 @@ def edit_employee(emp_id):
     password = request.form.get('password', '')
     permissions_list = request.form.getlist('permissions')
     permissions_str = ",".join(permissions_list)
+    
     photo_file = request.files.get('photo')
     cert_file = request.files.get('certificate')
+    nic_file = request.files.get('nic_doc')
+    passport_file = request.files.get('passport_doc')
+    other_file = request.files.get('other_docs')
+    
     photo_name = None
     cert_name = None
+    nic_name = None
+    passport_name = None
+    other_name = None
+    
     if photo_file and photo_file.filename != '':
         photo_name = upload_file_to_storage(photo_file, UPLOAD_FOLDER)
     if cert_file and cert_file.filename != '':
         cert_name = upload_file_to_storage(cert_file, UPLOAD_FOLDER)
-    db.update_employee(emp_id, name, phone, role, salary, photo_name, cert_name, username, password, permissions_str)
+    if nic_file and nic_file.filename != '':
+        nic_name = upload_file_to_storage(nic_file, UPLOAD_FOLDER)
+    if passport_file and passport_file.filename != '':
+        passport_name = upload_file_to_storage(passport_file, UPLOAD_FOLDER)
+    if other_file and other_file.filename != '':
+        other_name = upload_file_to_storage(other_file, UPLOAD_FOLDER)
+        
+    db.update_employee(emp_id, name, phone, role, salary, photo_name, cert_name, username, password, permissions_str, nic_name, passport_name, other_name)
+    return redirect(url_for('employees'))
+
+@app.route('/delete_employee/<int:emp_id>')
+@requires_permission('employees')
+def delete_employee(emp_id):
+    success, msg = db.delete_employee(emp_id)
+    if not success:
+        return f"<script>alert('{msg}'); window.location.href='/employees';</script>"
     return redirect(url_for('employees'))
 
 # --- Payroll ---
