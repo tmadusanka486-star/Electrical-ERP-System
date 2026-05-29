@@ -3,43 +3,16 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <title>Project Invoice - {{ project[1] }}</title>
+    <title>Project Details - {{ project[1] }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f8f9fa; color: #333; }
-        .invoice-container { 
-            max-width: 800px; margin: 30px auto; background: #fff; padding: 50px; 
-            border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.1); 
-        }
-        .header-section { border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
-        .company-logo { max-height: 80px; margin-bottom: 10px; }
-        .invoice-title { font-size: 28px; font-weight: 700; color: #333; text-transform: uppercase; }
-        
-        .info-box { margin-bottom: 30px; }
-        .info-label { font-size: 12px; color: #777; text-transform: uppercase; font-weight: 600; margin-bottom: 2px; }
-        .info-value { font-size: 15px; font-weight: 500; color: #000; }
-
-        .table-custom { width: 100%; margin-top: 20px; border-collapse: collapse; }
-        .table-custom th { background: #f4f4f4; color: #333; padding: 12px; border: 1px solid #ddd; font-size: 13px; text-transform: uppercase; }
-        .table-custom td { padding: 12px; border: 1px solid #ddd; font-size: 14px; }
-
-        .totals-section { margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px; }
-        .total-row { display: flex; justify-content: flex-end; margin-bottom: 10px; }
-        .total-label { width: 200px; font-weight: 600; color: #555; }
-        .total-val { width: 150px; text-align: right; font-weight: 700; font-size: 16px; }
-        .grand-total { border-top: 2px solid #333; padding-top: 10px; margin-top: 10px; font-size: 20px; color: #d63031; }
-
-        .footer-note { margin-top: 50px; font-size: 11px; color: #888; border-top: 1px solid #eee; padding-top: 20px; }
-        .signature-box { margin-top: 60px; display: flex; justify-content: space-between; }
-        .sig-line { border-top: 1px solid #333; width: 200px; text-align: center; font-size: 12px; padding-top: 5px; }
-
-        /* 🔥 Print Styling 🔥 */
-        @media print {
-            body { background: #fff; margin: 0; padding: 0; }
-            .invoice-container { box-shadow: none; margin: 0; width: 100%; max-width: 100%; padding: 20px; }
-            .no-print { display: none; }
-        }
+        /* --- පොදු CSS (දෙකටම වැඩ) --- */
+        body { background: #f5f5f5; font-family: 'Poppins', sans-serif; font-size: 11px; margin: 0; }
+        :root { --dark-blue: #1c2336; }
+        .text-end { text-align: right !important; }
+        .text-center { text-align: center !important; }
     
         /* --- Mobile Responsiveness --- */
         .mobile-header {
@@ -63,8 +36,79 @@
             .col-md-5, .col-md-3, .col-md-4, .col-md-6, .col-md-7, .col-md-8, .col-md-12 { padding-left: 5px; padding-right: 5px; }
         }
 </style>
+
+    {% if settings and settings|length > 5 and settings[5] == 'Thermal' %}
+    <style>
+        @media print {
+            @page { margin: 0; size: 80mm auto; }
+            body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .no-print { display: none !important; }
+            .page { border: none !important; margin: 0 !important; width: 100% !important; min-height: auto !important; padding: 5mm !important; }
+        }
+        
+        body { background: white; font-family: 'Courier New', Courier, monospace; } 
+        .page { width: 75mm; margin: 0 auto; padding: 5mm; background: white; border: 1px solid #eee; position: static; }
+        
+        .invoice-header { border-bottom: 1px dashed #333; padding-bottom: 5px; margin-bottom: 10px; text-align: center; }
+        .header-top { display: block; text-align: center; }
+        .logo-img { max-height: 40px; margin: 0 auto 5px auto; }
+        .invoice-title { font-size: 14px; font-weight: bold; margin-top: 5px; }
+        .invoice-meta { font-size: 10px; text-align: center; color: #000; margin-top: 5px; }
+
+        .bill-label { display: inline; font-size: 10px; font-weight: normal; color: #000; }
+        .bill-data { display: inline; font-size: 10px; font-weight: bold; margin-bottom: 10px; display: block; }
+
+        .custom-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 10px; }
+        .custom-table th { background-color: transparent; color: #000; border-bottom: 1px dashed #333; padding: 2px 0; font-size: 9px; text-transform: uppercase; text-align: left; }
+        .custom-table td { padding: 4px 0; border-bottom: 1px dashed #eee; font-size: 10px; color: #000; }
+        
+        .hide-thermal { display: none !important; }
+
+        .totals-area { display: flex; justify-content: flex-end; margin-top: 5px; border-top: 1px dashed #333; padding-top: 5px; }
+        .totals-table { width: 100%; }
+        .totals-table td { padding: 2px 0; text-align: right; font-size: 11px; font-weight: bold; }
+        .total-final { font-size: 13px; color: #000; border-top: 1px dashed #333; padding-top: 5px; margin-top: 2px; }
+        
+        .footer-area { position: static; width: 100%; padding: 10px 0 0 0; text-align: center; border-top: 1px dashed #333; margin-top: 10px; }
+        .bottom-bar { background-color: transparent; color: #000; font-size: 10px; font-weight: bold; padding: 2px; }
+    
+</style>
+    {% else %}
+    <style>
+        @media print {
+            @page { size: A5 portrait; margin: 0; }
+            body { margin: 0; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .no-print { display: none !important; }
+            .page { border: none !important; margin: 0 !important; width: 100% !important; height: 100% !important; box-shadow: none !important; }
+        }
+        
+        .page { width: 148mm; min-height: 210mm; padding: 10mm; margin: 1cm auto; background: white; border: 1px solid #d3d3d3; position: relative; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        
+        .invoice-header { border-bottom: 2px solid var(--dark-blue); padding-bottom: 10px; margin-bottom: 15px; }
+        .logo-img { max-height: 50px; width: auto; display: block; margin-bottom: 5px; }
+        .header-top { display: flex; justify-content: space-between; align-items: flex-start; }
+        .invoice-title { font-size: 20px; font-weight: 700; color: var(--dark-blue); text-transform: uppercase; }
+        .invoice-meta { font-size: 10px; text-align: right; color: #555; font-weight: 500; }
+
+        .bill-label { font-size: 9px; font-weight: 700; text-transform: uppercase; color: #777; margin-bottom: 2px; }
+        .bill-data { font-size: 11px; font-weight: 600; color: #333; margin-bottom: 0; }
+
+        .custom-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        .custom-table th { background-color: var(--dark-blue); color: white; padding: 6px 4px; text-align: left; font-weight: 600; font-size: 9px; text-transform: uppercase; }
+        .custom-table td { padding: 6px 4px; border-bottom: 1px solid #eee; font-size: 10px; color: #333; font-weight: 500; }
+        
+        .totals-area { display: flex; justify-content: flex-end; }
+        .totals-table { width: 100%; max-width: 200px; }
+        .totals-table td { padding: 3px 0; text-align: right; font-size: 11px; }
+        .total-final { font-size: 14px; font-weight: 700; color: var(--dark-blue); border-top: 1px solid #333; padding-top: 5px; }
+        
+        .footer-area { position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px 10mm; }
+        .bottom-bar { background-color: var(--dark-blue); color: white; padding: 5px 10px; font-size: 8px; text-align: center; border-radius: 3px; }
+    
+</style>
+    {% endif %}
 </head>
-<body>
+<body onload="window.print()">
 
 <div class="mobile-header no-print">
     <div style="font-size: 16px; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px;">
@@ -78,109 +122,122 @@
 <div class="sidebar-overlay no-print" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
 
-    <div class="container text-center mt-4 no-print">
-        <button onclick="window.print()" class="btn btn-primary px-5 py-2 fw-bold">🖨️ Click Here to Print Invoice</button>
-        <p class="mt-2 text-muted small">A4 size optimized</p>
+<div class="text-center mt-3 no-print">
+    <button onclick="window.print()" class="btn btn-primary btn-sm">🖨️ Print Project Details</button>
+    <a href="/manage_project/{{ project[0] }}" class="btn btn-secondary btn-sm">Back to Project</a>
+</div>
+
+<div class="page">
+    
+    <div class="invoice-header">
+        <div class="header-top">
+            <div>
+                {% if settings and settings|length > 6 and settings[6] %}
+                    <img src="{{ settings[6] if settings[6].startswith('http') else url_for('static', filename='uploads/logo/' + settings[6]) }}" alt="Logo" class="logo-img">
+                {% else %}
+                    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo-img">
+                {% endif %}
+                <div style="font-size: 14px; font-weight: 700; color: #333; text-transform: uppercase;">{{ settings[1] if settings else 'T&S PowerTech' }}</div>
+                <div style="font-size: 10px; color: #555; line-height: 1.3;">
+                    {{ settings[2] if settings else 'Address' }}<br>
+                    📞 {{ settings[3] if settings else 'Phone' }} | ✉️ {{ settings[4] if settings else 'Email' }}
+                </div>
+            </div>
+            <div>
+                <div class="invoice-title">PROJECT DETAILS</div>
+                <div class="invoice-meta">
+                    #PRJ-INV-{{ "%03d" % project[0] }}<br>
+                    Start Date: {{ project[4] }}<br> 
+                    Status: <strong>{{ project[5] }}</strong><br>
+                    Manager: <strong>{{ session['user_name'] }}</strong>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="invoice-container">
-        <div class="header-section d-flex justify-content-between align-items-start">
-            <div>
-                {% if sys_settings and sys_settings[6] %}
-                    <img src="{{ (sys_settings[6] if sys_settings[6] and (sys_settings[6]|string).startswith('http') else url_for('static', filename='uploads/logo/' + sys_settings[6])) }}" class="company-logo" alt="Logo">
-                {% endif %}
-                <h2 style="font-weight: 800; margin: 0; color: #000;">{{ sys_settings[1] if sys_settings else 'T&S PowerTech' }}</h2>
-                <p style="margin: 0; font-size: 12px; color: #555;">{{ sys_settings[2] }} | {{ sys_settings[3] }}</p>
-                <p style="margin: 0; font-size: 12px; color: #555;">{{ sys_settings[4] }}</p>
-            </div>
-            <div class="text-end">
-                <div class="invoice-title">Invoice</div>
-                <div class="info-label mt-3">Invoice No:</div>
-                <div class="info-value">#PRJ-INV-{{ "%03d" % project[0] }}</div>
-                <div class="info-label mt-2">Date:</div>
-                <div class="info-value"><script>document.write(new Date().toLocaleDateString());</script></div>
-            </div>
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="bill-label">Customer:</div>
+            <p class="bill-data">{{ project[2] }}</p> 
+            <div class="bill-label mt-1">Project Site:</div>
+            <p class="bill-data">{{ project[1] }} - {{ project[3] }}</p>
         </div>
+    </div>
 
-        <div class="row info-box">
-            <div class="col-6">
-                <div class="info-label">Customer Name / Bill To:</div>
-                <div class="info-value" style="font-size: 18px; font-weight: 700;">{{ project[2] }}</div>
-                <div class="info-label mt-3">Project Site:</div>
-                <div class="info-value">{{ project[1] }}</div>
-                <div class="info-value" style="font-size: 13px;">{{ project[3] }}</div>
-            </div>
-            <div class="col-6 text-end">
-                <div class="info-label">Project Status:</div>
-                <div class="badge bg-dark text-white">{{ project[5] }}</div>
-                <div class="info-label mt-3">Start Date:</div>
-                <div class="info-value">{{ project[4] }}</div>
-            </div>
-        </div>
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th width="5%" class="hide-thermal">#</th>
+                <th width="40%">Description</th>
+                <th width="15%" class="text-end hide-thermal">Price</th>
+                <th width="10%" class="text-center">Qty</th>
+                <th width="15%" class="text-end">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td colspan="5" style="background:#eee; font-weight:bold; text-align:center;">--- MATERIALS ---</td></tr>
+            {% for item in materials %}
+            <tr>
+                <td class="text-center hide-thermal">{{ loop.index }}</td>
+                <td>
+                    <div style="font-weight: 600;">{{ item[1] }}</div> 
+                    <div style="font-size: 9px; color: #666;">{{ item[2] }}</div>
+                </td>
+                <td class="text-end hide-thermal">{% if item[3] > 0 %}{{ "{:,.2f}".format(item[4]/item[3]) }}{% else %}0.00{% endif %}</td> 
+                <td class="text-center">{{ item[3] }}</td> 
+                <td class="text-end">{{ "{:,.2f}".format(item[4]) }}</td> 
+            </tr>
+            {% endfor %}
+            {% if labor_points %}
+            <tr><td colspan="5" style="background:#eee; font-weight:bold; text-align:center;">--- LABOR / POINTS ---</td></tr>
+            {% for l in labor_points %}
+            <tr>
+                <td class="text-center hide-thermal">{{ loop.index }}</td>
+                <td>
+                    <div style="font-weight: 600;">{{ l[2] }}</div> 
+                </td>
+                <td class="text-end hide-thermal">{{ "{:,.2f}".format(l[4]) }}</td> 
+                <td class="text-center">{{ l[3] }}</td> 
+                <td class="text-end">{{ "{:,.2f}".format(l[5]) }}</td> 
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
 
-        <h6 class="fw-bold text-uppercase border-bottom pb-2" style="font-size: 13px;">Material Summary</h6>
-        <table class="table-custom">
-            <thead>
-                <tr>
-                    <th width="50%">Item Description</th>
-                    <th class="text-center">Qty</th>
-                    <th class="text-end">Total (LKR)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for mat in materials %}
-                <tr>
-                    <td>{{ mat[1] }} <br><small class="text-muted">{{ mat[2] }}</small></td>
-                    <td class="text-center">{{ mat[3] }}</td>
-                    <td class="text-end">{{ "{:,.2f}".format(mat[4]) }}</td>
-                </tr>
-                {% endfor %}
-                {% if not materials %}
-                <tr><td colspan="3" class="text-center text-muted py-3">No materials recorded for this invoice.</td></tr>
-                {% endif %}
-            </tbody>
+    <div class="totals-area">
+        <table class="totals-table">
+            <tr>
+                <td>Subtotal (Materials):</td>
+                <td>{{ "{:,.2f}".format(total_cost) }}</td> 
+            </tr>
+            <tr>
+                <td>Subtotal (Labor):</td>
+                <td>{{ "{:,.2f}".format(total_labor) }}</td> 
+            </tr>
+            <tr>
+                <td class="total-final">Total Project Cost:</td>
+                <td class="total-final">{{ "{:,.2f}".format(total_cost + total_labor) }}</td> 
+            </tr>
         </table>
-
-        <div class="totals-section">
-            <div class="total-row">
-                <div class="total-label">Subtotal (Materials Only):</div>
-                <div class="total-val">LKR {{ "{:,.2f}".format(total_cost) }}</div>
-            </div>
-            
-            {% set budget = project[6] or 0 %}
-            {% set received = project[7] or 0 %}
-            {% set balance = budget - received %}
-
-            <div class="total-row">
-                <div class="total-label">Estimated Project Value:</div>
-                <div class="total-val">LKR {{ "{:,.2f}".format(budget) }}</div>
-            </div>
-            <div class="total-row">
-                <div class="total-label" style="color: #2ecc71;">Total Payments Received:</div>
-                <div class="total-val" style="color: #2ecc71;">- LKR {{ "{:,.2f}".format(received) }}</div>
-            </div>
-            <div class="total-row grand-total">
-                <div class="total-label" style="color: #000;">Pending Balance Due:</div>
-                <div class="total-val">LKR {{ "{:,.2f}".format(balance) }}</div>
-            </div>
-        </div>
-
-        <div class="signature-box">
-            <div>
-                <div class="sig-line">Prepared By / Issued By</div>
-                <div class="text-center small text-muted">{{ session['user_name'] }}</div>
-            </div>
-            <div>
-                <div class="sig-line">Customer Signature / Date</div>
-                <div class="text-center small text-muted">Confirming materials & work</div>
-            </div>
-        </div>
-
-        <div class="footer-note text-center">
-            <p class="mb-1"><strong>Thank you for your business!</strong></p>
-            <p>This is a computer-generated document. For any inquiries, please contact us at {{ sys_settings[4] }}.</p>
-        </div>
     </div>
 
+    <div class="footer-area">
+        {% if settings and settings|length > 7 and settings[7] %}
+        <div style="font-size: 9px; font-weight: 600; text-align: center; color: #333; margin-bottom: 5px; border-top: 1px dashed #ccc; padding-top: 5px;">
+            SERVICES: {{ settings[7] }}
+        </div>
+        {% endif %}
+        
+        <div class="text-center mb-2" style="font-size: 9px; color: #555;">
+            <strong>Thank you for your business!</strong><br>
+            {{ settings[8] if settings and settings|length > 8 and settings[8] else 'Goods once sold will not be taken back.' }}
+        </div>
+        <div class="bottom-bar" style="background-color: var(--dark-blue); color: white; padding: 5px; font-size: 9px; font-weight: bold; border-radius: 4px;">
+            Hotline: {{ settings[3] if settings else '074-0018697' }}
+        </div>
+    </div>
+    
+</div>
 </body>
 </html>

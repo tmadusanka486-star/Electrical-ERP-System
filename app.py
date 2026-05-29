@@ -335,8 +335,11 @@ def add_project_payment(project_id):
 def print_invoice(project_id):
     project = db.get_project(project_id)
     materials = db.get_project_materials(project_id)
-    total_cost = sum(m[4] for m in materials) if materials else 0
-    return render_template('invoice.html', project=project, materials=materials, total_cost=total_cost)
+    labor_points = db.get_project_labor(project_id)
+    settings_data = db.get_settings()
+    total_materials = sum(m[4] for m in materials) if materials else 0
+    total_labor = sum(l[5] for l in labor_points) if labor_points else 0
+    return render_template('invoice.html', project=project, materials=materials, labor_points=labor_points, total_cost=total_materials, total_labor=total_labor, settings=settings_data)
 
 # --- Customers ---
 @app.route('/customers')
