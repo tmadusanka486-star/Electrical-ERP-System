@@ -584,8 +584,13 @@ def save_payroll():
     basic = float(request.form['basic'])
     allowance = float(request.form.get('allowance', 0))
     deduction = float(request.form.get('deduction', 0))
-    net_salary = basic + allowance - deduction
-    db.save_payroll(emp_id, month, basic, allowance, deduction, net_salary)
+    ot_hours = float(request.form.get('ot_hours', 0))
+    ot_payment = float(request.form.get('ot_payment', 0))
+    allowance_reason = request.form.get('allowance_reason', '')
+    deduction_reason = request.form.get('deduction_reason', '')
+    
+    net_salary = basic + allowance + ot_payment - deduction
+    db.save_payroll(emp_id, month, basic, allowance, deduction, net_salary, ot_hours, ot_payment, allowance_reason, deduction_reason)
     return redirect(url_for('payroll', month=month))
 
 @app.route('/print_paysheets/<month>')

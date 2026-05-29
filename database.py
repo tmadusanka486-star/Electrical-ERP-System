@@ -289,6 +289,10 @@ class Database:
         self.cursor.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS nic_doc TEXT")
         self.cursor.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS passport_doc TEXT")
         self.cursor.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS other_docs TEXT")
+        self.cursor.execute("ALTER TABLE payroll ADD COLUMN IF NOT EXISTS ot_hours REAL DEFAULT 0")
+        self.cursor.execute("ALTER TABLE payroll ADD COLUMN IF NOT EXISTS ot_payment REAL DEFAULT 0")
+        self.cursor.execute("ALTER TABLE payroll ADD COLUMN IF NOT EXISTS allowance_reason TEXT")
+        self.cursor.execute("ALTER TABLE payroll ADD COLUMN IF NOT EXISTS deduction_reason TEXT")
         self.conn.commit()
 
 
@@ -641,24 +645,24 @@ class Database:
     # --- Payroll Functions ---
     def get_payroll_by_month(self, month):
         self.cursor.execute("""
-            SELECT e.id, e.name, e.role, e.basic_salary, p.allowance, p.deduction, p.net_salary
+            SELECT e.id, e.name, e.role, e.basic_salary, p.allowance, p.deduction, p.net_salary, p.ot_hours, p.ot_payment, p.allowance_reason, p.deduction_reason
             FROM employees e
             LEFT JOIN payroll p ON e.id = p.emp_id AND p.month = %s
         """, (month,))
         return self.cursor.fetchall()
 
-    def save_payroll(self, emp_id, month, basic, allowance, deduction, net):
+    def save_payroll(self, emp_id, month, basic, allowance, deduction, net, ot_hours=0, ot_payment=0, allowance_reason="", deduction_reason=""):
         self.cursor.execute("SELECT id FROM payroll WHERE emp_id = %s AND month = %s", (emp_id, month))
         row = self.cursor.fetchone()
         if row:
             self.cursor.execute("""
-                UPDATE payroll SET basic_salary=%s, allowance=%s, deduction=%s, net_salary=%s WHERE id=%s
-            """, (basic, allowance, deduction, net, row[0]))
+                UPDATE payroll SET basic_salary=%s, allowance=%s, deduction=%s, net_salary=%s, ot_hours=%s, ot_payment=%s, allowance_reason=%s, deduction_reason=%s WHERE id=%s
+            """, (basic, allowance, deduction, net, ot_hours, ot_payment, allowance_reason, deduction_reason, row[0]))
         else:
             self.cursor.execute("""
-                INSERT INTO payroll (emp_id, month, basic_salary, allowance, deduction, net_salary)
-                VALUES (%s, %s, %s, %s, %s, %s)
-            """, (emp_id, month, basic, allowance, deduction, net))
+                INSERT INTO payroll (emp_id, month, basic_salary, allowance, deduction, net_salary, ot_hours, ot_payment, allowance_reason, deduction_reason)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (emp_id, month, basic, allowance, deduction, net, ot_hours, ot_payment, allowance_reason, deduction_reason))
         self.conn.commit()
 
 
