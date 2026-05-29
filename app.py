@@ -377,8 +377,15 @@ def save_invoice():
         customer_id = None
     customer_name = data.get('customer_name')
     cart = data.get('cart', [])
-    discount = float(data.get('discount', 0))
+    
+    raw_discount = data.get('discount', 0)
+    try:
+        discount = float(raw_discount) if raw_discount != "" else 0.0
+    except (ValueError, TypeError):
+        discount = 0.0
+        
     payment_method = data.get('payment_method', 'Cash') 
+    
     if not cart:
         return jsonify({'success': False, 'message': 'Cart is empty!'})
     invoice_id = db.create_invoice(customer_id, customer_name, cart, discount, payment_method)
