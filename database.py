@@ -325,13 +325,19 @@ class Database:
         except:
             self.conn.rollback()
             
+        self.cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='expenses'")
+        cols = [r[0] for r in self.cursor.fetchall()]
+        
         try:
             from flask import session
             added_by = session.get('user_name', 'Unknown')
         except:
             added_by = 'Unknown'
             
-        self.cursor.execute("INSERT INTO expenses (shop_id, branch_id, expense_date, category, description, amount, added_by) VALUES (%s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, date, category, desc, amount, added_by))
+        if 'added_by' in cols:
+            self.cursor.execute("INSERT INTO expenses (shop_id, branch_id, expense_date, category, description, amount, added_by) VALUES (%s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, date, category, desc, amount, added_by))
+        else:
+            self.cursor.execute("INSERT INTO expenses (shop_id, branch_id, expense_date, category, description, amount) VALUES (%s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, date, category, desc, amount))
         
     def get_all_expenses(self):
         try:
@@ -341,7 +347,20 @@ class Database:
         except:
             self.conn.rollback()
             
-        self.cursor.execute("SELECT id, COALESCE(expense_date, TO_CHAR(date_added, 'YYYY-MM-DD')), COALESCE(category, 'Other'), description, amount, added_by FROM expenses WHERE shop_id=%s ORDER BY id DESC", (self.shop_id,))
+        self.cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='expenses'")
+        cols = [r[0] for r in self.cursor.fetchall()]
+        
+        date_col = "expense_date"
+        if "date_added" in cols:
+            date_col = "COALESCE(expense_date, TO_CHAR(date_added, 'YYYY-MM-DD'))"
+        elif "date" in cols:
+            date_col = "COALESCE(expense_date, TO_CHAR(date, 'YYYY-MM-DD'))"
+            
+        cat_col = "category" if "category" in cols else "'Other'"
+        added_by_col = "added_by" if "added_by" in cols else "''"
+            
+        query = f"SELECT id, {date_col}, {cat_col}, description, amount, {added_by_col} FROM expenses WHERE shop_id=%s ORDER BY id DESC"
+        self.cursor.execute(query, (self.shop_id,))
         return self.cursor.fetchall()
     def create_quotation(self, customer_name, phone, items, discount=0):
         t = sum(i['price'] * i['qty'] for i in items)
