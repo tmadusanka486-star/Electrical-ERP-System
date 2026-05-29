@@ -558,7 +558,13 @@ def edit_employee(emp_id):
 def delete_employee(emp_id):
     success, msg = db.delete_employee(emp_id)
     if not success:
-        return f"<script>alert('{msg}'); window.location.href='/employees';</script>"
+        return f"""
+        <div style="padding: 20px; font-family: sans-serif; text-align: center;">
+            <h2 style="color: red;">Error Deleting Employee</h2>
+            <p>{msg}</p>
+            <button onclick="window.history.back()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Go Back</button>
+        </div>
+        """
     return redirect(url_for('employees'))
 
 # --- Payroll ---
