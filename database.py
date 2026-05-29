@@ -293,6 +293,8 @@ class Database:
         self.cursor.execute("ALTER TABLE payroll ADD COLUMN IF NOT EXISTS ot_payment REAL DEFAULT 0")
         self.cursor.execute("ALTER TABLE payroll ADD COLUMN IF NOT EXISTS allowance_reason TEXT")
         self.cursor.execute("ALTER TABLE payroll ADD COLUMN IF NOT EXISTS deduction_reason TEXT")
+        self.cursor.execute("ALTER TABLE settings ADD COLUMN IF NOT EXISTS services_list TEXT")
+        self.cursor.execute("ALTER TABLE settings ADD COLUMN IF NOT EXISTS terms_conditions TEXT")
         self.conn.commit()
 
 
@@ -581,22 +583,22 @@ class Database:
 
     # --- Settings Functions ---
     def get_settings(self):
-        self.cursor.execute("SELECT id, company_name, address, phone, email, printer_type, logo FROM settings WHERE id = 1")
+        self.cursor.execute("SELECT id, company_name, address, phone, email, printer_type, logo, services_list, terms_conditions FROM settings WHERE id = 1")
         return self.cursor.fetchone()
 
-    def update_settings(self, name, address, phone, email, printer_type, logo=None):
+    def update_settings(self, name, address, phone, email, printer_type, services_list="", terms_conditions="", logo=None):
         self.cursor.execute("SELECT id FROM settings WHERE id=1")
         if not self.cursor.fetchone():
             self.cursor.execute("INSERT INTO settings (company_name) VALUES ('T&S PowerTech')")
             
         if logo:
             self.cursor.execute("""
-                UPDATE settings SET company_name=%s, address=%s, phone=%s, email=%s, printer_type=%s, logo=%s WHERE id=1
-            """, (name, address, phone, email, printer_type, logo))
+                UPDATE settings SET company_name=%s, address=%s, phone=%s, email=%s, printer_type=%s, services_list=%s, terms_conditions=%s, logo=%s WHERE id=1
+            """, (name, address, phone, email, printer_type, services_list, terms_conditions, logo))
         else:
             self.cursor.execute("""
-                UPDATE settings SET company_name=%s, address=%s, phone=%s, email=%s, printer_type=%s WHERE id=1
-            """, (name, address, phone, email, printer_type))
+                UPDATE settings SET company_name=%s, address=%s, phone=%s, email=%s, printer_type=%s, services_list=%s, terms_conditions=%s WHERE id=1
+            """, (name, address, phone, email, printer_type, services_list, terms_conditions))
         self.conn.commit()
 
 
@@ -736,3 +738,86 @@ class Database:
     def get_pq_items(self, pq_id):
         self.cursor.execute("SELECT * FROM pq_items WHERE pq_id = %s", (pq_id,))
         return self.cursor.fetchall()
+
+    # --- Database Backup & Restore ---
+    def backup_database(self):
+        import json
+        tables = ['settings', 'customers', 'products', 'suppliers', 'employees', 
+                  'inventory_returns', 'purchases', 'payroll', 'expenses', 'projects', 
+                  'quotations', 'quotation_items', 'project_quotations', 'pq_items', 
+                  'invoices', 'invoice_items']
+        
+        backup_data = {}
+        for table in tables:
+            self.cursor.execute(f"SELECT * FROM {table}")
+            rows = self.cursor.fetchall()
+            if not rows:
+                backup_data[table] = []
+                continue
+            colnames = [desc[0] for desc in self.cursor.description]
+            table_data = []
+            for row in rows:
+                row_dict = {}
+                for idx, col in enumerate(colnames):
+                    val = row[idx]
+                    if hasattr(val, 'isoformat'):
+                        val = val.isoformat()
+                    row_dict[col] = val
+                table_data.append(row_dict)
+            backup_data[table] = table_data
+            
+        return json.dumps(backup_data)
+
+    def restore_database(self, json_data):
+        import json
+        try:
+            data = json.loads(json_data)
+            
+            # Wiping tables in reverse dependency order
+            tables = ['invoice_items', 'invoices', 'pq_items', 'project_quotations', 
+                      'quotation_items', 'quotations', 'projects', 'expenses', 
+                      'payroll', 'purchases', 'inventory_returns', 'products', 
+                      'suppliers', 'employees', 'customers', 'settings']
+            
+            for table in tables:
+                self.cursor.execute(f"TRUNCATE TABLE {table} RESTART IDENTITY CASCADE")
+                
+            # Restoring tables in correct dependency order
+            restore_order = ['settings', 'customers', 'products', 'suppliers', 'employees', 
+                             'inventory_returns', 'purchases', 'payroll', 'expenses', 'projects', 
+                             'quotations', 'project_quotations', 'quotation_items', 'pq_items', 
+                             'invoices', 'invoice_items']
+                             
+            for table in restore_order:
+                rows = data.get(table, [])
+                if rows:
+                    cols = list(rows[0].keys())
+                    col_names = ', '.join(cols)
+                    placeholders = ', '.join(['%s'] * len(cols))
+                    query = f"INSERT INTO {table} ({col_names}) VALUES ({placeholders})"
+                    for row in rows:
+                        self.cursor.execute(query, [row[c] for c in cols])
+            self.conn.commit()
+            return True, "Database restored successfully!"
+        except Exception as e:
+            self.conn.rollback()
+            return False, f"Restore failed: {str(e)}"
+
+    def reset_database(self):
+        try:
+            tables_to_wipe = ['invoice_items', 'invoices', 'pq_items', 'project_quotations', 
+                              'quotation_items', 'quotations', 'projects', 'expenses', 
+                              'payroll', 'purchases', 'inventory_returns', 'products', 
+                              'suppliers', 'customers']
+            for table in tables_to_wipe:
+                self.cursor.execute(f"TRUNCATE TABLE {table} RESTART IDENTITY CASCADE")
+            
+            # Wipe employees except admin
+            self.cursor.execute("DELETE FROM payroll")
+            self.cursor.execute("DELETE FROM employees WHERE role != 'Admin' AND id != 1")
+            
+            self.conn.commit()
+            return True, "System reset successfully!"
+        except Exception as e:
+            self.conn.rollback()
+            return False, f"Reset failed: {str(e)}"

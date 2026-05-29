@@ -632,20 +632,61 @@ def update_settings():
     phone = request.form['phone']
     email = request.form['email']
     printer_type = request.form['printer_type'] 
+    services_list = request.form.get('services_list', '')
+    terms_conditions = request.form.get('terms_conditions', '')
     logo_file = request.files.get('logo')
     logo_name = None
     if logo_file and logo_file.filename != '':
         logo_name = upload_file_to_storage(logo_file, LOGO_FOLDER)
-    db.update_settings(name, address, phone, email, printer_type, logo_name)
+    db.update_settings(name, address, phone, email, printer_type, services_list, terms_conditions, logo_name)
+    flash("Settings updated successfully", "success")
     return redirect(url_for('settings'))
 
-@app.route('/backup_db')
-@requires_permission('settings')
-def backup_db():
+@app.route('/api/backup')
+def api_backup():
     try:
-        return send_file('electrical_erp.db', as_attachment=True, download_name='T&S_Backup.db')
+        json_data = db.backup_database()
+        from flask import Response
+        return Response(
+            json_data,
+            mimetype="application/json",
+            headers={"Content-disposition": "attachment; filename=ERP_Backup.json"}
+        )
     except Exception as e:
-        return str(e)
+        return str(e), 500
+
+@app.route('/api/restore', methods=['POST'])
+@requires_permission('settings')
+def api_restore():
+    if 'backup_file' not in request.files:
+        flash("No file part", "error")
+        return redirect(url_for('settings'))
+    file = request.files['backup_file']
+    if file.filename == '':
+        flash("No selected file", "error")
+        return redirect(url_for('settings'))
+    
+    try:
+        json_data = file.read().decode('utf-8')
+        success, msg = db.restore_database(json_data)
+        if success:
+            flash(msg, "success")
+        else:
+            flash(msg, "error")
+    except Exception as e:
+        flash(f"Invalid file format: {str(e)}", "error")
+        
+    return redirect(url_for('settings'))
+
+@app.route('/api/reset', methods=['POST'])
+@requires_permission('settings')
+def api_reset():
+    success, msg = db.reset_database()
+    if success:
+        flash(msg, "success")
+    else:
+        flash(msg, "error")
+    return redirect(url_for('settings'))
 
 # --- Expenses Management ---
 @app.route('/expenses')
