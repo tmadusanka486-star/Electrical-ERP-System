@@ -249,7 +249,17 @@ class Database:
         self.cursor.execute("SELECT SUM(final_amount) FROM invoices WHERE shop_id=%s AND to_char(date_created, 'YYYY-MM') = to_char(CURRENT_DATE, 'YYYY-MM')", (self.shop_id,))
         month_sales = self.cursor.fetchone()[0] or 0
         
-        self.cursor.execute("SELECT SUM(amount) FROM expenses WHERE shop_id=%s AND to_char(date_added, 'YYYY-MM') = to_char(CURRENT_DATE, 'YYYY-MM')", (self.shop_id,))
+        # Try to get monthly expenses - handle if date column doesn't exist
+        try:
+            self.cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='expenses' AND column_name IN ('date_added','date_created','created_at') LIMIT 1")
+            date_col_row = self.cursor.fetchone()
+            if date_col_row:
+                date_col = date_col_row[0]
+                self.cursor.execute(f"SELECT SUM(amount) FROM expenses WHERE shop_id=%s AND to_char({date_col}, 'YYYY-MM') = to_char(CURRENT_DATE, 'YYYY-MM')", (self.shop_id,))
+            else:
+                self.cursor.execute("SELECT SUM(amount) FROM expenses WHERE shop_id=%s", (self.shop_id,))
+        except:
+            self.cursor.execute("SELECT SUM(amount) FROM expenses WHERE shop_id=%s", (self.shop_id,))
         month_expenses = self.cursor.fetchone()[0] or 0
         
         month_profit = float(month_sales) - float(month_expenses)

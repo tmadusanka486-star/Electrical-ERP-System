@@ -231,7 +231,10 @@ def index():
     low_stock_items = db.get_low_stock_items()
     current_month = datetime.datetime.now().strftime('%Y-%m')
     all_expenses = db.get_all_expenses()
-    month_expenses = sum(exp[4] for exp in all_expenses if exp[1].startswith(current_month))
+    try:
+        month_expenses = sum(exp[4] for exp in all_expenses if str(exp[1]).startswith(current_month))
+    except:
+        month_expenses = sum(exp[4] for exp in all_expenses) if all_expenses else 0
     return render_template('dashboard.html', stats=stats, low_stock_items=low_stock_items, month_expenses=month_expenses)
 
 @app.route('/super_admin_dashboard')
