@@ -249,7 +249,7 @@ class Database:
         self.cursor.execute("SELECT SUM(final_amount) FROM invoices WHERE shop_id=%s AND to_char(date_created, 'YYYY-MM') = to_char(CURRENT_DATE, 'YYYY-MM')", (self.shop_id,))
         month_sales = self.cursor.fetchone()[0] or 0
         
-        self.cursor.execute("SELECT SUM(amount) FROM expenses WHERE shop_id=%s AND to_char(date, 'YYYY-MM') = to_char(CURRENT_DATE, 'YYYY-MM')", (self.shop_id,))
+        self.cursor.execute("SELECT SUM(amount) FROM expenses WHERE shop_id=%s AND to_char(date_added, 'YYYY-MM') = to_char(CURRENT_DATE, 'YYYY-MM')", (self.shop_id,))
         month_expenses = self.cursor.fetchone()[0] or 0
         
         month_profit = float(month_sales) - float(month_expenses)
