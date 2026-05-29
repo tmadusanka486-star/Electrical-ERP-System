@@ -259,7 +259,7 @@ def super_admin_dashboard():
     shops = db.get_all_shops()
     branches = db.get_all_branches()
     stats = {
-        'total_revenue': sum(s[4] for s in shops if s[4]),
+        'total_revenue': db.get_aggregated_revenue(),
         'total_shops': len(shops)
     }
     return render_template('super_admin_dashboard.html', shops=shops, branches=branches, stats=stats)
