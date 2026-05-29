@@ -311,8 +311,10 @@ def manage_project(project_id):
     project = db.get_project_by_id(project_id)
     products = db.get_inventory_for_projects() 
     materials = db.get_project_materials(project_id)
+    labor_points = db.get_project_labor(project_id)
     total_cost = sum(mat[4] for mat in materials) if materials else 0
-    return render_template('manage_project.html', project=project, products=products, materials=materials, total_cost=total_cost)
+    total_labor = sum(l[5] for l in labor_points) if labor_points else 0
+    return render_template('manage_project.html', project=project, products=products, materials=materials, labor_points=labor_points, total_cost=total_cost, total_labor=total_labor)
 
 @app.route('/update_project_status/<int:project_id>', methods=['POST'])
 @requires_permission('projects')
@@ -745,22 +747,40 @@ def add_expense():
 @app.route('/add_project_material', methods=['POST'])
 @requires_permission('projects')
 def add_project_material():
-    # HTML Form එකේ hidden field එකෙන් එන project_id එක ගන්නවා
-    pid = request.form.get('project_id')
-    # Select box එකේ නම inventory_id නිසා ඒක මෙතනට ගන්නවා
-    prod_id = request.form.get('inventory_id') 
+    project_id = request.form.get('project_id')
+    inventory_id = request.form.get('inventory_id')
     qty = request.form.get('qty')
     
-    if pid and prod_id and qty:
-        try:
-            # Database එකට data යවනවා
-            db.add_item_to_project(int(pid), int(prod_id), float(qty))
-            # ආපහු manage_project පිටුවටම යවනවා (පරාමිතිය project_id ලෙස දිය යුතුයි)
-            return redirect(url_for('manage_project', project_id=pid))
-        except Exception as e:
-            return f"Database Error: {str(e)}"
+    if project_id and inventory_id and qty:
+        qty = float(qty)
+        product = db.get_product_by_id(inventory_id)
+        if not product or product[11] < qty:
+            flash("Not enough stock!", "danger")
+            return redirect(url_for('manage_project', project_id=project_id))
             
-    return "Error: දත්ත අසම්පූර්ණයි!", 400
+        total_cost = product[7] * qty  # Using selling price
+        try:
+            db.add_project_material(int(project_id), int(inventory_id), qty, total_cost)
+            flash("Material added successfully.", "success")
+        except Exception as e:
+            flash(f"Database Error: {str(e)}", "danger")
+        return redirect(url_for('manage_project', project_id=project_id))
+    return "Error: Incomplete data!", 400
+
+@app.route('/add_project_labor', methods=['POST'])
+@requires_permission('projects')
+def add_project_labor():
+    project_id = request.form.get('project_id')
+    description = request.form.get('description')
+    qty = float(request.form.get('qty') or 1)
+    rate = float(request.form.get('rate') or 0)
+    
+    if project_id and description:
+        total = qty * rate
+        db.add_project_labor(int(project_id), description, qty, rate, total)
+        flash("Labor/Work Point added successfully.", "success")
+        return redirect(url_for('manage_project', project_id=project_id))
+    return "Error: Incomplete data!", 400
 
 # --- Quotations ---
 @app.route('/quotations')

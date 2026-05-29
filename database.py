@@ -140,6 +140,20 @@ class Database:
             reason TEXT
         )
         """)
+        
+        # Project Labor Table
+        self.cursor.execute("""
+        CREATE TABLE IF NOT EXISTS project_labor (
+            id SERIAL PRIMARY KEY,
+            project_id INTEGER,
+            description TEXT NOT NULL,
+            qty REAL,
+            rate REAL,
+            total REAL,
+            date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(project_id) REFERENCES projects(id)
+        )
+        """)
         self.conn.commit()
 
         # Suppliers Table 
@@ -463,6 +477,17 @@ class Database:
         self.cursor.execute("UPDATE products SET current_stock = current_stock - %s WHERE id = %s", (qty, product_id))
         self.conn.commit()
         
+    def add_project_labor(self, project_id, description, qty, rate, total):
+        self.cursor.execute("""
+            INSERT INTO project_labor (project_id, description, qty, rate, total) 
+            VALUES (%s, %s, %s, %s, %s)
+        """, (project_id, description, qty, rate, total))
+        self.conn.commit()
+        
+    def get_project_labor(self, project_id):
+        self.cursor.execute("SELECT * FROM project_labor WHERE project_id = %s ORDER BY id ASC", (project_id,))
+        return self.cursor.fetchall()
+        
     def generate_project_invoice(self, project_id):
         # Fetch project details
         self.cursor.execute("SELECT project_name, customer_name, estimated_cost FROM projects WHERE id=%s", (project_id,))
@@ -491,22 +516,18 @@ class Database:
                 'total': float(m[2]) * float(m[3])
             })
             
-        # Add labor/service fee if budget > materials selling price total
-        materials_total = sum(item['total'] for item in cart_items)
-        if budget and budget > materials_total:
-            labor_fee = budget - materials_total
+        # Fetch labor points
+        labor_points = self.get_project_labor(project_id)
+        for l in labor_points:
             cart_items.append({
                 'id': 0,
-                'name': f'Service/Labor Charge ({p_name})',
-                'qty': 1,
-                'price': labor_fee,
-                'total': labor_fee
+                'name': f"{l[2]} (Project: {p_name})",
+                'qty': float(l[3]),
+                'price': float(l[4]),
+                'total': float(l[5])
             })
             
         # Create the invoice (discount 0, Cash payment)
-        # Note: stock was already deducted when material was added to project, so create_invoice shouldn't deduct again!
-        # Wait, create_invoice WILL deduct stock. So we can't use standard create_invoice directly, or we need a flag.
-        
         total_amount = sum(item['total'] for item in cart_items)
         
         self.cursor.execute("""
