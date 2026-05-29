@@ -80,7 +80,7 @@ class Database:
         self.cursor.execute("CREATE TABLE IF NOT EXISTS settings (id INTEGER PRIMARY KEY CHECK (id = 1), company_name TEXT, address TEXT, phone TEXT, email TEXT, logo TEXT, printer_type TEXT DEFAULT 'A4', services_list TEXT, terms_conditions TEXT)")
         self.cursor.execute("CREATE TABLE IF NOT EXISTS employees (id SERIAL PRIMARY KEY, name TEXT NOT NULL, phone TEXT, role TEXT, basic_salary REAL, username TEXT, password TEXT, permissions TEXT, photo TEXT, certificate TEXT, nic_doc TEXT, passport_doc TEXT, other_docs TEXT)")
         self.cursor.execute("CREATE TABLE IF NOT EXISTS payroll (id SERIAL PRIMARY KEY, emp_id INTEGER, month TEXT, basic_salary REAL, allowance REAL, deduction REAL, net_salary REAL, ot_hours REAL DEFAULT 0, ot_payment REAL DEFAULT 0, allowance_reason TEXT, deduction_reason TEXT, FOREIGN KEY(emp_id) REFERENCES employees(id))")
-        self.cursor.execute("CREATE TABLE IF NOT EXISTS expenses (id SERIAL PRIMARY KEY, description TEXT NOT NULL, amount REAL NOT NULL, date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP, added_by TEXT)")
+        self.cursor.execute("CREATE TABLE IF NOT EXISTS expenses (id SERIAL PRIMARY KEY, expense_date TEXT, category TEXT, description TEXT NOT NULL, amount REAL NOT NULL, date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP, added_by TEXT)")
         self.cursor.execute("CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL)")
         self.cursor.execute("CREATE TABLE IF NOT EXISTS quotations (id SERIAL PRIMARY KEY, customer_name TEXT, customer_phone TEXT, date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, total_amount REAL, discount REAL DEFAULT 0, final_amount REAL)")
         self.cursor.execute("CREATE TABLE IF NOT EXISTS quotation_items (id SERIAL PRIMARY KEY, quotation_id INTEGER, product_id INTEGER, item_name TEXT, qty REAL, unit_price REAL, total_price REAL, FOREIGN KEY(quotation_id) REFERENCES quotations(id) ON DELETE CASCADE)")
@@ -317,10 +317,31 @@ class Database:
         return self.cursor.fetchall()
     def save_payroll(self, emp_id, month, basic, allowance, deduction, net, ot_hours, ot_payment, all_reason, ded_reason):
         self.cursor.execute("INSERT INTO payroll (shop_id, branch_id, emp_id, month, basic_salary, allowance, deduction, net_salary, ot_hours, ot_payment, allowance_reason, deduction_reason) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, emp_id, month, basic, allowance, deduction, net, ot_hours, ot_payment, all_reason, ded_reason))
-    def add_expense(self, desc, amount, added_by):
-        self.cursor.execute("INSERT INTO expenses (shop_id, branch_id, description, amount, added_by) VALUES (%s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, desc, amount, added_by))
+    def add_expense(self, date, category, desc, amount):
+        try:
+            self.cursor.execute("ALTER TABLE expenses ADD COLUMN IF NOT EXISTS expense_date TEXT;")
+            self.cursor.execute("ALTER TABLE expenses ADD COLUMN IF NOT EXISTS category TEXT;")
+            self.conn.commit()
+        except:
+            self.conn.rollback()
+            
+        try:
+            from flask import session
+            added_by = session.get('user_name', 'Unknown')
+        except:
+            added_by = 'Unknown'
+            
+        self.cursor.execute("INSERT INTO expenses (shop_id, branch_id, expense_date, category, description, amount, added_by) VALUES (%s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, date, category, desc, amount, added_by))
+        
     def get_all_expenses(self):
-        self.cursor.execute("SELECT * FROM expenses WHERE shop_id=%s ORDER BY id DESC", (self.shop_id,))
+        try:
+            self.cursor.execute("ALTER TABLE expenses ADD COLUMN IF NOT EXISTS expense_date TEXT;")
+            self.cursor.execute("ALTER TABLE expenses ADD COLUMN IF NOT EXISTS category TEXT;")
+            self.conn.commit()
+        except:
+            self.conn.rollback()
+            
+        self.cursor.execute("SELECT id, COALESCE(expense_date, TO_CHAR(date_added, 'YYYY-MM-DD')), COALESCE(category, 'Other'), description, amount, added_by FROM expenses WHERE shop_id=%s ORDER BY id DESC", (self.shop_id,))
         return self.cursor.fetchall()
     def create_quotation(self, customer_name, phone, items, discount=0):
         t = sum(i['price'] * i['qty'] for i in items)

@@ -896,10 +896,15 @@ def quotations():
     products = db.get_all_products()
     return render_template('quotations.html', quotations=all_q, products=products)
 @app.route('/save_quotation', methods=['POST'])
+@requires_permission('quotations')
 def save_quotation():
-    data = request.get_json()
-    q_id = db.create_quotation(data['name'], data['phone'], data['cart'], data['total'], data['notes'])
-    return jsonify({'success': True, 'q_id': q_id})
+    try:
+        data = request.get_json()
+        q_id = db.create_quotation(data['name'], data['phone'], data['cart'], 0)
+        return jsonify({'success': True, 'q_id': q_id})
+    except Exception as e:
+        print(f"Error saving quotation: {e}")
+        return jsonify({'success': False, 'error': str(e)})
 
 @app.route('/print_quotation/<int:q_id>')
 def print_quotation(q_id):
