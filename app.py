@@ -371,25 +371,30 @@ def billing():
 @app.route('/save_invoice', methods=['POST'])
 @requires_permission('billing')
 def save_invoice():
-    data = request.get_json()
-    customer_id = data.get('customer_id')
-    if not customer_id:
-        customer_id = None
-    customer_name = data.get('customer_name')
-    cart = data.get('cart', [])
-    
-    raw_discount = data.get('discount', 0)
     try:
-        discount = float(raw_discount) if raw_discount != "" else 0.0
-    except (ValueError, TypeError):
-        discount = 0.0
+        data = request.get_json()
+        customer_id = data.get('customer_id')
+        if not customer_id:
+            customer_id = None
+        customer_name = data.get('customer_name')
+        cart = data.get('cart', [])
         
-    payment_method = data.get('payment_method', 'Cash') 
-    
-    if not cart:
-        return jsonify({'success': False, 'message': 'Cart is empty!'})
-    invoice_id = db.create_invoice(customer_id, customer_name, cart, discount, payment_method)
-    return jsonify({'success': True, 'invoice_id': invoice_id})
+        raw_discount = data.get('discount', 0)
+        try:
+            discount = float(raw_discount) if raw_discount != "" else 0.0
+        except (ValueError, TypeError):
+            discount = 0.0
+            
+        payment_method = data.get('payment_method', 'Cash') 
+        
+        if not cart:
+            return jsonify({'success': False, 'message': 'Cart is empty!'})
+        invoice_id = db.create_invoice(customer_id, customer_name, cart, discount, payment_method)
+        return jsonify({'success': True, 'invoice_id': invoice_id})
+    except Exception as e:
+        import traceback
+        err_msg = traceback.format_exc()
+        return jsonify({'success': False, 'message': f'Server Error: {str(e)} | Trace: {err_msg}'})
 
 @app.route('/print_bill/<int:invoice_id>')
 @requires_permission('billing')
