@@ -318,8 +318,8 @@
                 {% for emp in employees %}
                 <tr>
                     <td>
-                        {% if emp|length > 5 and emp[5] %}
-                            <img src="{{ (emp[5] if emp[5] and (emp[5]|string).startswith('http') else url_for('static', filename='uploads/employees/' + emp[5])) }}" class="emp-photo" alt="Profile">
+                        {% if emp|length > 8 and emp[8] %}
+                            <img src="{{ (emp[8] if emp[8] and (emp[8]|string).startswith('http') else url_for('static', filename='uploads/employees/' + emp[8])) }}" class="emp-photo" alt="Profile">
                         {% else %}
                             <div class="emp-photo d-flex justify-content-center align-items-center" style="background: #444; color: #888; font-size: 20px;">👤</div>
                         {% endif %}
@@ -328,13 +328,13 @@
                         {{ emp[1] }}
                         <div style="font-size: 10px; color: #888;">
                             Emp ID: <span class="text-warning">EMP-{{ "%03d" % emp[0] }}</span> | 
-                            {% if emp|length > 7 and emp[7] %}Username: <span class="text-info">{{ emp[7] }}</span>{% else %}No Login Access{% endif %}
+                            {% if emp|length > 5 and emp[5] %}Username: <span class="text-info">{{ emp[5] }}</span>{% else %}No Login Access{% endif %}
                         </div>
                     </td>
                     <td><span class="role-badge">{{ emp[3] }}</span></td>
                     <td style="font-size: 11px; color: #aaa;">
-                        {% if emp|length > 9 and emp[9] %}
-                            {{ emp[9].replace(',', ' | ').title() }}
+                        {% if emp|length > 7 and emp[7] %}
+                            {{ emp[7].replace(',', ' | ').title() }}
                         {% else %}
                             None
                         {% endif %}
@@ -354,8 +354,8 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body text-center">
-                                {% if emp|length > 5 and emp[5] %}
-                                    <img src="{{ (emp[5] if emp[5] and (emp[5]|string).startswith('http') else url_for('static', filename='uploads/employees/' + emp[5])) }}" class="profile-img-large" alt="Profile">
+                                {% if emp|length > 8 and emp[8] %}
+                                    <img src="{{ (emp[8] if emp[8] and (emp[8]|string).startswith('http') else url_for('static', filename='uploads/employees/' + emp[8])) }}" class="profile-img-large" alt="Profile">
                                 {% else %}
                                     <div class="profile-img-large d-inline-flex justify-content-center align-items-center mx-auto" style="background: #444; color: #888; font-size: 50px;">👤</div>
                                 {% endif %}
@@ -369,8 +369,8 @@
                                     
                                     <div class="mt-3 pt-3" style="border-top: 1px dashed var(--border-color);">
                                         <strong style="color: var(--text-muted);">Documents:</strong><br>
-                                        {% if emp|length > 6 and emp[6] %}
-                                            <a href="{{ (emp[6] if emp[6] and (emp[6]|string).startswith('http') else url_for('static', filename='uploads/employees/' + emp[6])) }}" target="_blank" class="btn btn-sm btn-outline-info mt-2">📄 Certificate/CV</a>
+                                        {% if emp|length > 9 and emp[9] %}
+                                            <a href="{{ (emp[9] if emp[9] and (emp[9]|string).startswith('http') else url_for('static', filename='uploads/employees/' + emp[9])) }}" target="_blank" class="btn btn-sm btn-outline-info mt-2">📄 Certificate/CV</a>
                                         {% endif %}
                                         {% if emp|length > 10 and emp[10] %}
                                             <a href="{{ (emp[10] if emp[10] and (emp[10]|string).startswith('http') else url_for('static', filename='uploads/employees/' + emp[10])) }}" target="_blank" class="btn btn-sm btn-outline-info mt-2">🪪 NIC</a>
@@ -381,7 +381,7 @@
                                         {% if emp|length > 12 and emp[12] %}
                                             <a href="{{ (emp[12] if emp[12] and (emp[12]|string).startswith('http') else url_for('static', filename='uploads/employees/' + emp[12])) }}" target="_blank" class="btn btn-sm btn-outline-info mt-2">📁 Other Docs</a>
                                         {% endif %}
-                                        {% if not (emp|length > 6 and emp[6]) and not (emp|length > 10 and emp[10]) and not (emp|length > 11 and emp[11]) and not (emp|length > 12 and emp[12]) %}
+                                        {% if not (emp|length > 9 and emp[9]) and not (emp|length > 10 and emp[10]) and not (emp|length > 11 and emp[11]) and not (emp|length > 12 and emp[12]) %}
                                             <span class="text-muted small">No documents uploaded.</span>
                                         {% endif %}
                                     </div>
@@ -450,17 +450,17 @@
                                     
                                     <div class="col-md-6">
                                         <label class="form-label">System Username</label>
-                                        <input type="text" name="username" class="form-control" value="{% if emp|length > 7 %}{{ emp[7] }}{% endif %}">
+                                        <input type="text" name="username" class="form-control" value="{% if emp|length > 5 %}{{ emp[5] }}{% endif %}">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">System Password</label>
-                                        <input type="text" name="password" class="form-control" value="{% if emp|length > 8 %}{{ emp[8] }}{% endif %}">
+                                        <input type="text" name="password" class="form-control" value="{% if emp|length > 6 %}{{ emp[6] }}{% endif %}">
                                     </div>
 
                                     <div class="col-md-12 mt-3">
                                         <label class="form-label text-warning">Update Modules Allowed:</label>
                                         <div class="access-checkboxes d-flex flex-wrap mt-2">
-                                            {% set perms = emp[9] if emp|length > 9 and emp[9] else "" %}
+                                            {% set perms = emp[7] if emp|length > 7 and emp[7] else "" %}
                                             <label><input type="checkbox" name="permissions" value="dashboard" {% if 'dashboard' in perms %}checked{% endif %}> 📊 Dashboard</label>
                                             <label><input type="checkbox" name="permissions" value="billing" {% if 'billing' in perms %}checked{% endif %}> 🧾 Billing</label>
                                             
