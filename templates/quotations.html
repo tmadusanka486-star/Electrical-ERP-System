@@ -221,7 +221,15 @@
                 </div>
                 
                 <div class="mt-4 pt-3 border-top border-secondary">
-                    <h5 class="text-end" style="color: #f1c40f; font-weight: 700;">Grand Total: LKR <span id="qTotal">0.00</span></h5>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span style="color: #a0a0a0; font-weight: 600; font-size: 15px;">Sub Total:</span>
+                        <h6 style="color: white; font-weight: 600; margin: 0;">LKR <span id="qSubTotal">0.00</span></h6>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span style="color: #a0a0a0; font-weight: 600; font-size: 15px;">Discount (LKR):</span>
+                        <input type="number" id="qDiscount" class="form-control" style="width: 120px; text-align: right; height: 35px; background-color: rgba(255, 71, 87, 0.1); color: #ff4757; font-weight: bold; border: 1px solid #ff4757; font-size: 15px;" value="0" oninput="renderCart()">
+                    </div>
+                    <h5 class="text-end mt-3" style="color: #f1c40f; font-weight: 700;">Grand Total: LKR <span id="qTotal">0.00</span></h5>
                     <button class="btn-primary-solid w-100 mt-3" onclick="saveQ()">💾 Generate & Print Quotation</button>
                 </div>
             </div>
@@ -285,7 +293,7 @@
     }
 
     function renderCart() {
-        let html = ""; let total = 0;
+        let html = ""; let subTotal = 0;
         cart.forEach((item, index) => {
             html += `<tr>
                 <td style="font-size: 12px;">${item.name}</td>
@@ -293,9 +301,16 @@
                 <td class="text-end">${item.total.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
                 <td class="text-center"><button class="btn btn-sm p-0 text-danger" onclick="removeItem(${index})">×</button></td>
             </tr>`;
-            total += item.total;
+            subTotal += item.total;
         });
+        
+        let discount = parseFloat(document.getElementById('qDiscount') ? document.getElementById('qDiscount').value : 0) || 0;
+        let total = subTotal - discount;
+
         document.getElementById('qItems').innerHTML = html;
+        if(document.getElementById('qSubTotal')) {
+            document.getElementById('qSubTotal').innerText = subTotal.toLocaleString(undefined, {minimumFractionDigits: 2});
+        }
         document.getElementById('qTotal').innerText = total.toLocaleString(undefined, {minimumFractionDigits: 2});
     }
 
@@ -314,6 +329,7 @@
             name: document.getElementById('custName').value || "Guest Customer",
             phone: document.getElementById('custPhone').value || "",
             cart: cart,
+            discount: parseFloat(document.getElementById('qDiscount').value) || 0,
             total: parseFloat(document.getElementById('qTotal').innerText.replace(/,/g, '')),
             notes: ""
         };

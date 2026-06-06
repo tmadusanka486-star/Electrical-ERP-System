@@ -900,7 +900,8 @@ def quotations():
 def save_quotation():
     try:
         data = request.get_json()
-        q_id = db.create_quotation(data['name'], data['phone'], data['cart'], 0)
+        discount = data.get('discount', 0)
+        q_id = db.create_quotation(data['name'], data['phone'], data['cart'], discount)
         return jsonify({'success': True, 'q_id': q_id})
     except Exception as e:
         print(f"Error saving quotation: {e}")
