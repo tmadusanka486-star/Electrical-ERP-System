@@ -377,7 +377,7 @@ class Database:
         self.cursor.execute("SELECT * FROM quotations WHERE id=%s AND shop_id=%s", (q_id, self.shop_id))
         return self.cursor.fetchone()
     def get_quotation_items(self, q_id):
-        self.cursor.execute("SELECT * FROM quotation_items WHERE quotation_id=%s AND shop_id=%s", (q_id, self.shop_id))
+        self.cursor.execute("SELECT qi.*, p.warranty_months, p.brand, p.model FROM quotation_items qi LEFT JOIN products p ON qi.product_id = p.id WHERE qi.quotation_id=%s AND qi.shop_id=%s", (q_id, self.shop_id))
         return self.cursor.fetchall()
     def create_project_quotation(self, proj_name, customer, location, items, discount=0):
         sub = sum(i['price'] * i['qty'] for i in items)
