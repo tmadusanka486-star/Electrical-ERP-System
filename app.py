@@ -225,7 +225,8 @@ def login():
             session['original_branch_id'] = session['branch_id']
 
             perms = session.get('user_permissions', '')
-            if 'dashboard' in perms:
+            role = session.get('user_role', '')
+            if role in ['Admin', 'SuperAdmin', 'ShopOwner'] or perms == 'ALL' or 'dashboard' in perms:
                 return redirect(url_for('index'))
             elif 'billing' in perms:
                 return redirect(url_for('billing'))
@@ -313,9 +314,7 @@ def add_shop():
     shop_name = request.form['shop_name']
     owner_name = request.form['owner_name']
     contact = request.form['contact']
-    username = request.form['username']
-    password = request.form['password']
-    shop_id = db.add_shop(shop_name, owner_name, contact, username, password)
+    shop_id = db.add_shop(shop_name, owner_name, contact)
     flash('Shop created successfully!', 'success')
     return redirect(url_for('super_admin_dashboard'))
 

@@ -500,7 +500,7 @@ class Database:
         self.cursor.execute("SELECT SUM(received_amount) FROM projects")
         p = self.cursor.fetchone()[0] or 0
         return s + p
-    def add_shop(self, shop_name, owner_name, contact, username, password):
+    def add_shop(self, shop_name, owner_name, contact):
         self.cursor.execute("INSERT INTO shops (shop_name, owner_name, contact) VALUES (%s, %s, %s) RETURNING id", (shop_name, owner_name, contact))
         shop_id = self.cursor.fetchone()[0]
         
@@ -510,10 +510,6 @@ class Database:
         
         # Create default shop settings
         self.cursor.execute("INSERT INTO shop_settings (shop_id, company_name, phone, email) VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING", (shop_id, shop_name, contact, ''))
-        
-        # Create user account for owner
-        hashed_pw = generate_password_hash(password)
-        self.cursor.execute("INSERT INTO users (username, password, role, shop_id, branch_id) VALUES (%s, %s, %s, %s, %s)", (username, hashed_pw, 'ShopOwner', shop_id, branch_id))
         
         return shop_id
     def get_all_branches(self):
