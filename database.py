@@ -135,10 +135,10 @@ class Database:
     def add_customer(self, name, phone, address):
         self.cursor.execute("INSERT INTO customers (shop_id, branch_id, name, phone, address) VALUES (%s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, name, phone, address))
     def get_all_customers(self):
-        self.cursor.execute("SELECT * FROM customers WHERE shop_id=%s ORDER BY id DESC", (self.shop_id,))
+        self.cursor.execute("SELECT * FROM customers WHERE shop_id=%s AND branch_id=%s ORDER BY id DESC", (self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def get_customer(self, customer_id):
-        self.cursor.execute("SELECT * FROM customers WHERE id=%s AND shop_id=%s", (customer_id, self.shop_id))
+        self.cursor.execute("SELECT * FROM customers WHERE id=%s AND shop_id=%s AND branch_id=%s", (customer_id, self.shop_id, self.branch_id))
         return self.cursor.fetchone()
     def create_invoice(self, customer_id, customer_name, cart_items, discount=0, payment_method="Cash"):
         total = sum(item['price'] * item['qty'] for item in cart_items)
@@ -152,28 +152,28 @@ class Database:
             self.cursor.execute("UPDATE customers SET credit_balance = credit_balance + %s WHERE id = %s AND shop_id=%s", (final, customer_id, self.shop_id))
         return invoice_id
     def get_pos_invoice(self, invoice_id):
-        self.cursor.execute("SELECT id, customer_id, customer_name, date_created, total_amount, discount, final_amount, payment_method, shop_id, branch_id FROM invoices WHERE id=%s AND shop_id=%s", (invoice_id, self.shop_id))
+        self.cursor.execute("SELECT id, customer_id, customer_name, date_created, total_amount, discount, final_amount, payment_method, shop_id, branch_id FROM invoices WHERE id=%s AND shop_id=%s AND branch_id=%s", (invoice_id, self.shop_id, self.branch_id))
         return self.cursor.fetchone()
     def get_pos_invoice_items(self, invoice_id):
-        self.cursor.execute("SELECT ii.id, ii.invoice_id, ii.product_id, ii.item_name, ii.qty, ii.unit_price, ii.total_price, ii.shop_id, ii.branch_id, p.warranty_months, p.brand, p.model FROM invoice_items ii LEFT JOIN products p ON ii.product_id = p.id WHERE ii.invoice_id=%s AND ii.shop_id=%s", (invoice_id, self.shop_id))
+        self.cursor.execute("SELECT ii.id, ii.invoice_id, ii.product_id, ii.item_name, ii.qty, ii.unit_price, ii.total_price, ii.shop_id, ii.branch_id, p.warranty_months, p.brand, p.model FROM invoice_items ii LEFT JOIN products p ON ii.product_id = p.id WHERE ii.invoice_id=%s AND ii.shop_id=%s AND ii.branch_id=%s", (invoice_id, self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def add_product(self, name, barcode, category, brand, model, cost, price, qty, reorder, warranty):
         self.cursor.execute("INSERT INTO products (shop_id, branch_id, item_name, barcode, category, brand, model, cost_price, selling_price, initial_qty, reorder_level, current_stock, warranty_months) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, name, barcode, category, brand, model, cost, price, qty, reorder, qty, warranty))
     def get_all_products(self):
-        self.cursor.execute("SELECT * FROM products WHERE shop_id=%s ORDER BY id DESC", (self.shop_id,))
+        self.cursor.execute("SELECT * FROM products WHERE shop_id=%s AND branch_id=%s ORDER BY id DESC", (self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def get_product_by_id(self, product_id):
-        self.cursor.execute("SELECT * FROM products WHERE id=%s AND shop_id=%s", (product_id, self.shop_id))
+        self.cursor.execute("SELECT * FROM products WHERE id=%s AND shop_id=%s AND branch_id=%s", (product_id, self.shop_id, self.branch_id))
         return self.cursor.fetchone()
     def search_products(self, keyword):
         kw = '%'+keyword+'%'
-        self.cursor.execute("SELECT * FROM products WHERE shop_id=%s AND (item_name ILIKE %s OR brand ILIKE %s OR barcode ILIKE %s)", (self.shop_id, kw, kw, kw))
+        self.cursor.execute("SELECT * FROM products WHERE shop_id=%s AND branch_id=%s AND (item_name ILIKE %s OR brand ILIKE %s OR barcode ILIKE %s)", (self.shop_id, self.branch_id, kw, kw, kw))
         return self.cursor.fetchall()
     def update_product(self, product_id, name, barcode, category, brand, model, cost, price, stock, reorder, warranty):
-        self.cursor.execute("UPDATE products SET item_name=%s, barcode=%s, category=%s, brand=%s, model=%s, cost_price=%s, selling_price=%s, current_stock=%s, reorder_level=%s, warranty_months=%s WHERE id=%s AND shop_id=%s", (name, barcode, category, brand, model, cost, price, stock, reorder, warranty, product_id, self.shop_id))
+        self.cursor.execute("UPDATE products SET item_name=%s, barcode=%s, category=%s, brand=%s, model=%s, cost_price=%s, selling_price=%s, current_stock=%s, reorder_level=%s, warranty_months=%s WHERE id=%s AND shop_id=%s AND branch_id=%s", (name, barcode, category, brand, model, cost, price, stock, reorder, warranty, product_id, self.shop_id, self.branch_id))
     def delete_product(self, product_id):
         try:
-            self.cursor.execute("DELETE FROM products WHERE id=%s AND shop_id=%s", (product_id, self.shop_id))
+            self.cursor.execute("DELETE FROM products WHERE id=%s AND shop_id=%s AND branch_id=%s", (product_id, self.shop_id, self.branch_id))
             return True, "Product deleted successfully"
         except Exception as e:
             return False, f"Cannot delete product: {str(e)}"
@@ -187,29 +187,29 @@ class Database:
         return self.cursor.fetchall()
 
     def get_dashboard_stats(self):
-        self.cursor.execute("SELECT COUNT(*) FROM products WHERE shop_id=%s", (self.shop_id,))
+        self.cursor.execute("SELECT COUNT(*) FROM products WHERE shop_id=%s AND branch_id=%s", (self.shop_id, self.branch_id))
         p = self.cursor.fetchone()[0]
-        self.cursor.execute("SELECT SUM(final_amount) FROM invoices WHERE shop_id=%s", (self.shop_id,))
+        self.cursor.execute("SELECT SUM(final_amount) FROM invoices WHERE shop_id=%s AND branch_id=%s", (self.shop_id, self.branch_id))
         s = self.cursor.fetchone()[0] or 0
-        self.cursor.execute("SELECT SUM(amount) FROM expenses WHERE shop_id=%s", (self.shop_id,))
+        self.cursor.execute("SELECT SUM(amount) FROM expenses WHERE shop_id=%s AND branch_id=%s", (self.shop_id, self.branch_id))
         e = self.cursor.fetchone()[0] or 0
-        self.cursor.execute("SELECT SUM(credit_balance) FROM customers WHERE shop_id=%s", (self.shop_id,))
+        self.cursor.execute("SELECT SUM(credit_balance) FROM customers WHERE shop_id=%s AND branch_id=%s", (self.shop_id, self.branch_id))
         c = self.cursor.fetchone()[0] or 0
         
         # New metrics
-        self.cursor.execute("SELECT SUM(received_amount) FROM projects WHERE shop_id=%s", (self.shop_id,))
+        self.cursor.execute("SELECT SUM(received_amount) FROM projects WHERE shop_id=%s AND branch_id=%s", (self.shop_id, self.branch_id))
         pi = self.cursor.fetchone()[0] or 0
         
-        self.cursor.execute("SELECT SUM(final_amount) FROM invoices WHERE shop_id=%s AND to_char(date_created, 'YYYY-MM') = to_char(CURRENT_DATE, 'YYYY-MM')", (self.shop_id,))
+        self.cursor.execute("SELECT SUM(final_amount) FROM invoices WHERE shop_id=%s AND branch_id=%s AND to_char(date_created, 'YYYY-MM') = to_char(CURRENT_DATE, 'YYYY-MM')", (self.shop_id, self.branch_id))
         ms = self.cursor.fetchone()[0] or 0
         
-        self.cursor.execute("SELECT id, customer_name, final_amount, date_created FROM invoices WHERE shop_id=%s ORDER BY id DESC LIMIT 5", (self.shop_id,))
+        self.cursor.execute("SELECT id, customer_name, final_amount, date_created FROM invoices WHERE shop_id=%s AND branch_id=%s ORDER BY id DESC LIMIT 5", (self.shop_id, self.branch_id))
         ri = self.cursor.fetchall()
         
-        self.cursor.execute("SELECT id, project_name, status, estimated_cost FROM projects WHERE shop_id=%s ORDER BY id DESC LIMIT 5", (self.shop_id,))
+        self.cursor.execute("SELECT id, project_name, status, estimated_cost FROM projects WHERE shop_id=%s AND branch_id=%s ORDER BY id DESC LIMIT 5", (self.shop_id, self.branch_id))
         rp = self.cursor.fetchall()
         
-        self.cursor.execute("SELECT TO_CHAR(date_created, 'YYYY-MM-DD') as d, SUM(final_amount) FROM invoices WHERE shop_id=%s AND date_created >= CURRENT_DATE - INTERVAL '7 days' GROUP BY d ORDER BY d ASC", (self.shop_id,))
+        self.cursor.execute("SELECT TO_CHAR(date_created, 'YYYY-MM-DD') as d, SUM(final_amount) FROM invoices WHERE shop_id=%s AND branch_id=%s AND date_created >= CURRENT_DATE - INTERVAL '7 days' GROUP BY d ORDER BY d ASC", (self.shop_id, self.branch_id))
         chart_data = self.cursor.fetchall()
         
         return {
@@ -218,33 +218,33 @@ class Database:
             "chart_data": chart_data
         }
     def get_low_stock_items(self):
-        self.cursor.execute("SELECT * FROM products WHERE shop_id=%s AND current_stock <= reorder_level", (self.shop_id,))
+        self.cursor.execute("SELECT * FROM products WHERE shop_id=%s AND branch_id=%s AND current_stock <= reorder_level", (self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def create_project(self, name, customer, location, start_date, cost):
         self.cursor.execute("INSERT INTO projects (shop_id, branch_id, project_name, customer_name, location, start_date, estimated_cost) VALUES (%s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, name, customer, location, start_date, cost))
     def get_all_projects(self):
-        self.cursor.execute("SELECT * FROM projects WHERE shop_id=%s ORDER BY id DESC", (self.shop_id,))
+        self.cursor.execute("SELECT * FROM projects WHERE shop_id=%s AND branch_id=%s ORDER BY id DESC", (self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def get_project(self, pid):
-        self.cursor.execute("SELECT * FROM projects WHERE id=%s AND shop_id=%s", (pid, self.shop_id))
+        self.cursor.execute("SELECT * FROM projects WHERE id=%s AND shop_id=%s AND branch_id=%s", (pid, self.shop_id, self.branch_id))
         return self.cursor.fetchone()
     def get_project_by_id(self, project_id):
         return self.get_project(project_id)
     def get_inventory_for_projects(self):
-        self.cursor.execute("SELECT * FROM products WHERE shop_id=%s AND current_stock > 0", (self.shop_id,))
+        self.cursor.execute("SELECT * FROM products WHERE shop_id=%s AND branch_id=%s AND current_stock > 0", (self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def get_project_materials(self, project_id):
-        self.cursor.execute("SELECT pm.id, p.item_name, p.category, pm.qty, pm.total_cost, pm.date_added, pm.product_id FROM project_materials pm JOIN products p ON pm.product_id = p.id WHERE pm.project_id = %s AND pm.shop_id=%s", (project_id, self.shop_id))
+        self.cursor.execute("SELECT pm.id, p.item_name, p.category, pm.qty, pm.total_cost, pm.date_added, pm.product_id FROM project_materials pm JOIN products p ON pm.product_id = p.id WHERE pm.project_id = %s AND pm.shop_id=%s AND pm.branch_id=%s", (project_id, self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def add_item_to_project(self, pid, prod_id, qty):
         pass # Compatibility method, not used directly usually
     def add_project_material(self, project_id, product_id, qty, total_cost):
         self.cursor.execute("INSERT INTO project_materials (shop_id, branch_id, project_id, product_id, qty, total_cost) VALUES (%s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, project_id, product_id, qty, total_cost))
-        self.cursor.execute("UPDATE products SET current_stock = current_stock - %s WHERE id = %s AND shop_id=%s", (qty, product_id, self.shop_id))
+        self.cursor.execute("UPDATE products SET current_stock = current_stock - %s WHERE id = %s AND shop_id=%s AND branch_id=%s", (qty, product_id, self.shop_id, self.branch_id))
     def add_project_labor(self, project_id, description, qty, rate, total):
         self.cursor.execute("INSERT INTO project_labor (shop_id, branch_id, project_id, description, qty, rate, total) VALUES (%s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, project_id, description, qty, rate, total))
     def get_project_labor(self, project_id):
-        self.cursor.execute("SELECT * FROM project_labor WHERE project_id = %s AND shop_id=%s", (project_id, self.shop_id))
+        self.cursor.execute("SELECT * FROM project_labor WHERE project_id = %s AND shop_id=%s AND branch_id=%s", (project_id, self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def generate_project_invoice(self, project_id):
         proj = self.get_project(project_id)
@@ -264,41 +264,41 @@ class Database:
         self.update_project_status(project_id, 'Completed')
         return invoice_id
     def update_project_status(self, project_id, status):
-        self.cursor.execute("UPDATE projects SET status=%s WHERE id=%s AND shop_id=%s", (status, project_id, self.shop_id))
+        self.cursor.execute("UPDATE projects SET status=%s WHERE id=%s AND shop_id=%s AND branch_id=%s", (status, project_id, self.shop_id, self.branch_id))
     def add_project_payment(self, project_id, amount):
         self.cursor.execute("INSERT INTO project_payments (shop_id, branch_id, project_id, amount) VALUES (%s, %s, %s, %s)", (self.shop_id, self.branch_id, project_id, amount))
-        self.cursor.execute("UPDATE projects SET received_amount = COALESCE(received_amount, 0) + %s WHERE id=%s AND shop_id=%s", (amount, project_id, self.shop_id))
+        self.cursor.execute("UPDATE projects SET received_amount = COALESCE(received_amount, 0) + %s WHERE id=%s AND shop_id=%s AND branch_id=%s", (amount, project_id, self.shop_id, self.branch_id))
     def pay_customer_credit(self, customer_id, amount):
-        self.cursor.execute("UPDATE customers SET credit_balance = credit_balance - %s WHERE id=%s AND shop_id=%s", (amount, customer_id, self.shop_id))
+        self.cursor.execute("UPDATE customers SET credit_balance = credit_balance - %s WHERE id=%s AND shop_id=%s AND branch_id=%s", (amount, customer_id, self.shop_id, self.branch_id))
     def get_returnable_qty(self, invoice_id, product_id):
-        self.cursor.execute("SELECT qty FROM invoice_items WHERE invoice_id=%s AND product_id=%s AND shop_id=%s", (invoice_id, product_id, self.shop_id))
+        self.cursor.execute("SELECT qty FROM invoice_items WHERE invoice_id=%s AND product_id=%s AND shop_id=%s AND branch_id=%s", (invoice_id, product_id, self.shop_id, self.branch_id))
         s = self.cursor.fetchone()
-        self.cursor.execute("SELECT SUM(qty) FROM returns WHERE invoice_id=%s AND product_id=%s AND shop_id=%s", (invoice_id, product_id, self.shop_id))
+        self.cursor.execute("SELECT SUM(qty) FROM returns WHERE invoice_id=%s AND product_id=%s AND shop_id=%s AND branch_id=%s", (invoice_id, product_id, self.shop_id, self.branch_id))
         r = self.cursor.fetchone()
         sq = s[0] if s else 0
         rq = r[0] if r and r[0] else 0
         return sq - rq
     def process_return(self, invoice_id, product_id, item_name, qty, refund_amount, reason):
         self.cursor.execute("INSERT INTO returns (shop_id, branch_id, invoice_id, product_id, item_name, qty, refund_amount, reason) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, invoice_id, product_id, item_name, qty, refund_amount, reason))
-        self.cursor.execute("UPDATE products SET current_stock = current_stock + %s WHERE id = %s AND shop_id=%s", (qty, product_id, self.shop_id))
+        self.cursor.execute("UPDATE products SET current_stock = current_stock + %s WHERE id = %s AND shop_id=%s AND branch_id=%s", (qty, product_id, self.shop_id, self.branch_id))
     def get_all_returns(self):
-        self.cursor.execute("SELECT * FROM returns WHERE shop_id=%s ORDER BY id DESC", (self.shop_id,))
+        self.cursor.execute("SELECT * FROM returns WHERE shop_id=%s AND branch_id=%s ORDER BY id DESC", (self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def add_supplier(self, name, phone, company):
         self.cursor.execute("INSERT INTO suppliers (shop_id, branch_id, name, phone, company_name) VALUES (%s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, name, phone, company))
     def get_all_suppliers(self):
-        self.cursor.execute("SELECT * FROM suppliers WHERE shop_id=%s", (self.shop_id,))
+        self.cursor.execute("SELECT * FROM suppliers WHERE shop_id=%s AND branch_id=%s", (self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def add_purchase(self, supplier_id, product_id, qty, new_cost, warranty_months=0):
         from datetime import datetime, timedelta
         exp_date = datetime.now() + timedelta(days=30*int(warranty_months))
         self.cursor.execute("INSERT INTO purchases (shop_id, branch_id, supplier_id, product_id, qty, buying_cost, warranty_months, warranty_expire_date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, supplier_id, product_id, qty, new_cost, warranty_months, exp_date))
-        self.cursor.execute("UPDATE products SET current_stock = current_stock + %s, cost_price = %s WHERE id = %s AND shop_id=%s", (qty, new_cost, product_id, self.shop_id))
+        self.cursor.execute("UPDATE products SET current_stock = current_stock + %s, cost_price = %s WHERE id = %s AND shop_id=%s AND branch_id=%s", (qty, new_cost, product_id, self.shop_id, self.branch_id))
     def get_sales_report(self):
-        self.cursor.execute("SELECT SUM(final_amount) FROM invoices WHERE shop_id=%s AND DATE(date_created) = CURRENT_DATE", (self.shop_id,))
+        self.cursor.execute("SELECT SUM(final_amount) FROM invoices WHERE shop_id=%s AND branch_id=%s AND DATE(date_created) = CURRENT_DATE", (self.shop_id, self.branch_id))
         today_sales = self.cursor.fetchone()[0] or 0
         
-        self.cursor.execute("SELECT SUM(final_amount) FROM invoices WHERE shop_id=%s AND to_char(date_created, 'YYYY-MM') = to_char(CURRENT_DATE, 'YYYY-MM')", (self.shop_id,))
+        self.cursor.execute("SELECT SUM(final_amount) FROM invoices WHERE shop_id=%s AND branch_id=%s AND to_char(date_created, 'YYYY-MM') = to_char(CURRENT_DATE, 'YYYY-MM')", (self.shop_id, self.branch_id))
         month_sales = self.cursor.fetchone()[0] or 0
         
         # Try to get monthly expenses - handle if date column doesn't exist
@@ -307,11 +307,11 @@ class Database:
             date_col_row = self.cursor.fetchone()
             if date_col_row:
                 date_col = date_col_row[0]
-                self.cursor.execute(f"SELECT SUM(amount) FROM expenses WHERE shop_id=%s AND to_char({date_col}, 'YYYY-MM') = to_char(CURRENT_DATE, 'YYYY-MM')", (self.shop_id,))
+                self.cursor.execute(f"SELECT SUM(amount) FROM expenses WHERE shop_id=%s AND branch_id=%s AND to_char({date_col}, 'YYYY-MM') = to_char(CURRENT_DATE, 'YYYY-MM')", (self.shop_id, self.branch_id))
             else:
-                self.cursor.execute("SELECT SUM(amount) FROM expenses WHERE shop_id=%s", (self.shop_id,))
+                self.cursor.execute("SELECT SUM(amount) FROM expenses WHERE shop_id=%s AND branch_id=%s", (self.shop_id, self.branch_id))
         except:
-            self.cursor.execute("SELECT SUM(amount) FROM expenses WHERE shop_id=%s", (self.shop_id,))
+            self.cursor.execute("SELECT SUM(amount) FROM expenses WHERE shop_id=%s AND branch_id=%s", (self.shop_id, self.branch_id))
         month_expenses = self.cursor.fetchone()[0] or 0
         
         month_profit = float(month_sales) - float(month_expenses)
@@ -322,13 +322,13 @@ class Database:
             'month_profit': float(month_profit)
         }
     def get_top_selling_items(self):
-        self.cursor.execute("SELECT item_name, SUM(qty) FROM invoice_items WHERE shop_id=%s GROUP BY item_name ORDER BY SUM(qty) DESC LIMIT 5", (self.shop_id,))
+        self.cursor.execute("SELECT item_name, SUM(qty) FROM invoice_items WHERE shop_id=%s AND branch_id=%s GROUP BY item_name ORDER BY SUM(qty) DESC LIMIT 5", (self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def get_report_invoices(self):
-        self.cursor.execute("SELECT id, date_created, customer_name, payment_method, final_amount FROM invoices WHERE shop_id=%s ORDER BY id DESC", (self.shop_id,))
+        self.cursor.execute("SELECT id, date_created, customer_name, payment_method, final_amount FROM invoices WHERE shop_id=%s AND branch_id=%s ORDER BY id DESC", (self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def get_report_purchases(self):
-        self.cursor.execute("SELECT p.id, p.date_added, s.name, pr.item_name, p.qty, p.buying_cost, (p.qty * p.buying_cost) as total_cost, p.warranty_months, p.warranty_expire_date FROM purchases p JOIN suppliers s ON p.supplier_id = s.id JOIN products pr ON p.product_id = pr.id WHERE p.shop_id=%s ORDER BY p.id DESC", (self.shop_id,))
+        self.cursor.execute("SELECT p.id, p.date_added, s.name, pr.item_name, p.qty, p.buying_cost, (p.qty * p.buying_cost) as total_cost, p.warranty_months, p.warranty_expire_date FROM purchases p JOIN suppliers s ON p.supplier_id = s.id JOIN products pr ON p.product_id = pr.id WHERE p.shop_id=%s AND p.branch_id=%s ORDER BY p.id DESC", (self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def get_settings(self):
         self.cursor.execute("SELECT * FROM shop_settings WHERE shop_id=%s", (self.shop_id,))
@@ -352,7 +352,7 @@ class Database:
         else:
             self.cursor.execute("UPDATE shop_settings SET company_name=%s, address=%s, phone=%s, email=%s, print_type=%s, services_list=%s, terms_conditions=%s, google_webhook_url=%s WHERE shop_id=%s", (name, address, phone, email, printer_type, services_list, terms_conditions, google_webhook_url, self.shop_id))
     def get_all_employees(self):
-        self.cursor.execute("SELECT * FROM employees WHERE shop_id=%s ORDER BY id DESC", (self.shop_id,))
+        self.cursor.execute("SELECT * FROM employees WHERE shop_id=%s AND branch_id=%s ORDER BY id DESC", (self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def add_employee(self, name, phone, role, salary, photo_name, cert_name, username, password, permissions, nic_name="", passport_name="", other_name=""):
         hashed_pw = generate_password_hash(password) if password else ""
@@ -360,13 +360,13 @@ class Database:
     def update_employee(self, emp_id, name, phone, role, salary, photo_name, cert_name, username, password, permissions, nic_name="", passport_name="", other_name=""):
         if password:
             hashed_pw = generate_password_hash(password)
-            self.cursor.execute("UPDATE employees SET name=%s, phone=%s, role=%s, basic_salary=%s, username=%s, password=%s, permissions=%s, photo=COALESCE(%s, photo), certificate=COALESCE(%s, certificate), nic_doc=COALESCE(%s, nic_doc), passport_doc=COALESCE(%s, passport_doc), other_docs=COALESCE(%s, other_docs) WHERE id=%s AND shop_id=%s", (name, phone, role, salary, username, hashed_pw, permissions, photo_name, cert_name, nic_name, passport_name, other_name, emp_id, self.shop_id))
+            self.cursor.execute("UPDATE employees SET name=%s, phone=%s, role=%s, basic_salary=%s, username=%s, password=%s, permissions=%s, photo=COALESCE(%s, photo), certificate=COALESCE(%s, certificate), nic_doc=COALESCE(%s, nic_doc), passport_doc=COALESCE(%s, passport_doc), other_docs=COALESCE(%s, other_docs) WHERE id=%s AND shop_id=%s AND branch_id=%s", (name, phone, role, salary, username, hashed_pw, permissions, photo_name, cert_name, nic_name, passport_name, other_name, emp_id, self.shop_id, self.branch_id))
         else:
-            self.cursor.execute("UPDATE employees SET name=%s, phone=%s, role=%s, basic_salary=%s, username=%s, permissions=%s, photo=COALESCE(%s, photo), certificate=COALESCE(%s, certificate), nic_doc=COALESCE(%s, nic_doc), passport_doc=COALESCE(%s, passport_doc), other_docs=COALESCE(%s, other_docs) WHERE id=%s AND shop_id=%s", (name, phone, role, salary, username, permissions, photo_name, cert_name, nic_name, passport_name, other_name, emp_id, self.shop_id))
+            self.cursor.execute("UPDATE employees SET name=%s, phone=%s, role=%s, basic_salary=%s, username=%s, permissions=%s, photo=COALESCE(%s, photo), certificate=COALESCE(%s, certificate), nic_doc=COALESCE(%s, nic_doc), passport_doc=COALESCE(%s, passport_doc), other_docs=COALESCE(%s, other_docs) WHERE id=%s AND shop_id=%s AND branch_id=%s", (name, phone, role, salary, username, permissions, photo_name, cert_name, nic_name, passport_name, other_name, emp_id, self.shop_id, self.branch_id))
     def delete_employee(self, emp_id):
-        self.cursor.execute("DELETE FROM employees WHERE id=%s AND shop_id=%s", (emp_id, self.shop_id))
+        self.cursor.execute("DELETE FROM employees WHERE id=%s AND shop_id=%s AND branch_id=%s", (emp_id, self.shop_id, self.branch_id))
     def get_payroll_by_month(self, month):
-        self.cursor.execute("SELECT e.id, e.name, e.role, e.basic_salary, p.allowance, p.deduction, p.net_salary, p.ot_hours, p.ot_payment FROM employees e LEFT JOIN payroll p ON e.id = p.emp_id AND p.month = %s WHERE e.shop_id=%s", (month, self.shop_id))
+        self.cursor.execute("SELECT e.id, e.name, e.role, e.basic_salary, p.allowance, p.deduction, p.net_salary, p.ot_hours, p.ot_payment FROM employees e LEFT JOIN payroll p ON e.id = p.emp_id AND p.month = %s WHERE e.shop_id=%s AND e.branch_id=%s", (month, self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def save_payroll(self, emp_id, month, basic, allowance, deduction, net, ot_hours, ot_payment, all_reason, ded_reason):
         self.cursor.execute("INSERT INTO payroll (shop_id, branch_id, emp_id, month, basic_salary, allowance, deduction, net_salary, ot_hours, ot_payment, allowance_reason, deduction_reason) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, emp_id, month, basic, allowance, deduction, net, ot_hours, ot_payment, all_reason, ded_reason))
@@ -419,8 +419,8 @@ class Database:
         cat_col = "category" if "category" in cols else "'Other'"
         added_by_col = "added_by" if "added_by" in cols else "''"
             
-        query = f"SELECT id, {date_col}, {cat_col}, description, amount, {added_by_col} FROM expenses WHERE shop_id=%s ORDER BY id DESC"
-        self.cursor.execute(query, (self.shop_id,))
+        query = f"SELECT id, {date_col}, {cat_col}, description, amount, {added_by_col} FROM expenses WHERE shop_id=%s AND branch_id=%s ORDER BY id DESC"
+        self.cursor.execute(query, (self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def create_quotation(self, customer_name, phone, items, discount=0):
         t = sum(i['price'] * i['qty'] for i in items)
@@ -431,13 +431,13 @@ class Database:
             self.cursor.execute("INSERT INTO quotation_items (shop_id, branch_id, quotation_id, product_id, item_name, qty, unit_price, total_price) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, q_id, i['id'], i['name'], i['qty'], i['price'], i['price']*i['qty']))
         return q_id
     def get_all_quotations(self):
-        self.cursor.execute("SELECT * FROM quotations WHERE shop_id=%s ORDER BY id DESC", (self.shop_id,))
+        self.cursor.execute("SELECT * FROM quotations WHERE shop_id=%s AND branch_id=%s ORDER BY id DESC", (self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def get_quotation_by_id(self, q_id):
-        self.cursor.execute("SELECT id, customer_name, customer_phone, date_created, total_amount, discount, final_amount, shop_id, branch_id FROM quotations WHERE id=%s AND shop_id=%s", (q_id, self.shop_id))
+        self.cursor.execute("SELECT id, customer_name, customer_phone, date_created, total_amount, discount, final_amount, shop_id, branch_id FROM quotations WHERE id=%s AND shop_id=%s AND branch_id=%s", (q_id, self.shop_id, self.branch_id))
         return self.cursor.fetchone()
     def get_quotation_items(self, q_id):
-        self.cursor.execute("SELECT qi.id, qi.quotation_id, qi.product_id, qi.item_name, qi.qty, qi.unit_price, qi.total_price, qi.shop_id, qi.branch_id, p.warranty_months, p.brand, p.model FROM quotation_items qi LEFT JOIN products p ON qi.product_id = p.id WHERE qi.quotation_id=%s AND qi.shop_id=%s", (q_id, self.shop_id))
+        self.cursor.execute("SELECT qi.id, qi.quotation_id, qi.product_id, qi.item_name, qi.qty, qi.unit_price, qi.total_price, qi.shop_id, qi.branch_id, p.warranty_months, p.brand, p.model FROM quotation_items qi LEFT JOIN products p ON qi.product_id = p.id WHERE qi.quotation_id=%s AND qi.shop_id=%s AND qi.branch_id=%s", (q_id, self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def create_project_quotation(self, proj_name, customer, location, items, discount=0):
         sub = sum(i['price'] * i['qty'] for i in items)
@@ -448,13 +448,13 @@ class Database:
             self.cursor.execute("INSERT INTO pq_items (shop_id, branch_id, pq_id, description, qty, unit_price, total_price) VALUES (%s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, pq_id, i['name'], i['qty'], i['price'], i['price']*i['qty']))
         return pq_id
     def get_all_project_quotations(self):
-        self.cursor.execute("SELECT * FROM project_quotations WHERE shop_id=%s ORDER BY id DESC", (self.shop_id,))
+        self.cursor.execute("SELECT * FROM project_quotations WHERE shop_id=%s AND branch_id=%s ORDER BY id DESC", (self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def get_project_quotation_by_id(self, pq_id):
-        self.cursor.execute("SELECT * FROM project_quotations WHERE id=%s AND shop_id=%s", (pq_id, self.shop_id))
+        self.cursor.execute("SELECT * FROM project_quotations WHERE id=%s AND shop_id=%s AND branch_id=%s", (pq_id, self.shop_id, self.branch_id))
         return self.cursor.fetchone()
     def get_pq_items(self, pq_id):
-        self.cursor.execute("SELECT * FROM pq_items WHERE pq_id=%s AND shop_id=%s", (pq_id, self.shop_id))
+        self.cursor.execute("SELECT * FROM pq_items WHERE pq_id=%s AND shop_id=%s AND branch_id=%s", (pq_id, self.shop_id, self.branch_id))
         return self.cursor.fetchall()
     def verify_login(self, username, password):
         self.cursor.execute("SELECT id, name, role, permissions, shop_id, branch_id, password FROM employees WHERE username=%s", (username,))
