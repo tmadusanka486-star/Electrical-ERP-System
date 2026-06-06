@@ -12,8 +12,7 @@ if getattr(sys, 'frozen', False):
 else:
     base_path = os.path.dirname(os.path.abspath(__file__))
 
-# Update current working directory to the bundled path so load_dotenv finds .env
-os.chdir(base_path)
+
 
 # Now we can import the app
 from app import app
