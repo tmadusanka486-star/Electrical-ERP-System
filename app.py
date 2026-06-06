@@ -7,7 +7,19 @@ import uuid
 from functools import wraps
 from database import Database
 import datetime
+import threading
+import requests
 from dotenv import load_dotenv
+
+def send_to_google_sheet_async(webhook_url, payload):
+    if not webhook_url:
+        return
+    def task():
+        try:
+            requests.post(webhook_url, json=payload, timeout=5)
+        except Exception as e:
+            print(f"Error sending to Google Sheet: {e}")
+    threading.Thread(target=task).start()
 
 load_dotenv()
 
@@ -500,6 +512,14 @@ def save_invoice():
         if not cart:
             return jsonify({'success': False, 'message': 'Cart is empty!'})
         invoice_id = db.create_invoice(customer_id, customer_name, cart, discount, payment_method)
+        
+        # Trigger Google Sheets Webhook
+        webhook_url = db.get_google_webhook_url()
+        if webhook_url:
+            final_amount = sum((float(item['price']) * int(item['qty'])) for item in cart) - discount
+            payload = { "Type": "Bill", "ID": invoice_id, "Customer": customer_name or "Cash Customer", "Amount": final_amount, "Method": payment_method }
+            send_to_google_sheet_async(webhook_url, payload)
+            
         return jsonify({'success': True, 'invoice_id': invoice_id})
     except Exception as e:
         import traceback
@@ -592,7 +612,14 @@ def add_purchase():
         product_id = request.form['product_id']
     
     warranty_months = int(request.form.get('warranty_months', 0))
-    db.add_purchase(supplier_id, product_id, qty, cost, warranty_months)
+    purchase_id = db.add_purchase(supplier_id, product_id, qty, cost, warranty_months)
+    
+    # Trigger Google Sheets Webhook
+    webhook_url = db.get_google_webhook_url()
+    if webhook_url:
+        payload = { "Type": "Purchase", "SupplierID": supplier_id, "ProductID": product_id, "Qty": qty, "Cost": cost, "Total": qty * cost }
+        send_to_google_sheet_async(webhook_url, payload)
+        
     return redirect(url_for('purchasing'))
 
 # --- Barcodes ---
@@ -775,11 +802,12 @@ def update_settings():
     printer_type = request.form['printer_type'] 
     services_list = request.form.get('services_list', '')
     terms_conditions = request.form.get('terms_conditions', '')
+    google_webhook_url = request.form.get('google_webhook_url', '')
     logo_file = request.files.get('logo')
     logo_name = None
     if logo_file and logo_file.filename != '':
         logo_name = upload_file_to_storage(logo_file, LOGO_FOLDER)
-    db.update_settings(name, address, phone, email, printer_type, services_list, terms_conditions, logo_name)
+    db.update_settings(name, address, phone, email, printer_type, services_list, terms_conditions, logo_name, google_webhook_url)
     flash("Settings updated successfully", "success")
     return redirect(url_for('settings'))
 
@@ -844,6 +872,13 @@ def add_expense():
     description = request.form.get('description')
     amount = float(request.form.get('amount') or 0)
     db.add_expense(date, category, description, amount)
+    
+    # Trigger Google Sheets Webhook
+    webhook_url = db.get_google_webhook_url()
+    if webhook_url:
+        payload = { "Type": "Expense", "Date": date, "Category": category, "Description": description, "Amount": amount }
+        send_to_google_sheet_async(webhook_url, payload)
+        
     return redirect(url_for('expenses'))
 
 # ==========================================

@@ -219,6 +219,14 @@
                         <label class="form-label">Terms & Conditions (Displayed on Invoice bottom)</label>
                         <textarea name="terms_conditions" class="form-control" rows="3" placeholder="E.g., Goods once sold cannot be returned.">{{ settings[8] if settings|length > 8 else '' }}</textarea>
                     </div>
+
+                    <h6 class="mt-4 mb-3" style="color: var(--accent-blue); font-weight: 600; border-top: 1px solid var(--border-color); padding-top: 15px;">☁️ Automatic Cloud Backup (Google Sheets)</h6>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Google Apps Script Webhook URL</label>
+                        <input type="text" name="google_webhook_url" class="form-control" placeholder="https://script.google.com/macros/s/.../exec" value="{{ settings[9] if settings|length > 9 else '' }}">
+                        <small style="color: var(--text-muted); font-size: 11px;">Paste the Google Apps Script Web App URL here to automatically sync Invoices, Expenses, and Purchases to your Google Sheet.</small>
+                    </div>
                     
                     <button type="submit" class="btn-primary-solid mt-2">💾 Save & Apply Changes</button>
                 </form>

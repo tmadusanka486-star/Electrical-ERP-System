@@ -329,11 +329,24 @@ class Database:
     def get_settings(self):
         self.cursor.execute("SELECT * FROM shop_settings WHERE shop_id=%s", (self.shop_id,))
         return self.cursor.fetchone()
-    def update_settings(self, name, address, phone, email, printer_type, services_list="", terms_conditions="", logo=None):
+    def get_google_webhook_url(self):
+        try:
+            self.cursor.execute("SELECT google_webhook_url FROM shop_settings WHERE shop_id=%s", (self.shop_id,))
+            res = self.cursor.fetchone()
+            return res[0] if res else ""
+        except:
+            self.conn.rollback()
+            return ""
+    def update_settings(self, name, address, phone, email, printer_type, services_list="", terms_conditions="", logo=None, google_webhook_url=""):
+        try:
+            self.cursor.execute("ALTER TABLE shop_settings ADD COLUMN IF NOT EXISTS google_webhook_url TEXT;")
+        except:
+            self.conn.rollback()
+
         if logo:
-            self.cursor.execute("UPDATE shop_settings SET company_name=%s, address=%s, phone=%s, email=%s, print_type=%s, services_list=%s, terms_conditions=%s, logo=%s WHERE shop_id=%s", (name, address, phone, email, printer_type, services_list, terms_conditions, logo, self.shop_id))
+            self.cursor.execute("UPDATE shop_settings SET company_name=%s, address=%s, phone=%s, email=%s, print_type=%s, services_list=%s, terms_conditions=%s, logo=%s, google_webhook_url=%s WHERE shop_id=%s", (name, address, phone, email, printer_type, services_list, terms_conditions, logo, google_webhook_url, self.shop_id))
         else:
-            self.cursor.execute("UPDATE shop_settings SET company_name=%s, address=%s, phone=%s, email=%s, print_type=%s, services_list=%s, terms_conditions=%s WHERE shop_id=%s", (name, address, phone, email, printer_type, services_list, terms_conditions, self.shop_id))
+            self.cursor.execute("UPDATE shop_settings SET company_name=%s, address=%s, phone=%s, email=%s, print_type=%s, services_list=%s, terms_conditions=%s, google_webhook_url=%s WHERE shop_id=%s", (name, address, phone, email, printer_type, services_list, terms_conditions, google_webhook_url, self.shop_id))
     def get_all_employees(self):
         self.cursor.execute("SELECT * FROM employees WHERE shop_id=%s ORDER BY id DESC", (self.shop_id,))
         return self.cursor.fetchall()
