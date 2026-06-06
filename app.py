@@ -83,7 +83,14 @@ def auto_backup_database():
 # ==========================================
 # --- 2. App Setup & Security ---
 # ==========================================
-app = Flask(__name__)
+import sys
+
+if getattr(sys, 'frozen', False):
+    template_folder = os.path.join(sys._MEIPASS, 'templates')
+    static_folder = os.path.join(sys._MEIPASS, 'static')
+    app = Flask(__name__, template_folder=template_folder, static_folder=static_folder)
+else:
+    app = Flask(__name__)
 app.secret_key = 'ts_powertech_super_secret_key_2026'
 
 db_error = None
