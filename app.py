@@ -107,8 +107,7 @@ def inject_global_settings():
         shop_branches = []
         if 'user_id' in session and session.get('user_role') in ['ShopOwner', 'Admin', 'SuperAdmin']:
             all_branches = db.get_shop_branches()
-            # Only allow switching if the user belongs to the first branch (Main Branch) or is SuperAdmin
-            if len(all_branches) > 0 and (session.get('original_branch_id') == all_branches[0][0] or session.get('user_role') == 'SuperAdmin'):
+            if len(all_branches) > 0:
                 shop_branches = all_branches
         return dict(sys_settings=settings, shop_branches=shop_branches, current_branch_id=session.get('branch_id', 1))
     except:
@@ -117,8 +116,8 @@ def inject_global_settings():
 @app.route('/switch_branch/<int:branch_id>')
 def switch_branch(branch_id):
     if 'user_id' in session:
-        branches = db.get_shop_branches()
-        if len(branches) > 0 and (session.get('original_branch_id') == branches[0][0] or session.get('user_role') == 'SuperAdmin'):
+        if session.get('user_role') in ['ShopOwner', 'Admin', 'SuperAdmin']:
+            branches = db.get_shop_branches()
             if any(b[0] == branch_id for b in branches):
                 session['branch_id'] = branch_id
                 flash("Switched branch successfully.", "success")
@@ -323,10 +322,21 @@ def add_shop():
 @app.route('/super_admin/add_branch', methods=['POST'])
 @requires_super_admin
 def add_branch():
-    shop_id = request.form['shop_id']
+    parent_id = request.form.get('parent_id')
     branch_name = request.form['branch_name']
     location = request.form['location']
-    db.add_branch(shop_id, branch_name, location)
+    
+    if parent_id:
+        branches = db.get_all_branches()
+        shop_id = next((b[1] for b in branches if str(b[0]) == str(parent_id)), None)
+        if not shop_id:
+            flash('Invalid parent branch selected.', 'error')
+            return redirect(url_for('super_admin_dashboard'))
+        db.add_branch(shop_id, branch_name, location, parent_id)
+    else:
+        shop_id = request.form.get('shop_id')
+        db.add_branch(shop_id, branch_name, location)
+        
     flash('Branch created successfully!', 'success')
     return redirect(url_for('super_admin_dashboard'))
 

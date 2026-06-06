@@ -91,6 +91,7 @@
                             <th>ID</th>
                             <th>Shop ID</th>
                             <th>Branch Name</th>
+                            <th>Parent Branch</th>
                             <th>Location</th>
                             <th class="text-end">Action</th>
                         </tr>
@@ -101,6 +102,7 @@
                             <td>{{ branch[0] }}</td>
                             <td>Shop #{{ branch[1] }}</td>
                             <td>{{ branch[2] }}</td>
+                            <td>{{ branch[4] if branch[4] else 'None' }}</td>
                             <td>{{ branch[3] }}</td>
                             <td class="text-end">
                                 {% if branch[0] != 1 %}
@@ -175,11 +177,11 @@
       </div>
       <div class="modal-body">
          <div class="mb-3">
-             <label>Select Shop</label>
-             <select name="shop_id" class="form-control" required>
-                 <option value="">-- Select Shop --</option>
-                 {% for shop in shops %}
-                 <option value="{{ shop[0] }}">{{ shop[1] }} ({{ shop[2] }})</option>
+             <label>Select Parent Branch</label>
+             <select name="parent_id" class="form-control" required>
+                 <option value="">-- Select Parent Branch --</option>
+                 {% for branch in branches %}
+                 <option value="{{ branch[0] }}">Shop #{{ branch[1] }} - {{ branch[2] }}</option>
                  {% endfor %}
              </select>
          </div>

@@ -166,29 +166,31 @@
 
     <div style="overflow-y: auto; flex-grow: 1; padding-bottom: 20px;">
         {% set perms = session.get('user_permissions', '') %}
+        {% set role = session.get('user_role', '') %}
+        {% set has_all = role in ['Admin', 'SuperAdmin', 'ShopOwner'] or perms == 'ALL' %}
         
-        {% if 'dashboard' in perms %}<a href="/" class="nav-link {{ 'active' if request.path == '/' else '' }}">📊 Dashboard</a>{% endif %}
-        {% if 'billing' in perms %}<a href="/billing" class="nav-link {{ 'active' if request.path == '/billing' else '' }}">🧾 Billing</a>{% endif %}
+        {% if has_all or 'dashboard' in perms %}<a href="/" class="nav-link {{ 'active' if request.path == '/' else '' }}">📊 Dashboard</a>{% endif %}
+        {% if has_all or 'billing' in perms %}<a href="/billing" class="nav-link {{ 'active' if request.path == '/billing' else '' }}">🧾 Billing</a>{% endif %}
         
-        {% if 'quotations' in perms %}<a href="/quotations" class="nav-link {{ 'active' if request.path == '/quotations' else '' }}">📄 Quotations</a>{% endif %}
+        {% if has_all or 'quotations' in perms %}<a href="/quotations" class="nav-link {{ 'active' if request.path == '/quotations' else '' }}">📄 Quotations</a>{% endif %}
         
-        {% if 'expenses' in perms %}<a href="/expenses" class="nav-link {{ 'active' if request.path == '/expenses' else '' }}">💸 Shop Expenses</a>{% endif %}
-        {% if 'customers' in perms %}<a href="/customers" class="nav-link {{ 'active' if request.path == '/customers' else '' }}">👥 Customers</a>{% endif %}
-        {% if 'returns' in perms %}<a href="/returns" class="nav-link {{ 'active' if request.path == '/returns' else '' }}">↩️ Returns</a>{% endif %}
-        {% if 'inventory' in perms %}<a href="/inventory" class="nav-link {{ 'active' if request.path == '/inventory' else '' }}">📦 Inventory</a>{% endif %}
-        {% if 'purchasing' in perms %}<a href="/purchasing" class="nav-link {{ 'active' if request.path == '/purchasing' else '' }}">🛒 Purchasing</a>{% endif %}
-        {% if 'suppliers' in perms %}<a href="/suppliers" class="nav-link {{ 'active' if request.path == '/suppliers' else '' }}">🚚 Suppliers</a>{% endif %}
-        {% if 'barcodes' in perms %}<a href="/barcodes" class="nav-link {{ 'active' if request.path == '/barcodes' else '' }}">🏷️ Barcodes</a>{% endif %}
-        {% if 'employees' in perms %}<a href="/employees" class="nav-link {{ 'active' if request.path == '/employees' else '' }}">👨‍🔧 Employees</a>{% endif %}
-        {% if 'payroll' in perms %}<a href="/payroll" class="nav-link {{ 'active' if request.path == '/payroll' else '' }}">💰 Payroll</a>{% endif %}
+        {% if has_all or 'expenses' in perms %}<a href="/expenses" class="nav-link {{ 'active' if request.path == '/expenses' else '' }}">💸 Shop Expenses</a>{% endif %}
+        {% if has_all or 'customers' in perms %}<a href="/customers" class="nav-link {{ 'active' if request.path == '/customers' else '' }}">👥 Customers</a>{% endif %}
+        {% if has_all or 'returns' in perms %}<a href="/returns" class="nav-link {{ 'active' if request.path == '/returns' else '' }}">↩️ Returns</a>{% endif %}
+        {% if has_all or 'inventory' in perms %}<a href="/inventory" class="nav-link {{ 'active' if request.path == '/inventory' else '' }}">📦 Inventory</a>{% endif %}
+        {% if has_all or 'purchasing' in perms %}<a href="/purchasing" class="nav-link {{ 'active' if request.path == '/purchasing' else '' }}">🛒 Purchasing</a>{% endif %}
+        {% if has_all or 'suppliers' in perms %}<a href="/suppliers" class="nav-link {{ 'active' if request.path == '/suppliers' else '' }}">🚚 Suppliers</a>{% endif %}
+        {% if has_all or 'barcodes' in perms %}<a href="/barcodes" class="nav-link {{ 'active' if request.path == '/barcodes' else '' }}">🏷️ Barcodes</a>{% endif %}
+        {% if has_all or 'employees' in perms %}<a href="/employees" class="nav-link {{ 'active' if request.path == '/employees' else '' }}">👨‍🔧 Employees</a>{% endif %}
+        {% if has_all or 'payroll' in perms %}<a href="/payroll" class="nav-link {{ 'active' if request.path == '/payroll' else '' }}">💰 Payroll</a>{% endif %}
         
-        {% if 'projects' in perms %}
+        {% if has_all or 'projects' in perms %}
             <a href="/projects" class="nav-link {{ 'active' if request.path.startswith('/project') or request.path.startswith('/manage_project') else '' }}">📋 Projects</a>
             <a href="/project_quotations" class="nav-link {{ 'active' if request.path == '/project_quotations' else '' }}">🏗️ Project Quotes</a>
         {% endif %}
         
-        {% if 'reports' in perms %}<a href="/reports" class="nav-link {{ 'active' if request.path == '/reports' else '' }}">📈 Reports</a>{% endif %}
-        {% if 'settings' in perms %}<a href="/settings" class="nav-link {{ 'active' if request.path == '/settings' else '' }}">⚙️ Settings</a>{% endif %}
+        {% if has_all or 'reports' in perms %}<a href="/reports" class="nav-link {{ 'active' if request.path == '/reports' else '' }}">📈 Reports</a>{% endif %}
+        {% if has_all or 'settings' in perms %}<a href="/settings" class="nav-link {{ 'active' if request.path == '/settings' else '' }}">⚙️ Settings</a>{% endif %}
     </div>
 </div>
 <div class="content">

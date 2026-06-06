@@ -67,6 +67,9 @@ class Database:
             self.cursor.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'ShopOwner';")
             self.cursor.execute("UPDATE users SET role = 'SuperAdmin' WHERE username = 'admin';")
         except: pass
+        try:
+            self.cursor.execute("ALTER TABLE branches ADD COLUMN IF NOT EXISTS parent_id INTEGER REFERENCES branches(id) DEFAULT NULL;")
+        except: pass
         self.conn.commit()
 
     def migrate_missing_columns(self):
@@ -514,13 +517,16 @@ class Database:
         
         return shop_id
     def get_all_branches(self):
-        self.cursor.execute("SELECT * FROM branches ORDER BY id DESC")
+        self.cursor.execute("SELECT b.id, b.shop_id, b.branch_name, b.location, p.branch_name as parent_name FROM branches b LEFT JOIN branches p ON b.parent_id = p.id ORDER BY b.id DESC")
         return self.cursor.fetchall()
     def get_shop_branches(self):
-        self.cursor.execute("SELECT id, branch_name FROM branches WHERE shop_id=%s ORDER BY id", (self.shop_id,))
+        self.cursor.execute("SELECT id, branch_name, parent_id FROM branches WHERE shop_id=%s ORDER BY id", (self.shop_id,))
         return self.cursor.fetchall()
-    def add_branch(self, shop_id, branch_name, location):
-        self.cursor.execute("INSERT INTO branches (shop_id, branch_name, location) VALUES (%s, %s, %s)", (shop_id, branch_name, location))
+    def add_branch(self, shop_id, branch_name, location, parent_id=None):
+        if parent_id and str(parent_id).strip():
+            self.cursor.execute("INSERT INTO branches (shop_id, branch_name, location, parent_id) VALUES (%s, %s, %s, %s)", (shop_id, branch_name, location, parent_id))
+        else:
+            self.cursor.execute("INSERT INTO branches (shop_id, branch_name, location) VALUES (%s, %s, %s)", (shop_id, branch_name, location))
 
     def delete_branch(self, shop_id, branch_id):
         if branch_id == 1:
