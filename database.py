@@ -152,10 +152,10 @@ class Database:
             self.cursor.execute("UPDATE customers SET credit_balance = credit_balance + %s WHERE id = %s AND shop_id=%s", (final, customer_id, self.shop_id))
         return invoice_id
     def get_pos_invoice(self, invoice_id):
-        self.cursor.execute("SELECT * FROM invoices WHERE id=%s AND shop_id=%s", (invoice_id, self.shop_id))
+        self.cursor.execute("SELECT id, customer_id, customer_name, date_created, total_amount, discount, final_amount, payment_method, shop_id, branch_id FROM invoices WHERE id=%s AND shop_id=%s", (invoice_id, self.shop_id))
         return self.cursor.fetchone()
     def get_pos_invoice_items(self, invoice_id):
-        self.cursor.execute("SELECT ii.*, p.warranty_months, p.brand, p.model FROM invoice_items ii LEFT JOIN products p ON ii.product_id = p.id WHERE ii.invoice_id=%s AND ii.shop_id=%s", (invoice_id, self.shop_id))
+        self.cursor.execute("SELECT ii.id, ii.invoice_id, ii.product_id, ii.item_name, ii.qty, ii.unit_price, ii.total_price, ii.shop_id, ii.branch_id, p.warranty_months, p.brand, p.model FROM invoice_items ii LEFT JOIN products p ON ii.product_id = p.id WHERE ii.invoice_id=%s AND ii.shop_id=%s", (invoice_id, self.shop_id))
         return self.cursor.fetchall()
     def add_product(self, name, barcode, category, brand, model, cost, price, qty, reorder, warranty):
         self.cursor.execute("INSERT INTO products (shop_id, branch_id, item_name, barcode, category, brand, model, cost_price, selling_price, initial_qty, reorder_level, current_stock, warranty_months) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, name, barcode, category, brand, model, cost, price, qty, reorder, qty, warranty))
@@ -406,10 +406,10 @@ class Database:
         self.cursor.execute("SELECT * FROM quotations WHERE shop_id=%s ORDER BY id DESC", (self.shop_id,))
         return self.cursor.fetchall()
     def get_quotation_by_id(self, q_id):
-        self.cursor.execute("SELECT * FROM quotations WHERE id=%s AND shop_id=%s", (q_id, self.shop_id))
+        self.cursor.execute("SELECT id, customer_name, customer_phone, date_created, total_amount, discount, final_amount, shop_id, branch_id FROM quotations WHERE id=%s AND shop_id=%s", (q_id, self.shop_id))
         return self.cursor.fetchone()
     def get_quotation_items(self, q_id):
-        self.cursor.execute("SELECT qi.*, p.warranty_months, p.brand, p.model FROM quotation_items qi LEFT JOIN products p ON qi.product_id = p.id WHERE qi.quotation_id=%s AND qi.shop_id=%s", (q_id, self.shop_id))
+        self.cursor.execute("SELECT qi.id, qi.quotation_id, qi.product_id, qi.item_name, qi.qty, qi.unit_price, qi.total_price, qi.shop_id, qi.branch_id, p.warranty_months, p.brand, p.model FROM quotation_items qi LEFT JOIN products p ON qi.product_id = p.id WHERE qi.quotation_id=%s AND qi.shop_id=%s", (q_id, self.shop_id))
         return self.cursor.fetchall()
     def create_project_quotation(self, proj_name, customer, location, items, discount=0):
         sub = sum(i['price'] * i['qty'] for i in items)
