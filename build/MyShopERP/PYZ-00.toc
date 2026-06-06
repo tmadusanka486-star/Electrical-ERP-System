@@ -68,6 +68,10 @@
   ('_sitebuiltins', 'C:\\Python314\\Lib\\_sitebuiltins.py', 'PYMODULE'),
   ('_strptime', 'C:\\Python314\\Lib\\_strptime.py', 'PYMODULE'),
   ('_threading_local', 'C:\\Python314\\Lib\\_threading_local.py', 'PYMODULE'),
+  ('annotated_types',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\annotated_types\\__init__.py',
+   'PYMODULE'),
   ('annotationlib', 'C:\\Python314\\Lib\\annotationlib.py', 'PYMODULE'),
   ('anyio',
    'C:\\Users\\Thilina '
@@ -566,6 +570,7 @@
    'C:\\Users\\Thilina '
    'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\colorama\\winterm.py',
    'PYMODULE'),
+  ('colorsys', 'C:\\Python314\\Lib\\colorsys.py', 'PYMODULE'),
   ('compression', 'C:\\Python314\\Lib\\compression\\__init__.py', 'PYMODULE'),
   ('compression._common',
    'C:\\Python314\\Lib\\compression\\_common\\__init__.py',
@@ -830,6 +835,10 @@
   ('dataclasses', 'C:\\Python314\\Lib\\dataclasses.py', 'PYMODULE'),
   ('datetime', 'C:\\Python314\\Lib\\datetime.py', 'PYMODULE'),
   ('decimal', 'C:\\Python314\\Lib\\decimal.py', 'PYMODULE'),
+  ('deprecation',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\deprecation.py',
+   'PYMODULE'),
   ('difflib', 'C:\\Python314\\Lib\\difflib.py', 'PYMODULE'),
   ('dis', 'C:\\Python314\\Lib\\dis.py', 'PYMODULE'),
   ('dotenv',
@@ -1552,6 +1561,50 @@
   ('json.decoder', 'C:\\Python314\\Lib\\json\\decoder.py', 'PYMODULE'),
   ('json.encoder', 'C:\\Python314\\Lib\\json\\encoder.py', 'PYMODULE'),
   ('json.scanner', 'C:\\Python314\\Lib\\json\\scanner.py', 'PYMODULE'),
+  ('jwt',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\jwt\\__init__.py',
+   'PYMODULE'),
+  ('jwt.algorithms',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\jwt\\algorithms.py',
+   'PYMODULE'),
+  ('jwt.api_jwk',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\jwt\\api_jwk.py',
+   'PYMODULE'),
+  ('jwt.api_jws',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\jwt\\api_jws.py',
+   'PYMODULE'),
+  ('jwt.api_jwt',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\jwt\\api_jwt.py',
+   'PYMODULE'),
+  ('jwt.exceptions',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\jwt\\exceptions.py',
+   'PYMODULE'),
+  ('jwt.jwk_set_cache',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\jwt\\jwk_set_cache.py',
+   'PYMODULE'),
+  ('jwt.jwks_client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\jwt\\jwks_client.py',
+   'PYMODULE'),
+  ('jwt.types',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\jwt\\types.py',
+   'PYMODULE'),
+  ('jwt.utils',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\jwt\\utils.py',
+   'PYMODULE'),
+  ('jwt.warnings',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\jwt\\warnings.py',
+   'PYMODULE'),
   ('logging', 'C:\\Python314\\Lib\\logging\\__init__.py', 'PYMODULE'),
   ('lzma', 'C:\\Python314\\Lib\\lzma.py', 'PYMODULE'),
   ('markupsafe',
@@ -1563,6 +1616,22 @@
    'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\markupsafe\\_native.py',
    'PYMODULE'),
   ('mimetypes', 'C:\\Python314\\Lib\\mimetypes.py', 'PYMODULE'),
+  ('multidict',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\multidict\\__init__.py',
+   'PYMODULE'),
+  ('multidict._abc',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\multidict\\_abc.py',
+   'PYMODULE'),
+  ('multidict._compat',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\multidict\\_compat.py',
+   'PYMODULE'),
+  ('multidict._multidict_py',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\multidict\\_multidict_py.py',
+   'PYMODULE'),
   ('multiprocessing',
    'C:\\Python314\\Lib\\multiprocessing\\__init__.py',
    'PYMODULE'),
@@ -1700,7 +1769,79 @@
   ('pickle', 'C:\\Python314\\Lib\\pickle.py', 'PYMODULE'),
   ('pkgutil', 'C:\\Python314\\Lib\\pkgutil.py', 'PYMODULE'),
   ('platform', 'C:\\Python314\\Lib\\platform.py', 'PYMODULE'),
+  ('postgrest',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\postgrest\\__init__.py',
+   'PYMODULE'),
+  ('postgrest._async',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\postgrest\\_async\\__init__.py',
+   'PYMODULE'),
+  ('postgrest._async.client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\postgrest\\_async\\client.py',
+   'PYMODULE'),
+  ('postgrest._async.request_builder',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\postgrest\\_async\\request_builder.py',
+   'PYMODULE'),
+  ('postgrest._sync',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\postgrest\\_sync\\__init__.py',
+   'PYMODULE'),
+  ('postgrest._sync.client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\postgrest\\_sync\\client.py',
+   'PYMODULE'),
+  ('postgrest._sync.request_builder',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\postgrest\\_sync\\request_builder.py',
+   'PYMODULE'),
+  ('postgrest.base_client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\postgrest\\base_client.py',
+   'PYMODULE'),
+  ('postgrest.base_request_builder',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\postgrest\\base_request_builder.py',
+   'PYMODULE'),
+  ('postgrest.constants',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\postgrest\\constants.py',
+   'PYMODULE'),
+  ('postgrest.exceptions',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\postgrest\\exceptions.py',
+   'PYMODULE'),
+  ('postgrest.types',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\postgrest\\types.py',
+   'PYMODULE'),
+  ('postgrest.utils',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\postgrest\\utils.py',
+   'PYMODULE'),
+  ('postgrest.version',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\postgrest\\version.py',
+   'PYMODULE'),
   ('pprint', 'C:\\Python314\\Lib\\pprint.py', 'PYMODULE'),
+  ('propcache',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\propcache\\__init__.py',
+   'PYMODULE'),
+  ('propcache._helpers',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\propcache\\_helpers.py',
+   'PYMODULE'),
+  ('propcache._helpers_py',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\propcache\\_helpers_py.py',
+   'PYMODULE'),
+  ('propcache.api',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\propcache\\api.py',
+   'PYMODULE'),
   ('proxy_tools',
    'C:\\Users\\Thilina '
    'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\proxy_tools\\__init__.py',
@@ -1778,6 +1919,434 @@
    'C:\\Users\\Thilina '
    'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pycparser\\yacctab.py',
    'PYMODULE'),
+  ('pydantic',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\__init__.py',
+   'PYMODULE'),
+  ('pydantic._internal',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\__init__.py',
+   'PYMODULE'),
+  ('pydantic._internal._config',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_config.py',
+   'PYMODULE'),
+  ('pydantic._internal._core_metadata',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_core_metadata.py',
+   'PYMODULE'),
+  ('pydantic._internal._core_utils',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_core_utils.py',
+   'PYMODULE'),
+  ('pydantic._internal._dataclasses',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_dataclasses.py',
+   'PYMODULE'),
+  ('pydantic._internal._decorators',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_decorators.py',
+   'PYMODULE'),
+  ('pydantic._internal._decorators_v1',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_decorators_v1.py',
+   'PYMODULE'),
+  ('pydantic._internal._discriminated_union',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_discriminated_union.py',
+   'PYMODULE'),
+  ('pydantic._internal._docs_extraction',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_docs_extraction.py',
+   'PYMODULE'),
+  ('pydantic._internal._fields',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_fields.py',
+   'PYMODULE'),
+  ('pydantic._internal._forward_ref',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_forward_ref.py',
+   'PYMODULE'),
+  ('pydantic._internal._generate_schema',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_generate_schema.py',
+   'PYMODULE'),
+  ('pydantic._internal._generics',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_generics.py',
+   'PYMODULE'),
+  ('pydantic._internal._git',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_git.py',
+   'PYMODULE'),
+  ('pydantic._internal._import_utils',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_import_utils.py',
+   'PYMODULE'),
+  ('pydantic._internal._internal_dataclass',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_internal_dataclass.py',
+   'PYMODULE'),
+  ('pydantic._internal._known_annotated_metadata',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_known_annotated_metadata.py',
+   'PYMODULE'),
+  ('pydantic._internal._mock_val_ser',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_mock_val_ser.py',
+   'PYMODULE'),
+  ('pydantic._internal._model_construction',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_model_construction.py',
+   'PYMODULE'),
+  ('pydantic._internal._namespace_utils',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_namespace_utils.py',
+   'PYMODULE'),
+  ('pydantic._internal._repr',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_repr.py',
+   'PYMODULE'),
+  ('pydantic._internal._schema_gather',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_schema_gather.py',
+   'PYMODULE'),
+  ('pydantic._internal._schema_generation_shared',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_schema_generation_shared.py',
+   'PYMODULE'),
+  ('pydantic._internal._serializers',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_serializers.py',
+   'PYMODULE'),
+  ('pydantic._internal._signature',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_signature.py',
+   'PYMODULE'),
+  ('pydantic._internal._typing_extra',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_typing_extra.py',
+   'PYMODULE'),
+  ('pydantic._internal._utils',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_utils.py',
+   'PYMODULE'),
+  ('pydantic._internal._validate_call',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_validate_call.py',
+   'PYMODULE'),
+  ('pydantic._internal._validators',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_internal\\_validators.py',
+   'PYMODULE'),
+  ('pydantic._migration',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\_migration.py',
+   'PYMODULE'),
+  ('pydantic.alias_generators',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\alias_generators.py',
+   'PYMODULE'),
+  ('pydantic.aliases',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\aliases.py',
+   'PYMODULE'),
+  ('pydantic.annotated_handlers',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\annotated_handlers.py',
+   'PYMODULE'),
+  ('pydantic.class_validators',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\class_validators.py',
+   'PYMODULE'),
+  ('pydantic.color',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\color.py',
+   'PYMODULE'),
+  ('pydantic.config',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\config.py',
+   'PYMODULE'),
+  ('pydantic.dataclasses',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\dataclasses.py',
+   'PYMODULE'),
+  ('pydantic.datetime_parse',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\datetime_parse.py',
+   'PYMODULE'),
+  ('pydantic.decorator',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\decorator.py',
+   'PYMODULE'),
+  ('pydantic.deprecated',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\deprecated\\__init__.py',
+   'PYMODULE'),
+  ('pydantic.deprecated.class_validators',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\deprecated\\class_validators.py',
+   'PYMODULE'),
+  ('pydantic.deprecated.config',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\deprecated\\config.py',
+   'PYMODULE'),
+  ('pydantic.deprecated.copy_internals',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\deprecated\\copy_internals.py',
+   'PYMODULE'),
+  ('pydantic.deprecated.decorator',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\deprecated\\decorator.py',
+   'PYMODULE'),
+  ('pydantic.deprecated.json',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\deprecated\\json.py',
+   'PYMODULE'),
+  ('pydantic.deprecated.parse',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\deprecated\\parse.py',
+   'PYMODULE'),
+  ('pydantic.deprecated.tools',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\deprecated\\tools.py',
+   'PYMODULE'),
+  ('pydantic.env_settings',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\env_settings.py',
+   'PYMODULE'),
+  ('pydantic.error_wrappers',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\error_wrappers.py',
+   'PYMODULE'),
+  ('pydantic.errors',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\errors.py',
+   'PYMODULE'),
+  ('pydantic.experimental',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\experimental\\__init__.py',
+   'PYMODULE'),
+  ('pydantic.experimental.arguments_schema',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\experimental\\arguments_schema.py',
+   'PYMODULE'),
+  ('pydantic.experimental.missing_sentinel',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\experimental\\missing_sentinel.py',
+   'PYMODULE'),
+  ('pydantic.experimental.pipeline',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\experimental\\pipeline.py',
+   'PYMODULE'),
+  ('pydantic.fields',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\fields.py',
+   'PYMODULE'),
+  ('pydantic.functional_serializers',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\functional_serializers.py',
+   'PYMODULE'),
+  ('pydantic.functional_validators',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\functional_validators.py',
+   'PYMODULE'),
+  ('pydantic.generics',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\generics.py',
+   'PYMODULE'),
+  ('pydantic.json',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\json.py',
+   'PYMODULE'),
+  ('pydantic.json_schema',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\json_schema.py',
+   'PYMODULE'),
+  ('pydantic.main',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\main.py',
+   'PYMODULE'),
+  ('pydantic.mypy',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\mypy.py',
+   'PYMODULE'),
+  ('pydantic.networks',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\networks.py',
+   'PYMODULE'),
+  ('pydantic.parse',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\parse.py',
+   'PYMODULE'),
+  ('pydantic.plugin',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\plugin\\__init__.py',
+   'PYMODULE'),
+  ('pydantic.plugin._loader',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\plugin\\_loader.py',
+   'PYMODULE'),
+  ('pydantic.plugin._schema_validator',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\plugin\\_schema_validator.py',
+   'PYMODULE'),
+  ('pydantic.root_model',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\root_model.py',
+   'PYMODULE'),
+  ('pydantic.schema',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\schema.py',
+   'PYMODULE'),
+  ('pydantic.tools',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\tools.py',
+   'PYMODULE'),
+  ('pydantic.type_adapter',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\type_adapter.py',
+   'PYMODULE'),
+  ('pydantic.types',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\types.py',
+   'PYMODULE'),
+  ('pydantic.typing',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\typing.py',
+   'PYMODULE'),
+  ('pydantic.utils',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\utils.py',
+   'PYMODULE'),
+  ('pydantic.v1',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\__init__.py',
+   'PYMODULE'),
+  ('pydantic.v1._hypothesis_plugin',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\_hypothesis_plugin.py',
+   'PYMODULE'),
+  ('pydantic.v1.annotated_types',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\annotated_types.py',
+   'PYMODULE'),
+  ('pydantic.v1.class_validators',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\class_validators.py',
+   'PYMODULE'),
+  ('pydantic.v1.color',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\color.py',
+   'PYMODULE'),
+  ('pydantic.v1.config',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\config.py',
+   'PYMODULE'),
+  ('pydantic.v1.dataclasses',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\dataclasses.py',
+   'PYMODULE'),
+  ('pydantic.v1.datetime_parse',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\datetime_parse.py',
+   'PYMODULE'),
+  ('pydantic.v1.decorator',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\decorator.py',
+   'PYMODULE'),
+  ('pydantic.v1.env_settings',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\env_settings.py',
+   'PYMODULE'),
+  ('pydantic.v1.error_wrappers',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\error_wrappers.py',
+   'PYMODULE'),
+  ('pydantic.v1.errors',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\errors.py',
+   'PYMODULE'),
+  ('pydantic.v1.fields',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\fields.py',
+   'PYMODULE'),
+  ('pydantic.v1.generics',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\generics.py',
+   'PYMODULE'),
+  ('pydantic.v1.json',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\json.py',
+   'PYMODULE'),
+  ('pydantic.v1.main',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\main.py',
+   'PYMODULE'),
+  ('pydantic.v1.mypy',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\mypy.py',
+   'PYMODULE'),
+  ('pydantic.v1.networks',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\networks.py',
+   'PYMODULE'),
+  ('pydantic.v1.parse',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\parse.py',
+   'PYMODULE'),
+  ('pydantic.v1.schema',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\schema.py',
+   'PYMODULE'),
+  ('pydantic.v1.tools',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\tools.py',
+   'PYMODULE'),
+  ('pydantic.v1.types',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\types.py',
+   'PYMODULE'),
+  ('pydantic.v1.typing',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\typing.py',
+   'PYMODULE'),
+  ('pydantic.v1.utils',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\utils.py',
+   'PYMODULE'),
+  ('pydantic.v1.validators',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\validators.py',
+   'PYMODULE'),
+  ('pydantic.v1.version',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\v1\\version.py',
+   'PYMODULE'),
+  ('pydantic.validate_call_decorator',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\validate_call_decorator.py',
+   'PYMODULE'),
+  ('pydantic.validators',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\validators.py',
+   'PYMODULE'),
+  ('pydantic.version',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\version.py',
+   'PYMODULE'),
+  ('pydantic.warnings',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic\\warnings.py',
+   'PYMODULE'),
+  ('pydantic_core',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic_core\\__init__.py',
+   'PYMODULE'),
+  ('pydantic_core.core_schema',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\pydantic_core\\core_schema.py',
+   'PYMODULE'),
   ('pydoc', 'C:\\Python314\\Lib\\pydoc.py', 'PYMODULE'),
   ('pydoc_data', 'C:\\Python314\\Lib\\pydoc_data\\__init__.py', 'PYMODULE'),
   ('pydoc_data.topics',
@@ -1790,6 +2359,74 @@
   ('queue', 'C:\\Python314\\Lib\\queue.py', 'PYMODULE'),
   ('quopri', 'C:\\Python314\\Lib\\quopri.py', 'PYMODULE'),
   ('random', 'C:\\Python314\\Lib\\random.py', 'PYMODULE'),
+  ('realtime',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\realtime\\__init__.py',
+   'PYMODULE'),
+  ('realtime._async',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\realtime\\_async\\__init__.py',
+   'PYMODULE'),
+  ('realtime._async.channel',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\realtime\\_async\\channel.py',
+   'PYMODULE'),
+  ('realtime._async.client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\realtime\\_async\\client.py',
+   'PYMODULE'),
+  ('realtime._async.presence',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\realtime\\_async\\presence.py',
+   'PYMODULE'),
+  ('realtime._async.push',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\realtime\\_async\\push.py',
+   'PYMODULE'),
+  ('realtime._async.timer',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\realtime\\_async\\timer.py',
+   'PYMODULE'),
+  ('realtime._sync',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\realtime\\_sync\\__init__.py',
+   'PYMODULE'),
+  ('realtime._sync.channel',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\realtime\\_sync\\channel.py',
+   'PYMODULE'),
+  ('realtime._sync.client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\realtime\\_sync\\client.py',
+   'PYMODULE'),
+  ('realtime._sync.presence',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\realtime\\_sync\\presence.py',
+   'PYMODULE'),
+  ('realtime.exceptions',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\realtime\\exceptions.py',
+   'PYMODULE'),
+  ('realtime.message',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\realtime\\message.py',
+   'PYMODULE'),
+  ('realtime.transformers',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\realtime\\transformers.py',
+   'PYMODULE'),
+  ('realtime.types',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\realtime\\types.py',
+   'PYMODULE'),
+  ('realtime.utils',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\realtime\\utils.py',
+   'PYMODULE'),
+  ('realtime.version',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\realtime\\version.py',
+   'PYMODULE'),
   ('requests',
    'C:\\Users\\Thilina '
    'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\requests\\__init__.py',
@@ -2410,9 +3047,273 @@
   ('socketserver', 'C:\\Python314\\Lib\\socketserver.py', 'PYMODULE'),
   ('ssl', 'C:\\Python314\\Lib\\ssl.py', 'PYMODULE'),
   ('statistics', 'C:\\Python314\\Lib\\statistics.py', 'PYMODULE'),
+  ('storage3',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\__init__.py',
+   'PYMODULE'),
+  ('storage3._async',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\_async\\__init__.py',
+   'PYMODULE'),
+  ('storage3._async.analytics',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\_async\\analytics.py',
+   'PYMODULE'),
+  ('storage3._async.bucket',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\_async\\bucket.py',
+   'PYMODULE'),
+  ('storage3._async.client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\_async\\client.py',
+   'PYMODULE'),
+  ('storage3._async.file_api',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\_async\\file_api.py',
+   'PYMODULE'),
+  ('storage3._async.request',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\_async\\request.py',
+   'PYMODULE'),
+  ('storage3._async.vectors',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\_async\\vectors.py',
+   'PYMODULE'),
+  ('storage3._sync',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\_sync\\__init__.py',
+   'PYMODULE'),
+  ('storage3._sync.analytics',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\_sync\\analytics.py',
+   'PYMODULE'),
+  ('storage3._sync.bucket',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\_sync\\bucket.py',
+   'PYMODULE'),
+  ('storage3._sync.client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\_sync\\client.py',
+   'PYMODULE'),
+  ('storage3._sync.file_api',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\_sync\\file_api.py',
+   'PYMODULE'),
+  ('storage3._sync.request',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\_sync\\request.py',
+   'PYMODULE'),
+  ('storage3._sync.vectors',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\_sync\\vectors.py',
+   'PYMODULE'),
+  ('storage3.constants',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\constants.py',
+   'PYMODULE'),
+  ('storage3.exceptions',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\exceptions.py',
+   'PYMODULE'),
+  ('storage3.types',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\types.py',
+   'PYMODULE'),
+  ('storage3.utils',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\utils.py',
+   'PYMODULE'),
+  ('storage3.version',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\storage3\\version.py',
+   'PYMODULE'),
+  ('strenum',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\strenum\\__init__.py',
+   'PYMODULE'),
+  ('strenum._name_mangler',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\strenum\\_name_mangler.py',
+   'PYMODULE'),
+  ('strenum._version',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\strenum\\_version.py',
+   'PYMODULE'),
   ('string', 'C:\\Python314\\Lib\\string\\__init__.py', 'PYMODULE'),
   ('stringprep', 'C:\\Python314\\Lib\\stringprep.py', 'PYMODULE'),
   ('subprocess', 'C:\\Python314\\Lib\\subprocess.py', 'PYMODULE'),
+  ('supabase',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase\\__init__.py',
+   'PYMODULE'),
+  ('supabase._async',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase\\_async\\__init__.py',
+   'PYMODULE'),
+  ('supabase._async.auth_client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase\\_async\\auth_client.py',
+   'PYMODULE'),
+  ('supabase._async.client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase\\_async\\client.py',
+   'PYMODULE'),
+  ('supabase._sync',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase\\_sync\\__init__.py',
+   'PYMODULE'),
+  ('supabase._sync.auth_client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase\\_sync\\auth_client.py',
+   'PYMODULE'),
+  ('supabase._sync.client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase\\_sync\\client.py',
+   'PYMODULE'),
+  ('supabase.client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase\\client.py',
+   'PYMODULE'),
+  ('supabase.lib',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase\\lib\\__init__.py',
+   'PYMODULE'),
+  ('supabase.lib.client_options',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase\\lib\\client_options.py',
+   'PYMODULE'),
+  ('supabase.types',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase\\types.py',
+   'PYMODULE'),
+  ('supabase.version',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase\\version.py',
+   'PYMODULE'),
+  ('supabase_auth',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\__init__.py',
+   'PYMODULE'),
+  ('supabase_auth._async',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\_async\\__init__.py',
+   'PYMODULE'),
+  ('supabase_auth._async.gotrue_admin_api',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\_async\\gotrue_admin_api.py',
+   'PYMODULE'),
+  ('supabase_auth._async.gotrue_admin_mfa_api',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\_async\\gotrue_admin_mfa_api.py',
+   'PYMODULE'),
+  ('supabase_auth._async.gotrue_admin_oauth_api',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\_async\\gotrue_admin_oauth_api.py',
+   'PYMODULE'),
+  ('supabase_auth._async.gotrue_base_api',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\_async\\gotrue_base_api.py',
+   'PYMODULE'),
+  ('supabase_auth._async.gotrue_client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\_async\\gotrue_client.py',
+   'PYMODULE'),
+  ('supabase_auth._async.gotrue_mfa_api',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\_async\\gotrue_mfa_api.py',
+   'PYMODULE'),
+  ('supabase_auth._async.storage',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\_async\\storage.py',
+   'PYMODULE'),
+  ('supabase_auth._sync',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\_sync\\__init__.py',
+   'PYMODULE'),
+  ('supabase_auth._sync.gotrue_admin_api',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\_sync\\gotrue_admin_api.py',
+   'PYMODULE'),
+  ('supabase_auth._sync.gotrue_admin_mfa_api',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\_sync\\gotrue_admin_mfa_api.py',
+   'PYMODULE'),
+  ('supabase_auth._sync.gotrue_admin_oauth_api',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\_sync\\gotrue_admin_oauth_api.py',
+   'PYMODULE'),
+  ('supabase_auth._sync.gotrue_base_api',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\_sync\\gotrue_base_api.py',
+   'PYMODULE'),
+  ('supabase_auth._sync.gotrue_client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\_sync\\gotrue_client.py',
+   'PYMODULE'),
+  ('supabase_auth._sync.gotrue_mfa_api',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\_sync\\gotrue_mfa_api.py',
+   'PYMODULE'),
+  ('supabase_auth._sync.storage',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\_sync\\storage.py',
+   'PYMODULE'),
+  ('supabase_auth.constants',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\constants.py',
+   'PYMODULE'),
+  ('supabase_auth.errors',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\errors.py',
+   'PYMODULE'),
+  ('supabase_auth.helpers',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\helpers.py',
+   'PYMODULE'),
+  ('supabase_auth.timer',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\timer.py',
+   'PYMODULE'),
+  ('supabase_auth.types',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\types.py',
+   'PYMODULE'),
+  ('supabase_auth.version',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_auth\\version.py',
+   'PYMODULE'),
+  ('supabase_functions',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_functions\\__init__.py',
+   'PYMODULE'),
+  ('supabase_functions._async',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_functions\\_async\\__init__.py',
+   'PYMODULE'),
+  ('supabase_functions._async.functions_client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_functions\\_async\\functions_client.py',
+   'PYMODULE'),
+  ('supabase_functions._sync',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_functions\\_sync\\__init__.py',
+   'PYMODULE'),
+  ('supabase_functions._sync.functions_client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_functions\\_sync\\functions_client.py',
+   'PYMODULE'),
+  ('supabase_functions.errors',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_functions\\errors.py',
+   'PYMODULE'),
+  ('supabase_functions.utils',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_functions\\utils.py',
+   'PYMODULE'),
+  ('supabase_functions.version',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\supabase_functions\\version.py',
+   'PYMODULE'),
   ('sysconfig', 'C:\\Python314\\Lib\\sysconfig\\__init__.py', 'PYMODULE'),
   ('tarfile', 'C:\\Python314\\Lib\\tarfile.py', 'PYMODULE'),
   ('tempfile', 'C:\\Python314\\Lib\\tempfile.py', 'PYMODULE'),
@@ -2430,6 +3331,106 @@
   ('typing_extensions',
    'C:\\Users\\Thilina '
    'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\typing_extensions.py',
+   'PYMODULE'),
+  ('typing_inspection',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\typing_inspection\\__init__.py',
+   'PYMODULE'),
+  ('typing_inspection.introspection',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\typing_inspection\\introspection.py',
+   'PYMODULE'),
+  ('typing_inspection.typing_objects',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\typing_inspection\\typing_objects.py',
+   'PYMODULE'),
+  ('tzdata',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.Africa',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\Africa\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.America',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\America\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.America.Argentina',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\America\\Argentina\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.America.Indiana',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\America\\Indiana\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.America.Kentucky',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\America\\Kentucky\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.America.North_Dakota',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\America\\North_Dakota\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.Antarctica',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\Antarctica\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.Arctic',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\Arctic\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.Asia',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\Asia\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.Atlantic',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\Atlantic\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.Australia',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\Australia\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.Brazil',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\Brazil\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.Canada',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\Canada\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.Chile',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\Chile\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.Etc',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\Etc\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.Europe',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\Europe\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.Indian',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\Indian\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.Mexico',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\Mexico\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.Pacific',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\Pacific\\__init__.py',
+   'PYMODULE'),
+  ('tzdata.zoneinfo.US',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\tzdata\\zoneinfo\\US\\__init__.py',
    'PYMODULE'),
   ('unittest', 'C:\\Python314\\Lib\\unittest\\__init__.py', 'PYMODULE'),
   ('unittest._log', 'C:\\Python314\\Lib\\unittest\\_log.py', 'PYMODULE'),
@@ -2596,6 +3597,194 @@
    'PYMODULE'),
   ('uuid', 'C:\\Python314\\Lib\\uuid.py', 'PYMODULE'),
   ('webbrowser', 'C:\\Python314\\Lib\\webbrowser.py', 'PYMODULE'),
+  ('websockets',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\__init__.py',
+   'PYMODULE'),
+  ('websockets.__main__',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\__main__.py',
+   'PYMODULE'),
+  ('websockets.asyncio',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\asyncio\\__init__.py',
+   'PYMODULE'),
+  ('websockets.asyncio.async_timeout',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\asyncio\\async_timeout.py',
+   'PYMODULE'),
+  ('websockets.asyncio.client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\asyncio\\client.py',
+   'PYMODULE'),
+  ('websockets.asyncio.compatibility',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\asyncio\\compatibility.py',
+   'PYMODULE'),
+  ('websockets.asyncio.connection',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\asyncio\\connection.py',
+   'PYMODULE'),
+  ('websockets.asyncio.messages',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\asyncio\\messages.py',
+   'PYMODULE'),
+  ('websockets.asyncio.router',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\asyncio\\router.py',
+   'PYMODULE'),
+  ('websockets.asyncio.server',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\asyncio\\server.py',
+   'PYMODULE'),
+  ('websockets.auth',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\auth.py',
+   'PYMODULE'),
+  ('websockets.cli',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\cli.py',
+   'PYMODULE'),
+  ('websockets.client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\client.py',
+   'PYMODULE'),
+  ('websockets.connection',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\connection.py',
+   'PYMODULE'),
+  ('websockets.datastructures',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\datastructures.py',
+   'PYMODULE'),
+  ('websockets.exceptions',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\exceptions.py',
+   'PYMODULE'),
+  ('websockets.extensions',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\extensions\\__init__.py',
+   'PYMODULE'),
+  ('websockets.extensions.base',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\extensions\\base.py',
+   'PYMODULE'),
+  ('websockets.extensions.permessage_deflate',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\extensions\\permessage_deflate.py',
+   'PYMODULE'),
+  ('websockets.frames',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\frames.py',
+   'PYMODULE'),
+  ('websockets.headers',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\headers.py',
+   'PYMODULE'),
+  ('websockets.http',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\http.py',
+   'PYMODULE'),
+  ('websockets.http11',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\http11.py',
+   'PYMODULE'),
+  ('websockets.imports',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\imports.py',
+   'PYMODULE'),
+  ('websockets.legacy',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\legacy\\__init__.py',
+   'PYMODULE'),
+  ('websockets.legacy.auth',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\legacy\\auth.py',
+   'PYMODULE'),
+  ('websockets.legacy.client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\legacy\\client.py',
+   'PYMODULE'),
+  ('websockets.legacy.exceptions',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\legacy\\exceptions.py',
+   'PYMODULE'),
+  ('websockets.legacy.framing',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\legacy\\framing.py',
+   'PYMODULE'),
+  ('websockets.legacy.handshake',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\legacy\\handshake.py',
+   'PYMODULE'),
+  ('websockets.legacy.http',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\legacy\\http.py',
+   'PYMODULE'),
+  ('websockets.legacy.protocol',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\legacy\\protocol.py',
+   'PYMODULE'),
+  ('websockets.legacy.server',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\legacy\\server.py',
+   'PYMODULE'),
+  ('websockets.protocol',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\protocol.py',
+   'PYMODULE'),
+  ('websockets.server',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\server.py',
+   'PYMODULE'),
+  ('websockets.streams',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\streams.py',
+   'PYMODULE'),
+  ('websockets.sync',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\sync\\__init__.py',
+   'PYMODULE'),
+  ('websockets.sync.client',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\sync\\client.py',
+   'PYMODULE'),
+  ('websockets.sync.connection',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\sync\\connection.py',
+   'PYMODULE'),
+  ('websockets.sync.messages',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\sync\\messages.py',
+   'PYMODULE'),
+  ('websockets.sync.router',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\sync\\router.py',
+   'PYMODULE'),
+  ('websockets.sync.server',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\sync\\server.py',
+   'PYMODULE'),
+  ('websockets.sync.utils',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\sync\\utils.py',
+   'PYMODULE'),
+  ('websockets.typing',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\typing.py',
+   'PYMODULE'),
+  ('websockets.uri',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\uri.py',
+   'PYMODULE'),
+  ('websockets.utils',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\utils.py',
+   'PYMODULE'),
+  ('websockets.version',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\websockets\\version.py',
+   'PYMODULE'),
   ('webview',
    'C:\\Users\\Thilina '
    'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\webview\\__init__.py',
@@ -2988,6 +4177,38 @@
    'PYMODULE'),
   ('xmlrpc', 'C:\\Python314\\Lib\\xmlrpc\\__init__.py', 'PYMODULE'),
   ('xmlrpc.client', 'C:\\Python314\\Lib\\xmlrpc\\client.py', 'PYMODULE'),
+  ('yarl',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\yarl\\__init__.py',
+   'PYMODULE'),
+  ('yarl._parse',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\yarl\\_parse.py',
+   'PYMODULE'),
+  ('yarl._path',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\yarl\\_path.py',
+   'PYMODULE'),
+  ('yarl._query',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\yarl\\_query.py',
+   'PYMODULE'),
+  ('yarl._quoters',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\yarl\\_quoters.py',
+   'PYMODULE'),
+  ('yarl._quoting',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\yarl\\_quoting.py',
+   'PYMODULE'),
+  ('yarl._quoting_py',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\yarl\\_quoting_py.py',
+   'PYMODULE'),
+  ('yarl._url',
+   'C:\\Users\\Thilina '
+   'Madusanka\\AppData\\Roaming\\Python\\Python314\\site-packages\\yarl\\_url.py',
+   'PYMODULE'),
   ('zipfile', 'C:\\Python314\\Lib\\zipfile\\__init__.py', 'PYMODULE'),
   ('zipfile._path',
    'C:\\Python314\\Lib\\zipfile\\_path\\__init__.py',
@@ -2995,4 +4216,10 @@
   ('zipfile._path.glob',
    'C:\\Python314\\Lib\\zipfile\\_path\\glob.py',
    'PYMODULE'),
-  ('zipimport', 'C:\\Python314\\Lib\\zipimport.py', 'PYMODULE')])
+  ('zipimport', 'C:\\Python314\\Lib\\zipimport.py', 'PYMODULE'),
+  ('zoneinfo', 'C:\\Python314\\Lib\\zoneinfo\\__init__.py', 'PYMODULE'),
+  ('zoneinfo._common', 'C:\\Python314\\Lib\\zoneinfo\\_common.py', 'PYMODULE'),
+  ('zoneinfo._tzpath', 'C:\\Python314\\Lib\\zoneinfo\\_tzpath.py', 'PYMODULE'),
+  ('zoneinfo._zoneinfo',
+   'C:\\Python314\\Lib\\zoneinfo\\_zoneinfo.py',
+   'PYMODULE')])

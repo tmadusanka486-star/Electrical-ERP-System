@@ -24,10 +24,14 @@ def send_to_google_sheet_async(webhook_url, payload):
 load_dotenv()
 
 # Supabase Storage Initialization
-from supabase import create_client, Client
-SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY) if SUPABASE_URL and SUPABASE_KEY else None
+try:
+    from supabase import create_client, Client
+    SUPABASE_URL = os.environ.get("SUPABASE_URL")
+    SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY) if SUPABASE_URL and SUPABASE_KEY else None
+except ImportError:
+    print("Warning: supabase library not found. Falling back to local storage.")
+    supabase = None
 
 def upload_file_to_storage(file, folder):
     if not supabase:
