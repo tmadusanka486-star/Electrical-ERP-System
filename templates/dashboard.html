@@ -237,41 +237,46 @@
         <h5 class="section-title mb-4">🚀 Core Modules</h5>
         <div class="row g-3">
             {% set perms = session.get('user_permissions', '') %}
-            {% if 'billing' in perms %}
+            {% set role = session.get('user_role', '') %}
+            {% set has_all = role in ['Admin', 'SuperAdmin', 'ShopOwner'] or perms == 'ALL' %}
+            
+            {% if has_all or 'billing' in perms %}
                 <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/billing" class="module-card"><div class="module-icon">🧾</div><div class="module-title">Billing</div></a></div>
             {% endif %}
-            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/expenses" class="module-card"><div class="module-icon">💸</div><div class="module-title">Expenses</div></a></div>
-            {% if 'customers' in perms %}
+            {% if has_all or 'expenses' in perms %}
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/expenses" class="module-card"><div class="module-icon">💸</div><div class="module-title">Expenses</div></a></div>
+            {% endif %}
+            {% if has_all or 'customers' in perms %}
                 <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/customers" class="module-card"><div class="module-icon">👥</div><div class="module-title">Customers</div></a></div>
             {% endif %}
-            {% if 'returns' in perms %}
+            {% if has_all or 'returns' in perms %}
                 <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/returns" class="module-card"><div class="module-icon">↩️</div><div class="module-title">Returns</div></a></div>
             {% endif %}
-            {% if 'inventory' in perms %}
+            {% if has_all or 'inventory' in perms %}
                 <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/inventory" class="module-card"><div class="module-icon">📦</div><div class="module-title">Inventory</div></a></div>
             {% endif %}
-            {% if 'purchasing' in perms %}
+            {% if has_all or 'purchasing' in perms %}
                 <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/purchasing" class="module-card"><div class="module-icon">🛒</div><div class="module-title">Purchasing</div></a></div>
             {% endif %}
-            {% if 'suppliers' in perms %}
+            {% if has_all or 'suppliers' in perms %}
                 <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/suppliers" class="module-card"><div class="module-icon">🚚</div><div class="module-title">Suppliers</div></a></div>
             {% endif %}
-            {% if 'barcodes' in perms %}
+            {% if has_all or 'barcodes' in perms %}
                 <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/barcodes" class="module-card"><div class="module-icon">🏷️</div><div class="module-title">Barcodes</div></a></div>
             {% endif %}
-            {% if 'employees' in perms %}
+            {% if has_all or 'employees' in perms %}
                 <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/employees" class="module-card"><div class="module-icon">👨‍🔧</div><div class="module-title">Employees</div></a></div>
             {% endif %}
-            {% if 'payroll' in perms %}
+            {% if has_all or 'payroll' in perms %}
                 <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/payroll" class="module-card"><div class="module-icon">💰</div><div class="module-title">Payroll</div></a></div>
             {% endif %}
-            {% if 'projects' in perms %}
+            {% if has_all or 'projects' in perms %}
                 <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/projects" class="module-card"><div class="module-icon">📋</div><div class="module-title">Projects</div></a></div>
             {% endif %}
-            {% if 'reports' in perms %}
+            {% if has_all or 'reports' in perms %}
                 <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/reports" class="module-card"><div class="module-icon">📈</div><div class="module-title">Reports</div></a></div>
             {% endif %}
-            {% if 'settings' in perms %}
+            {% if has_all or 'settings' in perms %}
                 <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/settings" class="module-card"><div class="module-icon">⚙️</div><div class="module-title">Settings</div></a></div>
             {% endif %}
         </div>
