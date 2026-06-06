@@ -172,7 +172,11 @@ class Database:
     def update_product(self, product_id, name, barcode, category, brand, model, cost, price, stock, reorder, warranty):
         self.cursor.execute("UPDATE products SET item_name=%s, barcode=%s, category=%s, brand=%s, model=%s, cost_price=%s, selling_price=%s, current_stock=%s, reorder_level=%s, warranty_months=%s WHERE id=%s AND shop_id=%s", (name, barcode, category, brand, model, cost, price, stock, reorder, warranty, product_id, self.shop_id))
     def delete_product(self, product_id):
-        self.cursor.execute("DELETE FROM products WHERE id=%s AND shop_id=%s", (product_id, self.shop_id))
+        try:
+            self.cursor.execute("DELETE FROM products WHERE id=%s AND shop_id=%s", (product_id, self.shop_id))
+            return True, "Product deleted successfully"
+        except Exception as e:
+            return False, f"Cannot delete product: {str(e)}"
     def get_stock_in_other_branches(self, barcode):
         self.cursor.execute("""
             SELECT b.branch_name, p.current_stock
