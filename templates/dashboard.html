@@ -136,37 +136,14 @@
 </div>
 
 <div class="row g-4 mb-5">
-    <!-- Recent Invoices -->
+    <!-- Sales Chart -->
     <div class="col-lg-6">
-        <div class="card" style="background-color: var(--card-bg); border-color: var(--border-color); height: 100%;">
+        <div class="card" style="background-color: var(--card-bg); border-color: var(--border-color); height: 100%; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);">
             <div class="card-header bg-transparent" style="border-bottom: 1px solid var(--border-color); padding: 20px;">
-                <h5 class="section-title mb-0" style="border: none; padding: 0;">🧾 Recent Invoices</h5>
+                <h5 class="section-title mb-0" style="border: none; padding: 0;">📈 Sales Last 7 Days</h5>
             </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="dashboard-table">
-                        <thead>
-                            <tr>
-                                <th>Inv #</th>
-                                <th>Customer</th>
-                                <th>Amount</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for inv in stats.get('recent_invoices', []) %}
-                            <tr>
-                                <td style="color: var(--text-muted);">#{{ inv[0] }}</td>
-                                <td style="font-weight: 500;">{{ inv[1] }}</td>
-                                <td style="color: var(--accent-blue); font-weight: 600;">Rs {{ "{:,.2f}".format(inv[2]) }}</td>
-                                <td style="color: var(--text-muted); font-size: 11px;">{{ inv[3].strftime('%Y-%m-%d') if inv[3].strftime else inv[3] }}</td>
-                            </tr>
-                            {% else %}
-                            <tr><td colspan="4" class="text-center text-muted py-4">No recent invoices.</td></tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+            <div class="card-body p-4" style="min-height: 250px;">
+                <canvas id="salesChart" style="max-height: 250px; width: 100%;"></canvas>
             </div>
         </div>
     </div>
@@ -298,6 +275,70 @@
                 <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6"><a href="/settings" class="module-card"><div class="module-icon">⚙️</div><div class="module-title">Settings</div></a></div>
             {% endif %}
         </div>
+        </div>
     </div>
 </div>
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    
+    // Parse chart data from backend
+    const rawData = {{ stats.get('chart_data', []) | tojson | safe }};
+    const labels = rawData.map(item => item[0]); // Dates
+    const data = rawData.map(item => item[1]); // Amounts
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Daily Sales (Rs)',
+                data: data,
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#3b82f6',
+                pointBorderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) { label += ': '; }
+                            if (context.parsed.y !== null) {
+                                label += 'Rs ' + context.parsed.y.toLocaleString();
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                    ticks: { color: '#94a3b8' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#94a3b8' }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
+
 {% endblock %}

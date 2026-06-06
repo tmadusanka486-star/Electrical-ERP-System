@@ -209,9 +209,13 @@ class Database:
         self.cursor.execute("SELECT id, project_name, status, estimated_cost FROM projects WHERE shop_id=%s ORDER BY id DESC LIMIT 5", (self.shop_id,))
         rp = self.cursor.fetchall()
         
+        self.cursor.execute("SELECT TO_CHAR(date_created, 'YYYY-MM-DD') as d, SUM(final_amount) FROM invoices WHERE shop_id=%s AND date_created >= CURRENT_DATE - INTERVAL '7 days' GROUP BY d ORDER BY d ASC", (self.shop_id,))
+        chart_data = self.cursor.fetchall()
+        
         return {
             "total_products": p, "total_sales": s, "total_expenses": e, "total_credit": c,
-            "project_income": pi, "monthly_sales": ms, "recent_invoices": ri, "recent_projects": rp
+            "project_income": pi, "monthly_sales": ms, "recent_invoices": ri, "recent_projects": rp,
+            "chart_data": chart_data
         }
     def get_low_stock_items(self):
         self.cursor.execute("SELECT * FROM products WHERE shop_id=%s AND current_stock <= reorder_level", (self.shop_id,))
