@@ -5,14 +5,19 @@ import time
 import webview
 import logging
 
+from dotenv import load_dotenv
+
 # We need to set the environment paths BEFORE importing the app
 if getattr(sys, 'frozen', False):
     # PyInstaller creates a temp folder and stores path in _MEIPASS
     base_path = sys._MEIPASS
+    
+    # Load .env from the bundled PyInstaller temp folder
+    env_path = os.path.join(base_path, '.env')
+    load_dotenv(env_path)
 else:
     base_path = os.path.dirname(os.path.abspath(__file__))
-
-
+    load_dotenv()
 
 # Now we can import the app
 from app import app

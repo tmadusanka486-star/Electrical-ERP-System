@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import collect_all
 
-datas = [('templates', 'templates'), ('static', 'static')]
+datas = [('templates', 'templates'), ('static', 'static'), ('.env', '.')]
 binaries = []
 hiddenimports = ['supabase']
 tmp_ret = collect_all('supabase')
@@ -42,4 +42,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon=['logo.ico'],
 )
