@@ -75,6 +75,26 @@ class Database:
             self.cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='quotations' AND column_name='customer_phone'")
             if not self.cursor.fetchone():
                 self.cursor.execute("ALTER TABLE quotations ADD COLUMN customer_phone TEXT;")
+            
+            # Check if discount exists in quotations
+            self.cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='quotations' AND column_name='discount'")
+            if not self.cursor.fetchone():
+                self.cursor.execute("ALTER TABLE quotations ADD COLUMN discount REAL DEFAULT 0;")
+
+            # Check if final_amount exists in quotations
+            self.cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='quotations' AND column_name='final_amount'")
+            if not self.cursor.fetchone():
+                self.cursor.execute("ALTER TABLE quotations ADD COLUMN final_amount REAL;")
+
+            # Check if unit_price exists in quotation_items
+            self.cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='quotation_items' AND column_name='unit_price'")
+            if not self.cursor.fetchone():
+                self.cursor.execute("ALTER TABLE quotation_items ADD COLUMN unit_price REAL DEFAULT 0;")
+
+            # Check if total_price exists in quotation_items
+            self.cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='quotation_items' AND column_name='total_price'")
+            if not self.cursor.fetchone():
+                self.cursor.execute("ALTER TABLE quotation_items ADD COLUMN total_price REAL DEFAULT 0;")
         except:
             pass
 
