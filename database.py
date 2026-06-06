@@ -12,6 +12,7 @@ class Database:
             try:
                 self.create_tables()
                 self.migrate_multitenant()
+                self.migrate_missing_columns()
                 self.fix_sequences()
             except Exception as e:
                 print("DB Init error:", e)
@@ -56,15 +57,26 @@ class Database:
         self.cursor.execute("INSERT INTO shop_settings (shop_id, company_name, address, phone, email) SELECT 1, company_name, address, phone, email FROM settings WHERE id = 1 ON CONFLICT (shop_id) DO NOTHING;")
         tables_to_update = ['products', 'customers', 'invoices', 'invoice_items', 'projects', 'project_materials', 'returns', 'project_labor', 'suppliers', 'purchases', 'expenses', 'payroll', 'users', 'quotations', 'quotation_items', 'project_quotations', 'pq_items', 'project_payments', 'employees']
         for t in tables_to_update:
-            try:
-                self.cursor.execute(f"ALTER TABLE {t} ADD COLUMN shop_id INTEGER DEFAULT 1;")
-                self.cursor.execute(f"ALTER TABLE {t} ADD COLUMN branch_id INTEGER DEFAULT 1;")
-            except: pass
+            if t not in ['users']:
+                try:
+                    self.cursor.execute(f"ALTER TABLE {t} ADD COLUMN shop_id INTEGER DEFAULT 1;")
+                    self.cursor.execute(f"ALTER TABLE {t} ADD COLUMN branch_id INTEGER DEFAULT 1;")
+                except:
+                    pass
         try:
             self.cursor.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'ShopOwner';")
             self.cursor.execute("UPDATE users SET role = 'SuperAdmin' WHERE username = 'admin';")
         except: pass
         self.conn.commit()
+
+    def migrate_missing_columns(self):
+        try:
+            # Check if customer_phone exists in quotations
+            self.cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='quotations' AND column_name='customer_phone'")
+            if not self.cursor.fetchone():
+                self.cursor.execute("ALTER TABLE quotations ADD COLUMN customer_phone TEXT;")
+        except:
+            pass
 
     def create_tables(self):
         self.cursor.execute("CREATE TABLE IF NOT EXISTS products (id SERIAL PRIMARY KEY, item_name TEXT NOT NULL, barcode TEXT, category TEXT, brand TEXT, model TEXT, cost_price REAL, selling_price REAL, initial_qty REAL, reorder_level INTEGER, warranty_months INTEGER, current_stock REAL)")

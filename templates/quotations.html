@@ -327,7 +327,7 @@
                 let modal = new bootstrap.Modal(document.getElementById('printModal'));
                 modal.show();
             } else {
-                alert("Error saving quotation.");
+                alert("Error saving quotation: " + res.error);
             }
         }).catch(err => {
             alert("Network error: " + err);
