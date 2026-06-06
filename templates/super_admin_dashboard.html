@@ -46,7 +46,12 @@
                         {% for shop in shops %}
                         <tr>
                             <td>{{ shop[0] }}</td>
-                            <td>{{ shop[1] }}</td>
+                            <td>
+                                {{ shop[1] }}
+                                <a href="{{ url_for('login', shop=shop[0]) }}" target="_blank" class="ms-2 text-info" title="Shop Login Link" style="text-decoration: none;">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </td>
                             <td>{{ shop[2] }}</td>
                             <td>{{ shop[3] }}</td>
                             <td><span class="badge bg-success">{{ shop[4] }}</span></td>
@@ -115,6 +120,9 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block modals %}
 <!-- Add Shop Modal -->
 <div class="modal fade" id="addShopModal" tabindex="-1">
   <div class="modal-dialog">

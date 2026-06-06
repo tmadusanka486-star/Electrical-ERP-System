@@ -207,6 +207,10 @@ def handle_exception(e):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
+    shop_param = request.args.get('shop')
+    if shop_param and shop_param.isdigit():
+        session['shop_id'] = int(shop_param)
+        
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']

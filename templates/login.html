@@ -323,11 +323,17 @@
     <div class="login-wrapper">
         <div class="login-card">
             <div class="brand-section">
-                <div class="logo-container">
-                    <i class="fas fa-layer-group" style="font-size: 32px; color: white;"></i>
+                <div class="logo-container" style="background: transparent; box-shadow: none;">
+                    {% if sys_settings and sys_settings|length > 6 and sys_settings[6] %}
+                        <img src="{{ (sys_settings[6] if sys_settings[6] and (sys_settings[6]|string).startswith('http') else url_for('static', filename='uploads/logo/' + sys_settings[6])) }}" alt="Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 12px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    {% else %}
+                        <div style="width: 100%; height: 100%; background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); border-radius: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);">
+                            <i class="fas fa-layer-group" style="font-size: 32px; color: white;"></i>
+                        </div>
+                    {% endif %}
                 </div>
-                <h2>Enterprise ERP</h2>
-                <p>Welcome back! Please enter your details.</p>
+                <h2>{{ sys_settings[1] if sys_settings and sys_settings[1] else 'Enterprise ERP' }}</h2>
+                <p>{{ sys_settings[7] if sys_settings and sys_settings|length > 7 and sys_settings[7] else 'Welcome back! Please enter your details.' }}</p>
             </div>
 
             {% if error %}
