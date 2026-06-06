@@ -106,7 +106,10 @@ def inject_global_settings():
         settings = db.get_settings()
         shop_branches = []
         if 'user_id' in session and session.get('user_role') in ['ShopOwner', 'Admin', 'SuperAdmin']:
-            shop_branches = db.get_shop_branches()
+            all_branches = db.get_shop_branches()
+            # Only allow switching if the user belongs to the first branch (Main Branch) or is SuperAdmin
+            if len(all_branches) > 0 and (session.get('original_branch_id') == all_branches[0][0] or session.get('user_role') == 'SuperAdmin'):
+                shop_branches = all_branches
         return dict(sys_settings=settings, shop_branches=shop_branches, current_branch_id=session.get('branch_id', 1))
     except:
         return dict(sys_settings=None, shop_branches=[], current_branch_id=1)
@@ -114,13 +117,15 @@ def inject_global_settings():
 @app.route('/switch_branch/<int:branch_id>')
 def switch_branch(branch_id):
     if 'user_id' in session:
-        # Validate that branch belongs to this shop
         branches = db.get_shop_branches()
-        if any(b[0] == branch_id for b in branches):
-            session['branch_id'] = branch_id
-            flash("Switched branch successfully.", "success")
+        if len(branches) > 0 and (session.get('original_branch_id') == branches[0][0] or session.get('user_role') == 'SuperAdmin'):
+            if any(b[0] == branch_id for b in branches):
+                session['branch_id'] = branch_id
+                flash("Switched branch successfully.", "success")
+            else:
+                flash("Invalid branch selection.", "error")
         else:
-            flash("Invalid branch selection.", "error")
+            flash("You do not have permission to switch branches.", "error")
     return redirect(request.referrer or url_for('index'))
 
 UPLOAD_FOLDER = 'static/uploads/employees'
@@ -214,6 +219,7 @@ def login():
             session['user_permissions'] = user[3] if len(user) > 3 and user[3] else ""
             session['shop_id'] = user[4] if len(user) > 4 else 1
             session['branch_id'] = user[5] if len(user) > 5 else 1
+            session['original_branch_id'] = session['branch_id']
 
             perms = session.get('user_permissions', '')
             if 'dashboard' in perms:
