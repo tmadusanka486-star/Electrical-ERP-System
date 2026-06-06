@@ -382,7 +382,9 @@ def edit_item():
 def delete_item(item_id):
     success, msg = db.delete_product(item_id)
     if not success:
-        return f"<script>alert('{msg}'); window.location.href='/inventory';</script>"
+        flash(msg, 'danger')
+    else:
+        flash(msg, 'success')
     return redirect(url_for('inventory'))
 
 # --- Projects ---
