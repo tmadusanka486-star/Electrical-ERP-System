@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory - {{ sys_settings[1] if sys_settings else 'ERP System' }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           🎨 THEME VARIABLES (Solid Dark)
+           ========================================= */
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --sidebar-bg: #121212;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --accent-blue: #3b82f6;
+            --border-color: #333333;
+            --hover-bg: #2a2a2a;
+            --input-bg: #2b2b2b;
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            font-family: 'Poppins', sans-serif; 
+            font-size: 13px;
+            overflow-x: hidden; 
+        }
+
+        /* --- Sidebar Styles (New Dark Blue Theme) --- */
+        .sidebar { 
+            height: 100vh; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); 
+            position: fixed; width: 220px; padding-top: 25px; z-index: 1000; overflow-y: auto; 
+            display: flex; flex-direction: column;
+        }
+        .sidebar a.nav-link { padding: 12px 20px; text-decoration: none; font-size: 13px; color: var(--text-muted); display: block; transition: 0.3s; font-weight: 500; }
+        .sidebar a.nav-link:hover { background-color: var(--card-bg); color: #ffffff; padding-left: 25px; }
+        
+        .sidebar a.nav-link.active { 
+            background-color: #162232; 
+            color: var(--accent-blue); 
+            border-left: 3px solid var(--accent-blue); 
+            font-weight: 600; 
+        }
+        
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #444; border-radius: 5px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+
+        /* --- Content Area --- */
+        .content { margin-left: 220px; padding: 40px; position: relative; }
+
+        /* --- Custom Cards & Inputs --- */
+        .custom-card { 
+            background-color: var(--card-bg); border: 1px solid var(--border-color); 
+            border-radius: 8px; padding: 25px; margin-bottom: 25px; 
+        }
+        
+        .form-label { font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;}
+        
+        .form-control, .form-select { 
+            background-color: var(--input-bg); border: 1px solid var(--border-color); 
+            color: var(--text-main); border-radius: 6px; font-size: 12px; 
+            padding: 8px 12px; height: 38px;
+        }
+        .form-control:focus, .form-select:focus { background-color: var(--input-bg); color: var(--text-main); border-color: var(--accent-blue); box-shadow: none; }
+        .form-control::placeholder { color: #8b92a5 !important; opacity: 1; }
+
+        .btn-primary-solid { background-color: var(--accent-blue); color: white; border: none; font-weight: 600; border-radius: 6px; padding: 8px 20px; transition: 0.3s;}
+        .btn-primary-solid:hover { background-color: #2563eb; color: white;}
+        
+        .btn-success-solid { background-color: #2ecc71; color: black; border: none; font-weight: 600; border-radius: 6px; padding: 8px 20px; transition: 0.3s;}
+        .btn-success-solid:hover { background-color: #27ae60; color: black;}
+
+        /* --- Table Styling --- */
+        .table-custom { width: 100%; border-collapse: collapse; }
+        .table-custom th { 
+            background-color: #252525; color: var(--text-muted); padding: 12px 15px; 
+            text-align: left; border-bottom: 1px solid var(--border-color); font-size: 11px; text-transform: uppercase; font-weight: 600;
+        }
+        .table-custom td { padding: 12px 15px; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: #ddd;}
+        .table-custom tr:hover td { background-color: var(--hover-bg); }
+        
+        .text-dim { color: #888 !important; }
+        .badge-custom { padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
+        .bg-low { background-color: rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); }
+        .bg-ok { background-color: rgba(46, 204, 113, 0.15); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); }
+
+        /* Search Bar Fix */
+        .search-box-container { position: relative; width: 100%; max-width: 400px; }
+        .search-box-container .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; opacity: 0.7; }
+        .search-box-container .form-control { padding-left: 35px; }
+    
+        /* --- Mobile Responsiveness --- */
+        .mobile-header {
+            display: none; background-color: var(--card-bg); padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color); align-items: center; justify-content: space-between;
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 998;
+        }
+        .mobile-header .toggle-btn { background: none; border: none; color: var(--text-main); font-size: 24px; cursor: pointer; }
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 999;
+        }
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+            .sidebar.show { transform: translateX(0); }
+            .content { margin-left: 0 !important; padding: 80px 15px 20px 15px !important; }
+            .mobile-header { display: flex; }
+            .sidebar-overlay.show { display: block; }
+            .table-container, .custom-card { overflow-x: auto; padding: 15px; }
+            .row { margin-left: 0; margin-right: 0; }
+            .col-md-5, .col-md-3, .col-md-4, .col-md-6, .col-md-7, .col-md-8, .col-md-12 { padding-left: 5px; padding-right: 5px; }
+        }
+</style>
+</head>
+<body>
+
+<div class="mobile-header no-print">
+    <div style="font-size: 16px; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px;">
+        {% if sys_settings and sys_settings|length > 6 and sys_settings[6] %}
+            <img src="{{ (sys_settings[6] if sys_settings[6] and (sys_settings[6]|string).startswith('http') else url_for('static', filename='uploads/logo/' + sys_settings[6])) }}" alt="Logo" style="height: 30px; border-radius: 4px;">
+        {% endif %}
+        {{ sys_settings[1] if sys_settings else 'ERP System' }}
+    </div>
+    <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+</div>
+<div class="sidebar-overlay no-print" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+
+<div class="sidebar">
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 25px; padding: 0 15px; text-align: center;">
+        {% if sys_settings and sys_settings|length > 6 and sys_settings[6] %}
+            <img src="{{ (sys_settings[6] if sys_settings[6] and (sys_settings[6]|string).startswith('http') else url_for('static', filename='uploads/logo/' + sys_settings[6])) }}" alt="Logo" style="max-height: 60px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+        {% else %}
+            <div style="width: 50px; height: 50px; background: var(--accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; font-weight: bold; margin-bottom: 15px;">
+                {{ (sys_settings[1][0]|upper) if sys_settings else 'E' }}
+            </div>
+        {% endif %}
+        <div style="font-size: 15px; font-weight: 700; color: white; text-align: center; letter-spacing: 0.5px; line-height: 1.3; width: 100%; word-wrap: break-word;">
+            {{ sys_settings[1] if sys_settings else 'ERP System' }}
+        </div>
+    </div>
+
+    <div style="padding: 0 20px 20px 20px; margin-bottom: 10px; border-bottom: 1px solid var(--border-color);">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+            <div style="width: 35px; height: 35px; border-radius: 50%; background-color: #34495e; display: flex; align-items: center; justify-content: center; font-size: 14px; color: white; font-weight: 700; flex-shrink: 0;">
+                {{ session['user_name'][0]|upper if session['user_name'] else '👤' }}
+            </div>
+            <div style="text-align: left; overflow: hidden;">
+                <div style="color: var(--text-main); font-weight: 600; font-size: 12px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
+                    {{ session['user_name'] }}
+                </div>
+                <div style="color: var(--text-muted); font-size: 10px; text-transform: uppercase; font-weight: 600;">
+                    {{ session['user_role'] }}
+                </div>
+            </div>
+        </div>
+        <a href="/logout" style="display: block; background: #2c1618; color: #ff4d4d; border: 1px solid #4a2124; border-radius: 6px; padding: 7px; text-align: center; font-weight: 600; font-size: 11px; text-decoration: none; transition: 0.3s; margin: 0 5px;">
+            🚪 Logout
+        </a>
+    </div>
+
+    <div style="overflow-y: auto; flex-grow: 1; padding-bottom: 20px;">
+        {% set perms = session.get('user_permissions', '') %}
+        {% set role = session.get('user_role', '') %}
+        {% set has_all = role in ['Admin', 'SuperAdmin', 'ShopOwner'] or perms == 'ALL' %}
+        
+        {% if has_all or 'dashboard' in perms %}<a href="/" class="nav-link {{ 'active' if request.path == '/' else '' }}">📊 Dashboard</a>{% endif %}
+        {% if has_all or 'billing' in perms %}<a href="/billing" class="nav-link {{ 'active' if request.path == '/billing' else '' }}">🧾 Billing</a>{% endif %}
+        
+        {% if has_all or 'quotations' in perms %}<a href="/quotations" class="nav-link {{ 'active' if request.path == '/quotations' else '' }}">📄 Quotations</a>{% endif %}
+        
+        {% if has_all or 'expenses' in perms %}<a href="/expenses" class="nav-link {{ 'active' if request.path == '/expenses' else '' }}">💸 Shop Expenses</a>{% endif %}
+        {% if has_all or 'customers' in perms %}<a href="/customers" class="nav-link {{ 'active' if request.path == '/customers' else '' }}">👥 Customers</a>{% endif %}
+        {% if has_all or 'returns' in perms %}<a href="/returns" class="nav-link {{ 'active' if request.path == '/returns' else '' }}">↩️ Returns</a>{% endif %}
+        {% if has_all or 'inventory' in perms %}<a href="/inventory" class="nav-link {{ 'active' if request.path == '/inventory' else '' }}">📦 Inventory</a>{% endif %}
+        {% if has_all or 'purchasing' in perms %}<a href="/purchasing" class="nav-link {{ 'active' if request.path == '/purchasing' else '' }}">🛒 Purchasing</a>{% endif %}
+        {% if has_all or 'suppliers' in perms %}<a href="/suppliers" class="nav-link {{ 'active' if request.path == '/suppliers' else '' }}">🚚 Suppliers</a>{% endif %}
+        {% if has_all or 'barcodes' in perms %}<a href="/barcodes" class="nav-link {{ 'active' if request.path == '/barcodes' else '' }}">🏷️ Barcodes</a>{% endif %}
+        {% if has_all or 'employees' in perms %}<a href="/employees" class="nav-link {{ 'active' if request.path == '/employees' else '' }}">👨‍🔧 Employees</a>{% endif %}
+        {% if has_all or 'payroll' in perms %}<a href="/payroll" class="nav-link {{ 'active' if request.path == '/payroll' else '' }}">💰 Payroll</a>{% endif %}
+        
+        {% if has_all or 'projects' in perms %}
+            <a href="/projects" class="nav-link {{ 'active' if request.path.startswith('/project') or request.path.startswith('/manage_project') else '' }}">📋 Projects</a>
+            <a href="/project_quotations" class="nav-link {{ 'active' if request.path == '/project_quotations' else '' }}">🏗️ Project Quotes</a>
+        {% endif %}
+        
+        {% if has_all or 'reports' in perms %}<a href="/reports" class="nav-link {{ 'active' if request.path == '/reports' else '' }}">📈 Reports</a>{% endif %}
+        {% if has_all or 'settings' in perms %}<a href="/settings" class="nav-link {{ 'active' if request.path == '/settings' else '' }}">⚙️ Settings</a>{% endif %}
+    </div>
+</div>
+
+<div class="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 style="font-weight: 600; margin: 0;">📦 Inventory Management</h4>
+        
+        <form action="/search" method="POST" class="d-flex gap-2">
+            <div class="search-box-container" style="min-width: 300px;">
+                <span class="search-icon">🔍</span>
+                <input type="text" name="keyword" class="form-control" placeholder="Search Item, Brand or Barcode..." value="{{ request.form.get('keyword', '') }}">
+            </div>
+            <button type="submit" class="btn-primary-solid">Search</button>
+            <a href="/inventory" class="btn btn-secondary" style="border-radius: 6px; display: flex; align-items: center; font-weight: 600;">Clear</a>
+        </form>
+    </div>
+
+    <div class="custom-card">
+        <h6 class="mb-4" style="color: var(--accent-blue); font-weight: 600;">➕ Add New Item</h6>
+        <form action="/add_item" method="POST">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Item Name</label>
+                    <input type="text" name="name" class="form-control" required placeholder="e.g. 2.5mm Wire">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Barcode <span style="text-transform: none; color: #666;">(Optional)</span></label>
+                    <input type="text" name="barcode" class="form-control" placeholder="Scan or Type">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Category</label>
+                    <select name="category" class="form-select">
+                        <option>CCTV</option><option>Wiring</option><option>Network</option><option>Electrical</option><option>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Brand</label>
+                    <select name="brand" class="form-select">
+                        <option>Dahua</option><option>Hikvision</option><option>Orange</option><option>Kelani</option><option>ACL</option><option>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Model</label>
+                    <input type="text" name="model" class="form-control" placeholder="e.g. DH-HAC-HFW">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Cost Price</label>
+                    <input type="number" step="0.01" name="cost" class="form-control" placeholder="0.00">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Selling Price</label>
+                    <input type="number" step="0.01" name="price" class="form-control" placeholder="0.00" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Initial Qty</label>
+                    <input type="number" name="qty" class="form-control" value="0">
+                </div>
+                
+                <div class="col-md-1"></div>
+                
+                <div class="col-md-2">
+                    <label class="form-label">Reorder Lvl</label>
+                    <input type="number" name="reorder" class="form-control" value="5" title="Alert when stock is below this level">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Warranty (M)</label>
+                    <input type="number" name="warranty" class="form-control" value="0" placeholder="Months">
+                </div>
+                <div class="col-md-8 d-flex align-items-end gap-2">
+                    <button type="submit" class="btn-success-solid px-4">📥 Save Item</button>
+                    <button type="reset" class="btn btn-secondary" style="border-radius: 6px; font-weight: 600;">Clear Form</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="custom-card p-0" style="overflow: hidden;">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th width="50">ID</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Brand</th>
+                    <th>Barcode</th>
+                    <th>Model</th>
+                    <th class="text-end">Cost</th>
+                    <th class="text-end">Price</th>
+                    <th class="text-center">Stock</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td class="text-dim">#{{ item[0] }}</td>
+                    <td style="font-weight: 600; color: white;">{{ item[1] }}</td>
+                    <td>{{ item[3] }}</td>
+                    <td>{{ item[4] }}</td>
+                    <td class="text-dim">{{ item[2] if item[2] else '-' }}</td>
+                    <td class="text-dim">{{ item[5] if item[5] else '-' }}</td>
+                    <td class="text-end text-dim">{{ "{:,.2f}".format(item[6]) }}</td>
+                    <td class="text-end" style="color: var(--accent-blue); font-weight: 600;">{{ "{:,.2f}".format(item[7]) }}</td>
+                    
+                    <td class="text-center" style="font-size: 14px; font-weight: 700;">
+                        {% if item[11] <= item[9] %}
+                            <span style="color: #ff4757;">{{ item[11] }}</span>
+                        {% else %}
+                            <span style="color: white;">{{ item[11] }}</span>
+                        {% endif %}
+                    </td>
+
+                    <td class="text-center">
+                        {% if item[11] <= item[9] %}
+                            <span class="badge-custom bg-low">Low Stock</span>
+                        {% else %}
+                            <span class="badge-custom bg-ok">Good</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center" style="white-space: nowrap;">
+                        {% if item[2] %}
+                        <button class="btn btn-sm btn-info" onclick="checkBranches('{{ item[2] }}', '{{ item[1] }}')" title="Check Stock in Other Branches">
+                            <i class="fas fa-search-location"></i>
+                        </button>
+                        {% endif %}
+                        <button class="btn btn-sm btn-primary" style="background-color: var(--accent-blue); border: none;"
+                            data-id="{{ item[0] }}" 
+                            data-name="{{ item[1] }}" 
+                            data-barcode="{{ item[2] if item[2] else '' }}" 
+                            data-category="{{ item[3] }}" 
+                            data-brand="{{ item[4] }}" 
+                            data-model="{{ item[5] if item[5] else '' }}" 
+                            data-cost="{{ item[6] }}" 
+                            data-price="{{ item[7] }}" 
+                            data-stock="{{ item[11] }}" 
+                            data-reorder="{{ item[9] }}" 
+                            data-warranty="{{ item[10] }}" 
+                            onclick="openEditModal(this)">✏️</button>
+                        <a href="/delete_item/{{ item[0] }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this item?');" style="background-color: #e74c3c; border: none;">🗑️</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="10" class="text-center py-5 text-muted">No items found in inventory.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Edit Item Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" style="background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color);">
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+        <h5 class="modal-title" id="editModalLabel" style="color: var(--accent-blue); font-weight: 600;">✏️ Edit Item</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/edit_item" method="POST" id="editForm">
+            <input type="hidden" name="item_id" id="edit_item_id">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Item Name</label>
+                    <input type="text" name="name" id="edit_name" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Barcode</label>
+                    <input type="text" name="barcode" id="edit_barcode" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Category</label>
+                    <select name="category" id="edit_category" class="form-select">
+                        <option>CCTV</option><option>Wiring</option><option>Network</option><option>Electrical</option><option>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Brand</label>
+                    <select name="brand" id="edit_brand" class="form-select">
+                        <option>Dahua</option><option>Hikvision</option><option>Orange</option><option>Kelani</option><option>ACL</option><option>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Model</label>
+                    <input type="text" name="model" id="edit_model" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Cost Price</label>
+                    <input type="number" step="0.01" name="cost" id="edit_cost" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Selling Price</label>
+                    <input type="number" step="0.01" name="price" id="edit_price" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Current Stock</label>
+                    <input type="number" name="qty" id="edit_qty" class="form-control">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Reorder Lvl</label>
+                    <input type="number" name="reorder" id="edit_reorder" class="form-control">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Warranty(M)</label>
+                    <input type="number" name="warranty" id="edit_warranty" class="form-control">
+                </div>
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer" style="border-top: 1px solid var(--border-color);">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary-solid" onclick="document.getElementById('editForm').submit();">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Check Branches Modal -->
+<div class="modal fade" id="checkBranchesModal" tabindex="-1" aria-labelledby="checkBranchesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color);">
+            <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+                <h5 class="modal-title" id="checkBranchesModalLabel">Stock in Other Branches: <span id="cbItemName" class="text-info"></span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th>Branch Name</th>
+                            <th class="text-end">Current Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cbTableBody">
+                        <tr><td colspan="2" class="text-center">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                Swal.fire({
+                    icon: '{{ "success" if category == "success" else "error" }}',
+                    title: '{{ message }}',
+                    background: '#1e1e1e',
+                    color: '#fff',
+                    confirmButtonColor: '#0d6efd'
+                });
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+function checkBranches(barcode, itemName) {
+    document.getElementById('cbItemName').innerText = itemName;
+    document.getElementById('cbTableBody').innerHTML = '<tr><td colspan="2" class="text-center">Loading...</td></tr>';
+    var myModal = new bootstrap.Modal(document.getElementById('checkBranchesModal'));
+    myModal.show();
+    
+    fetch('/other_branches_stock/' + encodeURIComponent(barcode))
+        .then(response => response.json())
+        .then(data => {
+            let html = '';
+            if(data.length === 0) {
+                html = '<tr><td colspan="2" class="text-center text-muted">No stock found in other branches.</td></tr>';
+            } else {
+                data.forEach(branch => {
+                    html += `<tr><td>${branch.branch_name}</td><td class="text-end" style="font-weight:bold; color: ${branch.current_stock > 0 ? '#2ecc71' : '#ff4757'}">${branch.current_stock}</td></tr>`;
+                });
+            }
+            document.getElementById('cbTableBody').innerHTML = html;
+        })
+        .catch(err => {
+            document.getElementById('cbTableBody').innerHTML = '<tr><td colspan="2" class="text-center text-danger">Error loading data.</td></tr>';
+        });
+}
+
+function openEditModal(btn) {
+    document.getElementById('edit_item_id').value = btn.getAttribute('data-id');
+    document.getElementById('edit_name').value = btn.getAttribute('data-name');
+    document.getElementById('edit_barcode').value = btn.getAttribute('data-barcode');
+    document.getElementById('edit_category').value = btn.getAttribute('data-category');
+    document.getElementById('edit_brand').value = btn.getAttribute('data-brand');
+    document.getElementById('edit_model').value = btn.getAttribute('data-model');
+    document.getElementById('edit_cost').value = btn.getAttribute('data-cost');
+    document.getElementById('edit_price').value = btn.getAttribute('data-price');
+    document.getElementById('edit_qty').value = btn.getAttribute('data-stock');
+    document.getElementById('edit_reorder').value = btn.getAttribute('data-reorder');
+    document.getElementById('edit_warranty').value = btn.getAttribute('data-warranty');
+    
+    var myModal = new bootstrap.Modal(document.getElementById('editModal'));
+    myModal.show();
+}
+</script>
+</body>
+</html>

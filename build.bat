@@ -2,12 +2,16 @@
 echo Building T^&S PowerTech ERP Desktop Application...
 echo Please wait, this might take a few minutes...
 
-echo Running PyInstaller...
-python -m PyInstaller --name "MyShopERP" --clean --noconsole --onefile --icon="logo.ico" --collect-all supabase --hidden-import supabase --add-data "templates;templates" --add-data "static;static" --add-data ".env;." desktop_app.py
+echo Running PyInstaller in Directory Mode (for fast startup)...
+python -m PyInstaller --name "MyShopERP" --clean --noconsole --onedir --icon="logo.ico" --collect-all supabase --hidden-import supabase --add-data "templates;templates" --add-data "static;static" --add-data ".env;." desktop_app.py
+
+echo.
+echo Packaging into a professional Windows Installer...
+"C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer.iss
 
 echo.
 echo Build complete! 
-echo You can find your application: dist\MyShopERP.exe
+echo You can find your installation setup: dist\MyShopERP_Setup.exe
 echo.
-echo The application is now fully standalone! You do not need to copy any .env files.
+echo The application is now fully standalone and installs like a professional program!
 pause
