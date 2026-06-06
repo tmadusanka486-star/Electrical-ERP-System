@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import collect_all
 
-datas = [('templates', 'templates'), ('static', 'static'), ('.env', '.')]
+datas = [('templates', 'templates'), ('static', 'static'), ('.env', '.'), ('logo.ico', '.')]
 binaries = []
 hiddenimports = ['supabase']
 tmp_ret = collect_all('supabase')
