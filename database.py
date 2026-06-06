@@ -349,27 +349,34 @@ class Database:
         return self.cursor.fetchall()
     def save_payroll(self, emp_id, month, basic, allowance, deduction, net, ot_hours, ot_payment, all_reason, ded_reason):
         self.cursor.execute("INSERT INTO payroll (shop_id, branch_id, emp_id, month, basic_salary, allowance, deduction, net_salary, ot_hours, ot_payment, allowance_reason, deduction_reason) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, emp_id, month, basic, allowance, deduction, net, ot_hours, ot_payment, all_reason, ded_reason))
-    def add_expense(self, date, category, desc, amount):
+    def add_expense(self, date_val, category, desc, amount, added_by=None):
         try:
             self.cursor.execute("ALTER TABLE expenses ADD COLUMN IF NOT EXISTS expense_date TEXT;")
             self.cursor.execute("ALTER TABLE expenses ADD COLUMN IF NOT EXISTS category TEXT;")
-            self.conn.commit()
         except:
-            self.conn.rollback()
-            
-        self.cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='expenses'")
-        cols = [r[0] for r in self.cursor.fetchall()]
+            pass
         
-        try:
-            from flask import session
-            added_by = session.get('user_name', 'Unknown')
-        except:
-            added_by = 'Unknown'
-            
-        if 'added_by' in cols:
-            self.cursor.execute("INSERT INTO expenses (shop_id, branch_id, expense_date, category, description, amount, added_by) VALUES (%s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, date, category, desc, amount, added_by))
+        self.cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='expenses'")
+        columns = [row[0] for row in self.cursor.fetchall()]
+        
+        has_added_by = 'added_by' in columns
+        has_date = 'date' in columns
+
+        # Also try to drop NOT NULL if it's Postgres
+        if has_date:
+            try:
+                self.cursor.execute('ALTER TABLE expenses ALTER COLUMN "date" DROP NOT NULL;')
+            except:
+                pass
+        
+        if has_date and has_added_by:
+            self.cursor.execute('INSERT INTO expenses (shop_id, branch_id, expense_date, "date", category, description, amount, added_by) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', (self.shop_id, self.branch_id, date_val, date_val, category, desc, amount, added_by))
+        elif has_date and not has_added_by:
+            self.cursor.execute('INSERT INTO expenses (shop_id, branch_id, expense_date, "date", category, description, amount) VALUES (%s, %s, %s, %s, %s, %s, %s)', (self.shop_id, self.branch_id, date_val, date_val, category, desc, amount))
+        elif not has_date and has_added_by:
+            self.cursor.execute("INSERT INTO expenses (shop_id, branch_id, expense_date, category, description, amount, added_by) VALUES (%s, %s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, date_val, category, desc, amount, added_by))
         else:
-            self.cursor.execute("INSERT INTO expenses (shop_id, branch_id, expense_date, category, description, amount) VALUES (%s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, date, category, desc, amount))
+            self.cursor.execute("INSERT INTO expenses (shop_id, branch_id, expense_date, category, description, amount) VALUES (%s, %s, %s, %s, %s, %s)", (self.shop_id, self.branch_id, date_val, category, desc, amount))
         
     def get_all_expenses(self):
         try:
