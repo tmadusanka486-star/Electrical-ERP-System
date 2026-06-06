@@ -21,9 +21,9 @@ Source: "dist\MyShopERP\MyShopERP.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\MyShopERP\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\T&S PowerTech ERP"; Filename: "{app}\MyShopERP.exe"; IconFilename: "{app}\_internal\logo.ico"
+Name: "{group}\T&S PowerTech ERP"; Filename: "{app}\MyShopERP.exe"; IconFilename: "{app}\logo.ico"
 Name: "{group}\{cm:UninstallProgram,T&S PowerTech ERP}"; Filename: "{uninstallexe}"
-Name: "{commondesktop}\T&S PowerTech ERP"; Filename: "{app}\MyShopERP.exe"; Tasks: desktopicon; IconFilename: "{app}\_internal\logo.ico"
+Name: "{commondesktop}\T&S PowerTech ERP"; Filename: "{app}\MyShopERP.exe"; Tasks: desktopicon; IconFilename: "{app}\logo.ico"
 
 [Run]
 Filename: "{app}\MyShopERP.exe"; Description: "{cm:LaunchProgram,T&S PowerTech ERP}"; Flags: nowait postinstall skipifsilent
