@@ -239,9 +239,13 @@
         </div>
         <div style="display: flex; gap: 10px;">
             <button onclick="clearFilters()" style="background: #e74c3c; border: none; padding: 8px 15px; border-radius: 6px; color: white; font-weight: 600; font-size: 12px;"><i class="fas fa-times"></i> Clear</button>
+            <button onclick="downloadExcel()" class="btn-print" style="background-color: #27ae60; border: none; padding: 8px 15px; border-radius: 6px; color: white; font-weight: 600; font-size: 12px;"><i class="fas fa-file-excel"></i> Export Excel</button>
             <button onclick="downloadPDF()" class="btn-print" style="background-color: #8e44ad; border: none; padding: 8px 15px; border-radius: 6px; color: white; font-weight: 600; font-size: 12px;"><i class="fas fa-file-pdf"></i> Download PDF</button>
         </div>
     </div>
+
+    <!-- SheetJS for Excel Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <div class="nav-btn-group no-print">
         <button class="nav-btn btn-employees" onclick="showTab('employees')" style="background-color: #e84393;">👥 Employees</button>
@@ -547,6 +551,46 @@
         document.getElementById('startDate').value = "";
         document.getElementById('endDate').value = "";
         applyFilters();
+    }
+
+    function downloadExcel() {
+        const activeTab = document.querySelector('.tab-section.active');
+        if (!activeTab) return;
+
+        let table = activeTab.querySelector('table');
+        if (!table) {
+            alert('No tabular data to export in this view.');
+            return;
+        }
+
+        let reportTitle = document.getElementById('printReportTitle').innerText || 'Report';
+        
+        let ws_data = [];
+        let rows = table.querySelectorAll('tr');
+        rows.forEach(row => {
+            // Only include visible rows
+            if (window.getComputedStyle(row).display !== 'none') {
+                let rowData = [];
+                row.querySelectorAll('th, td').forEach(cell => {
+                    rowData.push(cell.innerText.trim());
+                });
+                ws_data.push(rowData);
+            }
+        });
+
+        // Add footer total at the end of the Excel sheet if available
+        let footerText = document.getElementById('footerText');
+        if (footerText && footerText.innerText.trim() !== "") {
+            ws_data.push([]);
+            ws_data.push(["TOTALS", footerText.innerText.trim()]);
+        }
+
+        var ws = XLSX.utils.aoa_to_sheet(ws_data);
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Data");
+        
+        let fileName = reportTitle.replace(/[^a-zA-Z0-9]/g, '_') + '_' + new Date().toISOString().slice(0,10) + '.xlsx';
+        XLSX.writeFile(wb, fileName);
     }
 
     // Load Purchases tab by default
