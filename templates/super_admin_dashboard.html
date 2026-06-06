@@ -51,7 +51,14 @@
                             <td>{{ shop[3] }}</td>
                             <td><span class="badge bg-success">{{ shop[4] }}</span></td>
                             <td>
-                                <a href="{{ url_for('manage_shop', shop_id=shop[0]) }}" class="btn btn-sm btn-primary-solid">Manage</a>
+                                <div class="d-flex gap-2">
+                                    <a href="{{ url_for('manage_shop', shop_id=shop[0]) }}" class="btn btn-sm btn-primary-solid">Manage</a>
+                                    {% if shop[0] != 1 %}
+                                    <form action="{{ url_for('delete_shop', shop_id=shop[0]) }}" method="POST" class="d-inline" onsubmit="return confirm('WARNING: Are you sure you want to permanently delete this Shop? ALL data (invoices, products, customers, branches) will be lost. This cannot be undone.');">
+                                        <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                    {% endif %}
+                                </div>
                             </td>
                         </tr>
                         {% else %}
@@ -80,6 +87,7 @@
                             <th>Shop ID</th>
                             <th>Branch Name</th>
                             <th>Location</th>
+                            <th class="text-end">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -89,6 +97,13 @@
                             <td>Shop #{{ branch[1] }}</td>
                             <td>{{ branch[2] }}</td>
                             <td>{{ branch[3] }}</td>
+                            <td class="text-end">
+                                {% if branch[0] != 1 %}
+                                <form action="{{ url_for('delete_branch', shop_id=branch[1], branch_id=branch[0]) }}" method="POST" class="d-inline" onsubmit="return confirm('WARNING: Are you sure you want to permanently delete this Branch? ALL data associated with it will be lost. This cannot be undone.');">
+                                    <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                </form>
+                                {% endif %}
+                            </td>
                         </tr>
                         {% else %}
                         <tr><td colspan="4" class="text-center text-muted">No branches found.</td></tr>

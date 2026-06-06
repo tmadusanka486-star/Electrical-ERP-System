@@ -521,3 +521,42 @@ class Database:
         return self.cursor.fetchall()
     def add_branch(self, shop_id, branch_name, location):
         self.cursor.execute("INSERT INTO branches (shop_id, branch_name, location) VALUES (%s, %s, %s)", (shop_id, branch_name, location))
+
+    def delete_branch(self, shop_id, branch_id):
+        if branch_id == 1:
+            return False, "Cannot delete the main system branch."
+        tables_to_delete = [
+            'invoice_items', 'pq_items', 'quotation_items', 'project_materials', 
+            'project_labor', 'project_payments', 'returns', 'payroll',
+            'invoices', 'quotations', 'project_quotations', 'purchases', 'expenses',
+            'projects', 'products', 'customers', 'employees', 'suppliers', 'users'
+        ]
+        try:
+            for t in tables_to_delete:
+                try:
+                    self.cursor.execute(f"DELETE FROM {t} WHERE shop_id=%s AND branch_id=%s", (shop_id, branch_id))
+                except: pass
+            self.cursor.execute("DELETE FROM branches WHERE id=%s AND shop_id=%s", (branch_id, shop_id))
+            return True, "Branch deleted successfully."
+        except Exception as e:
+            return False, str(e)
+
+    def delete_shop(self, shop_id):
+        if shop_id == 1:
+            return False, "Cannot delete the main system shop."
+        tables_to_delete = [
+            'invoice_items', 'pq_items', 'quotation_items', 'project_materials', 
+            'project_labor', 'project_payments', 'returns', 'payroll',
+            'invoices', 'quotations', 'project_quotations', 'purchases', 'expenses',
+            'projects', 'products', 'customers', 'employees', 'suppliers', 'users',
+            'shop_settings', 'branches'
+        ]
+        try:
+            for t in tables_to_delete:
+                try:
+                    self.cursor.execute(f"DELETE FROM {t} WHERE shop_id=%s", (shop_id,))
+                except: pass
+            self.cursor.execute("DELETE FROM shops WHERE id=%s", (shop_id,))
+            return True, "Shop deleted successfully."
+        except Exception as e:
+            return False, str(e)

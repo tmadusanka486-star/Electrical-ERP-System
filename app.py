@@ -326,6 +326,26 @@ def add_branch():
     flash('Branch created successfully!', 'success')
     return redirect(url_for('super_admin_dashboard'))
 
+@app.route('/super_admin/delete_shop/<int:shop_id>', methods=['POST'])
+@requires_super_admin
+def delete_shop(shop_id):
+    success, msg = db.delete_shop(shop_id)
+    if success:
+        flash(msg, 'success')
+    else:
+        flash(f'Error deleting shop: {msg}', 'error')
+    return redirect(url_for('super_admin_dashboard'))
+
+@app.route('/super_admin/delete_branch/<int:shop_id>/<int:branch_id>', methods=['POST'])
+@requires_super_admin
+def delete_branch(shop_id, branch_id):
+    success, msg = db.delete_branch(shop_id, branch_id)
+    if success:
+        flash(msg, 'success')
+    else:
+        flash(f'Error deleting branch: {msg}', 'error')
+    return redirect(url_for('super_admin_dashboard'))
+
 
 # ==========================================
 # --- 5. Main Modules Routes ---
