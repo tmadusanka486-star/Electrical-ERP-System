@@ -488,7 +488,23 @@ class Database:
         return None
     def backup_database(self): pass
     def restore_database(self, file_path): pass
-    def reset_database(self): pass
+    def reset_database(self):
+        tables_to_truncate = [
+            'pq_items', 'project_quotations', 
+            'quotation_items', 'quotations',
+            'project_payments', 'project_materials', 'project_labor', 'projects',
+            'returns', 'invoice_items', 'invoices', 
+            'purchases', 'expenses', 'payroll',
+            'products', 'customers', 'suppliers'
+        ]
+        try:
+            for table in tables_to_truncate:
+                self.cursor.execute(f"TRUNCATE TABLE {table} CASCADE")
+            self.conn.commit()
+            return True, "Factory reset successful. All transaction and inventory data cleared."
+        except Exception as e:
+            self.conn.rollback()
+            return False, f"Reset failed: {str(e)}"
     
     # ==== SUPER ADMIN METHODS ====
     def get_all_shops(self):
